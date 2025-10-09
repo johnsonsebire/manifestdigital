@@ -13,8 +13,8 @@ class PrimaryHeader extends Component
 
     public function __construct(
         bool $transparent = true,
-        bool $showMegaMenu = true,
-        bool $showDropdown = false,
+        bool $showMegaMenu = false,
+        bool $showDropdown = true,
         array $navItems = null
     ) {
         $this->transparent = $transparent;
