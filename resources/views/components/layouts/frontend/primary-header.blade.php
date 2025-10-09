@@ -5,19 +5,21 @@
 
     <x-notification-topbar />
 
-    <header class="primary-header {{ $transparent ?? true ? 'transparent' : '' }}">
-        <a href="{{ url('/') }}" class="logo">
-        </a>
+    <header class="primary-header {{ $transparent ? 'transparent' : '' }}">
+        <a href="{{ url('/') }}" class="logo"></a>
       
         <nav>
-            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Home</a>
-            <a href="{{ url('projects') }}" class="{{ request()->is('projects*') ? 'active' : '' }}">Projects</a>
-            <a href="{{ url('ai-sensei-chat') }}" class="{{ request()->is('ai-sensei-chat*') ? 'active' : '' }}">AI Sensei</a>
-            <!-- Mega Menu Component -->
-             <div id="mega-menu-placeholder"></div> 
-            <!-- Dropdown Component -->
-            <div id="dropdown-placeholder"></div> 
-            <a href="{{ url('book-a-call') }}" class="{{ request()->is('book-a-call*') ? 'active' : '' }}">Book a Call</a>
+            @foreach($navItems as $item)
+                @if($item['type'] === 'link')
+                    <a href="{{ url($item['url']) }}" class="{{ request()->is(trim($item['url'], '/*')) ? 'active' : '' }}">
+                        {{ $item['label'] }}
+                    </a>
+                @elseif($item['type'] === 'mega-menu' && $showMegaMenu)
+                    <x-mega-menu />
+                @elseif($item['type'] === 'dropdown' && $showDropdown)
+                    <x-drop-down />
+                @endif
+            @endforeach
         </nav>
         <div class="header-right">
             <a href="{{ route('login') }}" class="login">Login</a>
@@ -44,10 +46,13 @@
     <!-- Mobile navigation menu -->
     <div class="mobile-nav">
         <nav>
-            <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Home</a>
-            <a href="{{ url('projects') }}" class="{{ request()->is('projects*') ? 'active' : '' }}">Projects</a>
-            <a href="{{ url('ai-sensei-chat') }}" class="{{ request()->is('ai-sensei-chat*') ? 'active' : '' }}">AI Sensei</a>
-            <a href="{{ url('book-a-call') }}" class="{{ request()->is('book-a-call*') ? 'active' : '' }}">Book a Call</a>
+            @foreach($navItems as $item)
+                @if($item['type'] === 'link')
+                    <a href="{{ url($item['url']) }}" class="{{ request()->is(trim($item['url'], '/*')) ? 'active' : '' }}">
+                        {{ $item['label'] }}
+                    </a>
+                @endif
+            @endforeach
         </nav>
         <div class="mobile-nav-buttons">
             <a href="{{ route('login') }}" class="login">Login</a>
