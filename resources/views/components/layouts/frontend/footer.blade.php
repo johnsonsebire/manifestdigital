@@ -59,9 +59,7 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{asset('frontend/js/script.js')}}"></script>
+    <x-layouts.frontend.scripts />
     <script>
         // ========================
         // Reading Tracker
@@ -624,160 +622,9 @@
             }, 4500); // Total preloader duration: 4.5 seconds
         });
 
-        // ========================
-        // Mega Menu Service Switching
-        // ========================
-        
-        const serviceContent = {
-            web: {
-                'Design & UX': [
-                    { name: 'Responsive Design', url: '#responsive-design' },
-                    { name: 'UI/UX Design', url: '#ui-design' },
-                    { name: 'Frontend Development', url: '#frontend' },
-                    { name: 'User Testing', url: '#user-testing' }
-                ],
-                'Development': [
-                    { name: 'HTML5/CSS3', url: '#html-css' },
-                    { name: 'JavaScript/React', url: '#javascript' },
-                    { name: 'Backend APIs', url: '#backend' },
-                    { name: 'Database Design', url: '#database' }
-                ],
-                'Tools & Frameworks': [
-                    { name: 'WordPress', url: '#wordpress' },
-                    { name: 'Laravel', url: '#laravel' },
-                    { name: 'Vue.js', url: '#vue' },
-                    { name: 'Node.js', url: '#nodejs' }
-                ]
-            },
-            mobile: {
-                'iOS Development': [
-                    { name: 'Swift Programming', url: '#swift' },
-                    { name: 'SwiftUI', url: '#swiftui' },
-                    { name: 'App Store Submission', url: '#app-store' },
-                    { name: 'Core Data', url: '#core-data' }
-                ],
-                'Android Development': [
-                    { name: 'Kotlin Programming', url: '#kotlin' },
-                    { name: 'Android Studio', url: '#android-studio' },
-                    { name: 'Google Play Store', url: '#play-store' },
-                    { name: 'Material Design', url: '#material-design' }
-                ],
-                'Cross-Platform': [
-                    { name: 'React Native', url: '#react-native' },
-                    { name: 'Flutter', url: '#flutter' },
-                    { name: 'Ionic', url: '#ionic' },
-                    { name: 'Xamarin', url: '#xamarin' }
-                ]
-            },
-            ecommerce: {
-                'Platform Development': [
-                    { name: 'WooCommerce', url: '#woocommerce' },
-                    { name: 'Shopify Plus', url: '#shopify' },
-                    { name: 'Magento', url: '#magento' },
-                    { name: 'Custom Solutions', url: '#custom-ecommerce' }
-                ],
-                'Payment Integration': [
-                    { name: 'Stripe Integration', url: '#stripe' },
-                    { name: 'PayPal Gateway', url: '#paypal' },
-                    { name: 'Mobile Money', url: '#mobile-money' },
-                    { name: 'Bank Transfers', url: '#bank-transfer' }
-                ],
-                'Store Management': [
-                    { name: 'Inventory System', url: '#inventory' },
-                    { name: 'Order Management', url: '#orders' },
-                    { name: 'Analytics Dashboard', url: '#analytics' },
-                    { name: 'Customer Support', url: '#support' }
-                ]
-            },
-            api: {
-                'API Development': [
-                    { name: 'REST APIs', url: '#rest-api' },
-                    { name: 'GraphQL', url: '#graphql' },
-                    { name: 'Webhook Integration', url: '#webhooks' },
-                    { name: 'API Documentation', url: '#api-docs' }
-                ],
-                'Third-party Integration': [
-                    { name: 'Social Media APIs', url: '#social-apis' },
-                    { name: 'Payment Gateways', url: '#payment-apis' },
-                    { name: 'CRM Integration', url: '#crm-apis' },
-                    { name: 'Email Services', url: '#email-apis' }
-                ],
-                'Data & Security': [
-                    { name: 'Authentication', url: '#auth' },
-                    { name: 'Rate Limiting', url: '#rate-limit' },
-                    { name: 'Data Validation', url: '#validation' },
-                    { name: 'API Testing', url: '#api-testing' }
-                ]
-            }
-        };
-
-        function updateServiceCategories(serviceType) {
-            const categoriesContainer = document.getElementById('serviceCategories');
-            const content = serviceContent[serviceType];
-            
-            if (!content || !categoriesContainer) return;
-            
-            let html = '';
-            Object.keys(content).forEach(category => {
-                html += `
-                    <div class="category-column">
-                        <h4>${category}</h4>
-                        <ul>
-                            ${content[category].map(item => 
-                                `<li><a href="${item.url}">${item.name}</a></li>`
-                            ).join('')}
-                        </ul>
-                    </div>
-                `;
-            });
-            
-            categoriesContainer.innerHTML = html;
-        }
-
-        function initMegaMenuSwitching() {
-            const serviceItems = document.querySelectorAll('.service-item[data-service]');
-            
-            serviceItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all service items
-                    serviceItems.forEach(si => si.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Get service type and update categories
-                    const serviceType = this.getAttribute('data-service');
-                    updateServiceCategories(serviceType);
-                });
-            });
-            
-            // Initialize with web development content
-            updateServiceCategories('web');
-        }
-
-        // Component loading functionality
-        async function loadComponent(componentName, targetId) {
-            try {
-                const response = await fetch(`{{ asset('frontend/components') }}/${componentName}.html`);
-                const html = await response.text();
-                document.getElementById(targetId).innerHTML = html;
-            } catch (error) {
-                console.error(`Failed to load ${componentName}:`, error);
-            }
-        }
-        
         // Load components when DOM is ready
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Load both components in parallel
-            await Promise.all([
-                loadComponent('mega-menu', 'mega-menu-placeholder'),
-                loadComponent('drop-down', 'dropdown-placeholder')
-            ]);
-            
-            // Initialize mega menu functionality after components are loaded
-            initMegaMenuSwitching();
+        document.addEventListener('DOMContentLoaded', function() {
+            // All component initialization is now handled by Alpine.js and Blade components
         });
     </script>
     
