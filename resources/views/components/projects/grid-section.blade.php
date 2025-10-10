@@ -61,46 +61,71 @@
             observer: null,
 
             async init() {
+                console.log('🚀 Projects Grid initialized');
                 try {
+                    console.log('📡 Loading initial projects...');
                     await this.loadProjects();
+                    console.log('✅ Initial projects loaded:', this.projects.length);
                 } catch (error) {
-                    console.error('Error loading initial projects:', error);
+                    console.error('❌ Error loading initial projects:', error);
                 }
                 this.setupInfiniteScroll();
                 
                 this.$watch('currentFilter', (value) => {
+                    console.log('🔍 Filter changed:', value);
                     this.filterProjects();
                 });
                 
                 this.$watch('searchTerm', (value) => {
+                    console.log('🔎 Search term changed:', value);
                     this.filterProjects();
                 });
                 
                 window.addEventListener('filter-changed', (event) => {
+                    console.log('🎯 Filter event received:', event.detail);
                     this.currentFilter = event.detail.filter;
                     this.searchTerm = event.detail.searchTerm;
                 });
             },
 
             async loadProjects() {
-                if (!this.hasMore || this.loading) return;
+                if (!this.hasMore || this.loading) {
+                    console.log('⏭️ Skipping load - hasMore:', this.hasMore, 'loading:', this.loading);
+                    return;
+                }
                 
                 this.loading = true;
+                console.log('📥 Fetching projects - Page:', this.page);
+                
                 try {
-                    const response = await fetch(`/api/projects?page=${this.page}`);
+                    const url = `/api/projects?page=${this.page}`;
+                    console.log('🌐 API URL:', url);
+                    
+                    const response = await fetch(url);
+                    console.log('📊 Response status:', response.status);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const data = await response.json();
+                    console.log('📦 Data received:', data);
                     
                     if (data.projects.length === 0) {
+                        console.log('🏁 No more projects to load');
                         this.hasMore = false;
                     } else {
                         this.projects = [...this.projects, ...data.projects];
+                        console.log('✨ Projects updated. Total:', this.projects.length);
                         this.filterProjects();
                         this.page++;
                     }
                 } catch (error) {
-                    console.error('Error loading projects:', error);
+                    console.error('💥 Error loading projects:', error);
+                    console.error('Error details:', error.message);
                 } finally {
                     this.loading = false;
+                    console.log('🔄 Loading state reset');
                 }
             },
 
