@@ -6,7 +6,5 @@
     <x-projects.hero />
     <x-projects.filters-section />
     <x-projects.grid-section />
-    <x-projects.stats-section />
-    
-    <x-common.cta-section />
+    <x-projects.stats-section /> 
 </x-layouts.frontend>
