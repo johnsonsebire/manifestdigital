@@ -12,7 +12,10 @@ export default defineConfig({
                 'resources/css/styles.css',
                 'resources/css/projects.css',
                 'resources/css/simple-preloader.css',
+                'resources/css/advanced-preloader.css',
                 'resources/js/scripts.js',
+                'resources/js/simple-preloader.js',
+                'resources/js/advanced-preloader.js',
                 'resources/js/app.js'
             ],
             refresh: true,

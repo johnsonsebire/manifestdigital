@@ -52,18 +52,27 @@
 </head>
 
 <body class="loading">
+
+@if($preloader=='simple')
+<x-common.simple-preloader />
+@else 
+<x-common.advanced-preloader />
+@endif
+
     <x-layouts.frontend.primary-header :transparent="$transparentHeader" />
 
     <main class="main-content">
         {{ $slot }}
     </main>
 
+
     <x-layouts.frontend.footer />
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Additional Scripts -->
-    @stack('scripts')
+    @if($preloader=='simple')    
+    @push('scripts')
+    @vite('resources/js/simple-preloader.js')
+    @else 
+    @vite('resources/js/advanced-preloader.js')
+    @endif 
 </body>
 
 </html>

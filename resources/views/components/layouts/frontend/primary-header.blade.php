@@ -1,5 +1,3 @@
-
-    <x-layouts.frontend.preloader />
     <!-- Reading Tracker Progress Bar -->
     <div class="reading-tracker"></div>
 
