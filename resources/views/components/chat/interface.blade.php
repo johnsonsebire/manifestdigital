@@ -15,7 +15,77 @@
         init() {
             this.setupAudioPlayer();
             this.watchMessages();
+            this.setupAudioMessageHandler();
             this.$nextTick(() => this.scrollToBottom());
+        },
+        
+        setupAudioMessageHandler() {
+            this.$watch('isRecording', (value) => {
+                // Disable text input while recording
+                this.$refs.messageInput.disabled = value;
+            });
+            
+            this.$el.addEventListener('audio-message', async (event) => {
+                const { audioBlob, duration } = event.detail;
+                
+                // Create FormData with audio file
+                const formData = new FormData();
+                formData.append('audio', audioBlob, 'recording.webm');
+                formData.append('duration', duration);
+                
+                // Add user message with audio
+                this.messages.push({
+                    type: 'user',
+                    message: '🎤 Voice message (' + this.formatDuration(duration) + ')',
+                    timestamp: new Date().toLocaleTimeString(),
+                    audio: URL.createObjectURL(audioBlob)
+                });
+                
+                // Show typing indicator
+                this.isTyping = true;
+                
+                try {
+                    const response = await fetch('{{ route("ai.chat.voice") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: formData
+                    });
+                    
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    
+                    const data = await response.json();
+                    
+                    // Add AI response with delay
+                    setTimeout(() => {
+                        this.isTyping = false;
+                        this.messages.push({
+                            type: 'assistant',
+                            message: data.transcription || data.message,
+                            timestamp: new Date().toLocaleTimeString()
+                        });
+                        this.scrollToBottom();
+                    }, 1000);
+                    
+                } catch (error) {
+                    console.error('Error sending audio message:', error);
+                    this.messages.push({
+                        type: 'system',
+                        message: 'Sorry, there was an error processing your voice message. Please try again.',
+                        timestamp: new Date().toLocaleTimeString(),
+                        status: 'error'
+                    });
+                    this.isTyping = false;
+                }
+            });
+        },
+        
+        formatDuration(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         },
 
         setupAudioPlayer() {
@@ -287,6 +357,13 @@
                         </div>
                         <div class="p-3 rounded-lg" :class="msg.type === 'assistant' ? 'bg-gray-800 text-white' : 'bg-blue-500/10 text-blue-400'">
                             <p class="whitespace-pre-wrap" x-text="msg.message"></p>
+                            <template x-if="msg.audio">
+                                <audio
+                                    :src="msg.audio"
+                                    controls
+                                    class="mt-2 w-full h-8"
+                                ></audio>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -331,11 +408,7 @@
                         </div>
                     </div>
 
-                    <button type="button" class="p-2 text-gray-400 hover:text-gray-300">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                        </svg>
-                    </button>
+                    <x-chat.audio-recorder />
 
                     <button type="submit" class="p-2 text-gray-400 hover:text-gray-300">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
