@@ -8,11 +8,13 @@ class Frontend extends Component
 {
     public $title;
     public $transparentHeader;
+    public $preloader;
 
-    public function __construct($title = null, $transparentHeader = false)
+    public function __construct($title = null, $transparentHeader = false, $preloader='simple')
     {
         $this->title = $title;
         $this->transparentHeader = $transparentHeader;
+        $this->preloader=$preloader;
     }
 
     public function render()

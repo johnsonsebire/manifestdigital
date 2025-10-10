@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/styles.css',
                 'resources/css/projects.css',
+                'resources/css/simple-preloader.css',
                 'resources/js/scripts.js',
                 'resources/js/app.js'
             ],
