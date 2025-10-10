@@ -3,51 +3,82 @@
 <div
     x-data="{
         isRecording: false,
+        isSubmitting: false,
         mediaRecorder: null,
         audioChunks: [],
         audioUrl: null,
         duration: 0,
         durationTimer: null,
         permissionGranted: false,
+        stream: null,
         
         async requestPermission() {
+            if (this.permissionGranted) return true;
+            
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                this.setupRecorder(stream);
+                this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                this.setupRecorder(this.stream);
                 this.permissionGranted = true;
+                return true;
             } catch (err) {
                 console.error('Microphone permission denied:', err);
-                // Show error message to user
                 $dispatch('show-toast', { 
                     message: 'Please allow microphone access to record audio messages',
                     type: 'error'
                 });
+                return false;
             }
         },
         
         setupRecorder(stream) {
+            if (this.mediaRecorder) {
+                // Clean up old recorder
+                this.mediaRecorder.removeEventListener('dataavailable', this.handleDataAvailable);
+                this.mediaRecorder.removeEventListener('stop', this.handleStop);
+            }
+            
             this.mediaRecorder = new MediaRecorder(stream);
             
-            this.mediaRecorder.addEventListener('dataavailable', (event) => {
-                this.audioChunks.push(event.data);
-            });
+            this.handleDataAvailable = (event) => {
+                if (event.data.size > 0) {
+                    this.audioChunks.push(event.data);
+                }
+            };
             
-            this.mediaRecorder.addEventListener('stop', () => {
-                const audioBlob = new Blob(this.audioChunks, { type: 'audio/mp3' });
-                this.audioUrl = URL.createObjectURL(audioBlob);
-                this.audioChunks = [];
-            });
+            this.handleStop = () => {
+                if (this.audioChunks.length > 0) {
+                    const audioBlob = new Blob(this.audioChunks, { type: 'audio/mp3' });
+                    
+                    // Clean up old URL if it exists
+                    if (this.audioUrl) {
+                        URL.revokeObjectURL(this.audioUrl);
+                    }
+                    
+                    this.audioUrl = URL.createObjectURL(audioBlob);
+                }
+            };
+            
+            this.mediaRecorder.addEventListener('dataavailable', this.handleDataAvailable);
+            this.mediaRecorder.addEventListener('stop', this.handleStop);
         },
         
-        startRecording() {
+        async startRecording() {
+            if (this.isRecording) return;
+            
             if (!this.permissionGranted) {
-                this.requestPermission();
-                return;
+                const granted = await this.requestPermission();
+                if (!granted) return;
+            }
+            
+            this.audioChunks = [];
+            this.duration = 0;
+            this.audioUrl = null;
+            
+            if (!this.mediaRecorder || this.mediaRecorder.state === 'inactive') {
+                this.setupRecorder(this.stream);
             }
             
             this.isRecording = true;
-            this.audioChunks = [];
-            this.duration = 0;
             this.mediaRecorder.start();
             
             // Start duration timer
@@ -66,37 +97,50 @@
             this.isRecording = false;
             clearInterval(this.durationTimer);
             
-            // Dispatch recording stopped event
-            $dispatch('recording-stopped');
+            // Request data from the recorder
+            this.mediaRecorder.requestData();
+            
+            // Wait for the data to be processed
+            setTimeout(() => {
+                if (this.audioUrl) {
+                    this.submitRecording();
+                }
+            }, 100);
         },
         
         cancelRecording() {
             this.stopRecording();
-            this.audioUrl = null;
+            if (this.audioUrl) {
+                URL.revokeObjectURL(this.audioUrl);
+                this.audioUrl = null;
+            }
             this.duration = 0;
             this.audioChunks = [];
+            this.isSubmitting = false;
         },
         
         async submitRecording() {
-            if (!this.audioUrl) return;
+            if (!this.audioUrl || this.isSubmitting) return;
             
-            // Convert blob URL to blob data
-            const response = await fetch(this.audioUrl);
-            const blob = await response.blob();
-            
-            // Create form data
-            const formData = new FormData();
-            formData.append('audio', blob, 'recording.mp3');
-            
-            // Dispatch event with audio data
-            $dispatch('audio-message', { 
-                audioBlob: blob,
-                duration: this.duration,
-                url: this.audioUrl
-            });
-            
-            // Reset state
-            this.cancelRecording();
+            try {
+                this.isSubmitting = true;
+                
+                // Convert blob URL to blob data
+                const response = await fetch(this.audioUrl);
+                const blob = await response.blob();
+                
+                // Dispatch event with audio data
+                $dispatch('audio-message', { 
+                    audioBlob: blob,
+                    duration: this.duration,
+                    url: this.audioUrl
+                });
+                
+                // Reset state
+                this.cancelRecording();
+            } finally {
+                this.isSubmitting = false;
+            }
         },
         
         formatDuration(seconds) {
