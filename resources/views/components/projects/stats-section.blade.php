@@ -62,8 +62,8 @@
             technologies: 0,
             yearsExperience: 0,
             targetStats: {
-                completedProjects: 150,
-                satisfiedClients: 98,
+                completedProjects: 800,
+                satisfiedClients: 100,
                 technologies: 25,
                 yearsExperience: 10
             },

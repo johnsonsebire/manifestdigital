@@ -8,8 +8,41 @@
             sound: true,
             theme: 'dark',
             fontSize: 'medium'
+        },
+        
+        init() {
+            // Load saved settings
+            const savedTheme = localStorage.getItem('chat-theme') || 'dark';
+            const savedFontSize = localStorage.getItem('chat-fontSize') || 'medium';
+            const savedNotifications = localStorage.getItem('chat-notifications') !== 'false';
+            const savedSound = localStorage.getItem('chat-sound') !== 'false';
+            
+            this.settings.theme = savedTheme;
+            this.settings.fontSize = savedFontSize;
+            this.settings.notifications = savedNotifications;
+            this.settings.sound = savedSound;
+            
+            // Watch for changes
+            this.$watch('settings.theme', (value) => {
+                localStorage.setItem('chat-theme', value);
+                this.$dispatch('theme-changed', value);
+            });
+            
+            this.$watch('settings.fontSize', (value) => {
+                localStorage.setItem('chat-fontSize', value);
+                this.$dispatch('font-size-changed', value);
+            });
+            
+            this.$watch('settings.notifications', (value) => {
+                localStorage.setItem('chat-notifications', value);
+            });
+            
+            this.$watch('settings.sound', (value) => {
+                localStorage.setItem('chat-sound', value);
+            });
         }
     }"
+    x-init="init"
     x-show="show"
     @settings-toggle.window="show = !show"
     @click.away="show = false"

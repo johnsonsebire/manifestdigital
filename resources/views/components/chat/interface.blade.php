@@ -11,12 +11,43 @@
         isTyping: false,
         hasUnreadMessages: false,
         audioPlayer: null,
+        theme: 'dark',
 
         init() {
             this.setupAudioPlayer();
             this.watchMessages();
             this.setupAudioMessageHandler();
+            this.loadTheme();
+            this.watchTheme();
             this.$nextTick(() => this.scrollToBottom());
+        },
+        
+        loadTheme() {
+            const savedTheme = localStorage.getItem('chat-theme') || 'dark';
+            this.theme = savedTheme;
+            this.applyTheme(savedTheme);
+        },
+        
+        watchTheme() {
+            this.$watch('theme', (value) => {
+                localStorage.setItem('chat-theme', value);
+                this.applyTheme(value);
+            });
+        },
+        
+        applyTheme(theme) {
+            const chatInterface = this.$el.querySelector('.chat-interface-container');
+            if (!chatInterface) return;
+            
+            // Remove all theme classes
+            chatInterface.classList.remove('theme-dark', 'theme-light', 'theme-system');
+            
+            if (theme === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                chatInterface.classList.add(prefersDark ? 'theme-dark' : 'theme-light');
+            } else {
+                chatInterface.classList.add(`theme-${theme}`);
+            }
         },
         
         setupAudioMessageHandler() {
@@ -45,6 +76,7 @@
                 this.messages.push({
                     id: messageId,
                     type: 'user',
+                    isAudio: true, // Mark as audio message
                     message: '🎤 Voice message (' + this.formatDuration(duration) + ')',
                     timestamp: new Date().toLocaleTimeString(),
                     audio: URL.createObjectURL(audioBlob)
@@ -226,10 +258,11 @@
     }"
     x-init="init"
     class="chat-interface"
+    @theme-changed.window="theme = $event.detail; applyTheme($event.detail)"
 >
-    <div class="flex h-full dark bg-gray-900">
+    <div class="flex h-full chat-interface-container theme-dark">
         <!-- Sidebar -->
-        <div class="w-80 flex flex-col bg-gray-900 border-r border-gray-800">
+        <div class="w-80 flex flex-col sidebar-bg border-r sidebar-border">
             <div class="p-4">
                 <button @click="messages = []" class="w-full flex items-center justify-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 p-4 rounded-lg border border-red-500/20">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -274,17 +307,17 @@
         </div>
 
         <!-- Main Chat Area -->
-        <div class="flex-1 flex flex-col bg-gray-900">
+        <div class="flex-1 flex flex-col main-bg">
             <div class="flex-1 overflow-y-auto custom-scrollbar" x-ref="chatMessages">
                 <template x-if="messages.length === 0">
                     <div class="flex flex-col items-center justify-center h-full text-center px-4">
-                        <div class="p-4 bg-gray-800/50 rounded-full mb-4">
-                            <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="p-4 empty-state-icon-bg rounded-full mb-4">
+                            <svg class="w-12 h-12 empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-semibold text-gray-200 mb-2">Start a Conversation</h3>
-                        <p class="text-gray-400">Send a message to begin chatting with AI Sensei</p>
+                        <h3 class="text-xl font-semibold empty-state-title mb-2">Start a Conversation</h3>
+                        <p class="empty-state-text">Send a message to begin chatting with AI Sensei</p>
                     </div>
                 </template>
 
@@ -292,13 +325,23 @@
             <div class="p-4">
                 <div class="flex gap-3" :class="msg.type === 'user' ? 'flex-row-reverse' : ''">
                     <div class="flex-none">
-                        <div class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
+                        <div class="w-8 h-8 rounded-full message-avatar flex items-center justify-center">
                             <template x-if="msg.type === 'assistant'">
                                 <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </template>
-                            <template x-if="msg.type === 'user'">
+                            <template x-if="msg.type === 'system'">
+                                <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </template>
+                            <template x-if="msg.type === 'user' && msg.isAudio">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                </svg>
+                            </template>
+                            <template x-if="msg.type === 'user' && !msg.isAudio">
                                 <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                 </svg>
@@ -308,16 +351,25 @@
 
                     <div class="flex flex-col">
                         <div class="flex items-center gap-2 mb-1" :class="msg.type === 'user' ? 'flex-row-reverse' : ''">
-                            <span class="text-sm font-medium" :class="msg.type === 'assistant' ? 'text-blue-400' : 'text-green-400'" x-text="msg.type === 'assistant' ? 'AI Sensei' : 'You'"></span>
-                            <span class="text-xs text-gray-500" x-text="msg.timestamp"></span>
+                            <span class="text-sm font-medium" :class="{
+                                'text-blue-400': msg.type === 'assistant',
+                                'text-purple-400': msg.type === 'user' && msg.isAudio,
+                                'text-green-400': msg.type === 'user' && !msg.isAudio,
+                                'text-red-400': msg.type === 'system'
+                            }" x-text="msg.type === 'assistant' ? 'AI Sensei' : (msg.type === 'system' ? 'System' : 'You')"></span>
+                            <span class="text-xs message-timestamp" x-text="msg.timestamp"></span>
                         </div>
-                        <div class="p-3 rounded-lg" :class="msg.type === 'assistant' ? 'bg-gray-800 text-white' : 'bg-blue-500/10 text-blue-400'">
-                            <p class="whitespace-pre-wrap" x-text="msg.message"></p>
+                        <div class="p-3 rounded-lg message-bubble" :class="{
+                            'message-bubble-assistant': msg.type === 'assistant',
+                            'message-bubble-user': msg.type === 'user',
+                            'message-bubble-system': msg.type === 'system'
+                        }">
+                            <p class="whitespace-pre-wrap message-text" x-text="msg.message"></p>
                             <template x-if="msg.audio">
                                 <audio
                                     :src="msg.audio"
                                     controls
-                                    class="mt-2 w-full h-8"
+                                    class="mt-2 w-full h-8 audio-player"
                                 ></audio>
                             </template>
                         </div>
@@ -331,10 +383,10 @@
         </div>
     </div>
 
-            <div class="p-4 bg-gray-900 border-t border-gray-800">
+            <div class="p-4 main-bg footer-border">
                 <form @submit.prevent="handleSendMessage" class="flex items-end gap-2">
                     @csrf
-                    <div class="flex-1 bg-gray-800 rounded-lg border border-gray-700 focus-within:border-blue-500">
+                    <div class="flex-1 input-bg rounded-lg border input-border focus-within:border-blue-500">
                         <div class="flex items-center px-3 py-2 gap-2">
                             <div class="relative">
                                 <button type="button" @click="$dispatch('emoji-picker-toggle')" class="text-gray-400 hover:text-gray-300">
@@ -564,5 +616,194 @@
     .chat-title {
         font-size: 16px;
     }
+}
+
+/* Theme System */
+/* Dark Theme (Default) */
+.theme-dark {
+    background: #111827;
+}
+
+.theme-dark .sidebar-bg {
+    background: #111827;
+}
+
+.theme-dark .sidebar-border {
+    border-color: #1f2937;
+}
+
+.theme-dark .main-bg {
+    background: #111827;
+}
+
+.theme-dark .footer-border {
+    border-color: #1f2937;
+}
+
+.theme-dark .input-bg {
+    background: #1f2937;
+}
+
+.theme-dark .input-border {
+    border-color: #374151;
+}
+
+.theme-dark .message-avatar {
+    background: #374151;
+}
+
+.theme-dark .message-bubble-assistant {
+    background: #1f2937;
+    color: #ffffff;
+}
+
+.theme-dark .message-bubble-user {
+    background: rgba(59, 130, 246, 0.1);
+    color: #60a5fa;
+}
+
+.theme-dark .message-bubble-system {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.theme-dark .message-timestamp {
+    color: #6b7280;
+}
+
+.theme-dark .message-text {
+    color: inherit;
+}
+
+.theme-dark .empty-state-icon-bg {
+    background: rgba(31, 41, 55, 0.5);
+}
+
+.theme-dark .empty-state-icon {
+    color: #9ca3af;
+}
+
+.theme-dark .empty-state-title {
+    color: #e5e7eb;
+}
+
+.theme-dark .empty-state-text {
+    color: #9ca3af;
+}
+
+.theme-dark .audio-player {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* Light Theme */
+.theme-light {
+    background: #f9fafb;
+}
+
+.theme-light .sidebar-bg {
+    background: #ffffff;
+}
+
+.theme-light .sidebar-border {
+    border-color: #e5e7eb;
+}
+
+.theme-light .main-bg {
+    background: #f9fafb;
+}
+
+.theme-light .footer-border {
+    border-color: #e5e7eb;
+}
+
+.theme-light .input-bg {
+    background: #ffffff;
+}
+
+.theme-light .input-border {
+    border-color: #d1d5db;
+}
+
+.theme-light .message-avatar {
+    background: #e5e7eb;
+}
+
+.theme-light .message-bubble-assistant {
+    background: #ffffff;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+}
+
+.theme-light .message-bubble-user {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.theme-light .message-bubble-system {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.theme-light .message-timestamp {
+    color: #6b7280;
+}
+
+.theme-light .message-text {
+    color: inherit;
+}
+
+.theme-light .empty-state-icon-bg {
+    background: #f3f4f6;
+}
+
+.theme-light .empty-state-icon {
+    color: #6b7280;
+}
+
+.theme-light .empty-state-title {
+    color: #111827;
+}
+
+.theme-light .empty-state-text {
+    color: #6b7280;
+}
+
+.theme-light .audio-player {
+    filter: none;
+}
+
+/* Light theme text colors */
+.theme-light svg,
+.theme-light button,
+.theme-light input,
+.theme-light select,
+.theme-light label,
+.theme-light h3,
+.theme-light p {
+    color: #111827;
+}
+
+.theme-light .text-gray-400,
+.theme-light .text-gray-300,
+.theme-light .text-gray-200,
+.theme-light .text-gray-500 {
+    color: #6b7280 !important;
+}
+
+.theme-light input::placeholder {
+    color: #9ca3af;
+}
+
+/* Smooth theme transitions */
+.chat-interface-container,
+.sidebar-bg,
+.main-bg,
+.input-bg,
+.message-avatar,
+.message-bubble-assistant,
+.message-bubble-user {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 </style>
