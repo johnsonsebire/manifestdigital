@@ -12,15 +12,22 @@ class PrimaryHeader extends Component
     public $navItems;
 
     public function __construct(
-        bool $transparent = true,
+        $transparent = true,
         bool $showMegaMenu = false,
         bool $showDropdown = false,
        
     ) {
-        $this->transparent = $transparent;
+        // Ensure transparent is properly converted to boolean
+        // Handle both string ('false', 'true', '0', '1') and boolean values
+        $this->transparent = match(true) {
+            is_bool($transparent) => $transparent,
+            is_string($transparent) => filter_var($transparent, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? false,
+            default => (bool) $transparent
+        };
+        
         $this->showMegaMenu = $showMegaMenu;
         $this->showDropdown = $showDropdown;
-        $this->navItems = $navItems ?? [
+        $this->navItems = [
             ['label' => 'Home', 'url' => '/', 'type' => 'link'],
             ['label' => 'Projects', 'url' => 'projects', 'type' => 'link'],
             ['label' => 'AI Sensei', 'url' => 'ai-sensei', 'type' => 'link'],

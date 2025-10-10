@@ -1,51 +1,49 @@
 <!-- Projects Grid Section -->
-<section class="projects-grid" x-data="projectsGrid">
-    <div class="container">
-        <!-- Projects Grid -->
-        <div class="projects-grid-container" x-ref="gridContainer">
-            <template x-for="project in filteredProjects" :key="project.id">
-                <div 
-                    class="project-card" 
-                    :class="project.category"
-                    x-show="isVisible(project)"
-                    x-transition:enter="fade-enter"
-                    x-transition:enter-start="fade-enter-start"
-                    x-transition:enter-end="fade-enter-end"
-                >
-                    <div class="project-image">
-                        <img :src="project.image" :alt="project.title" loading="lazy">
-                        <div class="project-overlay">
-                            <a :href="'/projects/' + project.slug" class="project-link">
-                                <i class="fas fa-link"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="project-content">
-                        <h3 class="project-title" x-text="project.title"></h3>
-                        <p class="project-category" x-text="getCategoryLabel(project.category)"></p>
-                        <p class="project-description" x-text="project.description"></p>
-                        <div class="project-tech-stack">
-                            <template x-for="tech in project.technologies" :key="tech">
-                                <span class="tech-tag" x-text="tech"></span>
-                            </template>
-                        </div>
+<section class="projects-grid-section" x-data="projectsGrid">
+    <!-- Projects Grid -->
+    <div class="projects-grid" x-ref="gridContainer" x-show="filteredProjects.length > 0">
+        <template x-for="project in filteredProjects" :key="project.id">
+            <div 
+                class="project-card" 
+                :class="project.category"
+                x-show="isVisible(project)"
+                x-transition:enter="fade-enter"
+                x-transition:enter-start="fade-enter-start"
+                x-transition:enter-end="fade-enter-end"
+            >
+                <div class="project-image">
+                    <img :src="project.image" :alt="project.title" loading="lazy">
+                    <div class="project-overlay">
+                        <a :href="'/projects/' + project.slug" class="project-link">
+                            <i class="fas fa-link"></i>
+                        </a>
                     </div>
                 </div>
-            </template>
-        </div>
-        
-        <!-- Loading State -->
-        <div class="loading-spinner" x-show="loading">
-            <div class="spinner"></div>
-            <p>Loading more projects...</p>
-        </div>
-        
-        <!-- No Results Message -->
-        <div class="no-results" x-show="filteredProjects.length === 0 && !loading">
-            <i class="fas fa-search"></i>
-            <h3>No projects found</h3>
-            <p>Try adjusting your search or filter criteria</p>
-        </div>
+                <div class="project-content">
+                    <h3 class="project-title" x-text="project.title"></h3>
+                    <p class="project-category" x-text="getCategoryLabel(project.category)"></p>
+                    <p class="project-description" x-text="project.description"></p>
+                    <div class="project-tech-stack">
+                        <template x-for="tech in project.technologies" :key="tech">
+                            <span class="tech-tag" x-text="tech"></span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    
+    <!-- Loading State -->
+    <div class="loading-spinner" x-show="loading">
+        <div class="spinner"></div>
+        <p>Loading more projects...</p>
+    </div>
+    
+    <!-- No Results Message -->
+    <div class="no-results" x-show="filteredProjects.length === 0 && !loading">
+        <i class="fas fa-search"></i>
+        <h3>No projects found</h3>
+        <p>Try adjusting your search or filter criteria</p>
     </div>
 </section>
 

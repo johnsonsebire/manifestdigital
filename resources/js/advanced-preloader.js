@@ -49,33 +49,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('preloader').style.display = 'none';
                 document.body.style.overflow = 'hidden'; // Keep overflow hidden during transition
                 
-                // Show notification before content animation
-                if (typeof window.showNotificationAfterPreloader === 'function') {
-                    window.showNotificationAfterPreloader();
+                // Trigger notification to show immediately with content
+                const notificationTopbar = document.querySelector('.notification-topbar');
+                const notificationClosed = localStorage.getItem('notificationClosed');
+                
+                if (notificationTopbar && !notificationClosed) {
+                    notificationTopbar.classList.add('show');
+                    document.body.classList.add('notification-visible');
                 }
                 
-                // Delay content animation slightly to let notification initialize
-                setTimeout(() => {
-                    const mainContent = document.querySelector('.main-content');
-                    if (mainContent) {
-                        anime({
-                            targets: mainContent,
-                            opacity: [0, 1],
-                            translateY: [30, 0],
-                            duration: 1000,
-                            easing: 'easeOutQuad',
-                            complete: function() {
-                                // Remove loading class and restore overflow after all animations complete
-                                document.body.classList.remove('loading');
-                                document.body.style.overflow = '';
-                            }
-                        });
-                    } else {
-                        // If main content isn't found, still remove loading state
-                        document.body.classList.remove('loading');
-                        document.body.style.overflow = '';
-                    }
-                }, 100); // Short delay for notification
+                // Show content immediately after notification
+                const mainContent = document.querySelector('.main-content');
+                if (mainContent) {
+                    anime({
+                        targets: mainContent,
+                        opacity: [0, 1],
+                        translateY: [30, 0],
+                        duration: 1000,
+                        easing: 'easeOutQuad',
+                        complete: function() {
+                            // Remove loading class and restore overflow after all animations complete
+                            document.body.classList.remove('loading');
+                            document.body.style.overflow = '';
+                        }
+                    });
+                } else {
+                    // If main content isn't found, still remove loading state
+                    document.body.classList.remove('loading');
+                    document.body.style.overflow = '';
+                }
             }
         });
     }, 2500);});

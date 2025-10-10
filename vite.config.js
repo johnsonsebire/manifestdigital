@@ -17,6 +17,9 @@ export default defineConfig({
                 'resources/js/simple-preloader.js',
                 'resources/js/advanced-preloader.js',
                 'resources/js/features/projects-performance-optimizer.js',
+                'resources/js/features/projects/projects-data-manager.js',
+                'resources/js/features/projects/infinite-projects-scroll.js',
+                'resources/js/features/projects/project-navigation.js',
                 'resources/js/app.js'
             ],
             refresh: true,

@@ -2869,6 +2869,13 @@ footer {
     opacity: 0;
 }
 
+/* Hide notification during preloader */
+body.loading .notification-topbar {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
 .notification-topbar.show {
     display: flex;
     transform: translateY(0);
@@ -2970,6 +2977,12 @@ body.notification-visible .primary-header {
     left: 0;
     right: 0;
     width: 100%;
+}
+
+/* Force solid background for non-transparent headers when notification is visible */
+body.notification-visible .primary-header:not(.transparent) {
+    background: #FFFCFA !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* Add top spacing for page content when notification is visible */

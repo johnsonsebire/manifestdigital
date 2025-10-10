@@ -1011,4 +1011,94 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // ========================
+    // Notification Topbar Close Handler
+    // ========================
+    function setupNotificationTopbar() {
+        const closeBtn = document.querySelector('.notification-close');
+        
+        if (!closeBtn) return;
+
+        // Handle notification close
+        if (!closeBtn.hasAttribute('data-listener-added')) {
+            closeBtn.setAttribute('data-listener-added', 'true');
+            closeBtn.addEventListener('click', function() {
+                const notificationTopbar = document.querySelector('.notification-topbar');
+                if (notificationTopbar) {
+                    notificationTopbar.classList.remove('show');
+                    document.body.classList.remove('notification-visible');
+                    localStorage.setItem('notificationClosed', 'true');
+                }
+            });
+        }
+    }
+
+    // Initialize notification topbar close handler
+    setupNotificationTopbar();
+
+    // ========================
+    // Reading Tracker
+    // ========================
+    const readingTracker = document.querySelector('.reading-tracker');
+    
+    function updateReadingTracker() {
+        if (!readingTracker) return;
+        
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const trackLength = documentHeight - windowHeight;
+        const percentScrolled = (scrollTop / trackLength) * 100;
+        
+        readingTracker.style.width = percentScrolled + '%';
+    }
+    
+    if (readingTracker) {
+        window.addEventListener('scroll', updateReadingTracker, { passive: true });
+        window.addEventListener('resize', updateReadingTracker, { passive: true });
+        updateReadingTracker(); // Initial update
+    }
+
+    // ========================
+    // Scroll to Top Button
+    // ========================
+    const scrollToTopBtn = document.querySelector('.scroll-to-top');
+    const ctaFooterSection = document.querySelector('.cta-footer');
+    
+    function updateScrollButton() {
+        if (!scrollToTopBtn) return;
+        
+        // Show/hide button based on scroll position
+        if (window.pageYOffset > 300) {
+            scrollToTopBtn.classList.add('show');
+        } else {
+            scrollToTopBtn.classList.remove('show');
+        }
+        
+        // Check if button is over dark background
+        if (ctaFooterSection) {
+            const ctaRect = ctaFooterSection.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            
+            // If the CTA/footer section is visible in viewport
+            if (ctaRect.top < viewportHeight && ctaRect.bottom > 0) {
+                scrollToTopBtn.classList.add('on-dark');
+            } else {
+                scrollToTopBtn.classList.remove('on-dark');
+            }
+        }
+    }
+    
+    if (scrollToTopBtn) {
+        window.addEventListener('scroll', updateScrollButton, { passive: true });
+        updateScrollButton(); // Initial check
+        
+        scrollToTopBtn.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
 });

@@ -3,7 +3,12 @@
     <div class="filters-container">
         <!-- Desktop Scrollable Filters -->
         <div class="projects-filters-wrapper">
-            <button class="projects-filters-nav projects-filters-nav-left" aria-label="Scroll filters left" :disabled="!canScrollLeft">
+            <button 
+                class="projects-filters-nav projects-filters-nav-left" 
+                aria-label="Scroll filters left" 
+                :disabled="!canScrollLeft"
+                @click="scrollLeft()"
+            >
                 <i class="fas fa-chevron-left" aria-hidden="true"></i>
             </button>
             <div class="projects-filters-container" x-ref="filterContainer" @scroll="updateScrollButtons">
@@ -46,7 +51,12 @@
                     >Technology</button>
                 </div>
             </div>
-            <button class="projects-filters-nav projects-filters-nav-right" aria-label="Scroll filters right" :disabled="!canScrollRight">
+            <button 
+                class="projects-filters-nav projects-filters-nav-right" 
+                aria-label="Scroll filters right" 
+                :disabled="!canScrollRight"
+                @click="scrollRight()"
+            >
                 <i class="fas fa-chevron-right" aria-hidden="true"></i>
             </button>
         </div>
@@ -160,6 +170,19 @@
                 if (container) {
                     this.canScrollLeft = container.scrollLeft > 0;
                     this.canScrollRight = container.scrollLeft < (container.scrollWidth - container.clientWidth - 1);
+                    
+                    // Update CSS classes for gradient indicators
+                    if (this.canScrollLeft) {
+                        container.classList.add('can-scroll-left');
+                    } else {
+                        container.classList.remove('can-scroll-left');
+                    }
+                    
+                    if (this.canScrollRight) {
+                        container.classList.add('can-scroll-right');
+                    } else {
+                        container.classList.remove('can-scroll-right');
+                    }
                 }
             },
 

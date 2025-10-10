@@ -12,9 +12,13 @@
                      // Keep overflow hidden during content animations to prevent scrollbar flash
                      document.body.style.overflow = 'hidden';
 
-                     // Show notification after preloader if not previously closed
-                     if (typeof window.showNotificationAfterPreloader === 'function') {
-                         window.showNotificationAfterPreloader();
+                     // Trigger notification to show immediately with content
+                     const notificationTopbar = document.querySelector('.notification-topbar');
+                     const notificationClosed = localStorage.getItem('notificationClosed');
+                     
+                     if (notificationTopbar && !notificationClosed) {
+                         notificationTopbar.classList.add('show');
+                         document.body.classList.add('notification-visible');
                      }
 
                      // Animate main content in
