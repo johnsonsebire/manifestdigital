@@ -25,7 +25,8 @@
     <div class="grid grid-cols-6 gap-2">
         <template x-for="emoji in emojis" :key="emoji">
             <button
-                @click="$dispatch('emoji-selected', emoji); show = false"
+                type="button"
+                @click.prevent.stop="$dispatch('emoji-selected', emoji); show = false"
                 class="p-2 hover:bg-gray-700 rounded-lg transition-colors duration-150 text-xl"
                 x-text="emoji"
             ></button>

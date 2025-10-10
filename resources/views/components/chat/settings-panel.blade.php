@@ -24,16 +24,16 @@
     <h3 class="text-lg font-semibold text-gray-200 mb-4">Chat Settings</h3>
     
     <div class="space-y-4">
-        <!-- Notifications -->
+                <!-- Notifications -->
         <div class="flex items-center justify-between">
             <label class="text-gray-300">Notifications</label>
             <button 
                 @click="settings.notifications = !settings.notifications"
-                class="relative w-10 h-6 transition-colors duration-200 ease-in-out bg-gray-600 rounded-full"
-                :class="{ 'bg-blue-500': settings.notifications }"
+                class="relative w-11 h-6 transition-colors duration-200 ease-in-out bg-gray-700 rounded-full"
+                :class="{ 'bg-blue-600': settings.notifications }"
             >
                 <span
-                    class="inline-block w-4 h-4 transition-transform duration-200 ease-in-out bg-white rounded-full transform translate-x-1"
+                    class="absolute left-0.5 top-0.5 inline-block w-5 h-5 transition-transform duration-200 ease-in-out bg-white rounded-full shadow-sm transform"
                     :class="{ 'translate-x-5': settings.notifications }"
                 ></span>
             </button>
@@ -44,11 +44,11 @@
             <label class="text-gray-300">Sound</label>
             <button 
                 @click="settings.sound = !settings.sound"
-                class="relative w-10 h-6 transition-colors duration-200 ease-in-out bg-gray-600 rounded-full"
-                :class="{ 'bg-blue-500': settings.sound }"
+                class="relative w-11 h-6 transition-colors duration-200 ease-in-out bg-gray-700 rounded-full"
+                :class="{ 'bg-blue-600': settings.sound }"
             >
                 <span
-                    class="inline-block w-4 h-4 transition-transform duration-200 ease-in-out bg-white rounded-full transform translate-x-1"
+                    class="absolute left-0.5 top-0.5 inline-block w-5 h-5 transition-transform duration-200 ease-in-out bg-white rounded-full shadow-sm transform"
                     :class="{ 'translate-x-5': settings.sound }"
                 ></span>
             </button>
@@ -59,7 +59,11 @@
             <label class="text-gray-300">Theme</label>
             <select 
                 x-model="settings.theme"
-                class="w-full bg-gray-700 text-gray-300 rounded-lg p-2 border border-gray-600"
+                class="w-full bg-gray-800 text-gray-300 rounded-lg p-2.5 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer"
+                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');
+                background-repeat: no-repeat;
+                background-position: right 0.75rem center;
+                background-size: 1em;"
             >
                 <option value="dark">Dark</option>
                 <option value="light">Light</option>
@@ -72,7 +76,11 @@
             <label class="text-gray-300">Font Size</label>
             <select 
                 x-model="settings.fontSize"
-                class="w-full bg-gray-700 text-gray-300 rounded-lg p-2 border border-gray-600"
+                class="w-full bg-gray-800 text-gray-300 rounded-lg p-2.5 border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer"
+                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%239CA3AF%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');
+                background-repeat: no-repeat;
+                background-position: right 0.75rem center;
+                background-size: 1em;"
             >
                 <option value="small">Small</option>
                 <option value="medium">Medium</option>

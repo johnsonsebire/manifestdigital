@@ -32,15 +32,16 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: rgba(255, 255, 255, 0.9);
-            min-height: 100vh;
+            height: 100vh;
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
         .app-container {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
+            height: 100vh;
             position: relative;
             z-index: 1;
         }
@@ -107,13 +108,17 @@
 
         .main-content {
             flex: 1;
-            padding: 32px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
             max-width: 1200px;
             margin: 0 auto;
             width: 100%;
             box-sizing: border-box;
             position: relative;
             z-index: 1;
+            overflow: hidden;
         }
 
         @media (max-width: 640px) {
@@ -126,6 +131,18 @@
     <!-- Scripts -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial viewport height as a CSS variable
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            
+            // Calculate and set the chat interface height
+            const headerHeight = document.querySelector('.main-header').offsetHeight;
+            const chatHeight = Math.min(900, window.innerHeight - headerHeight - 32); // max height of 900px
+            document.documentElement.style.setProperty('--chat-height', `${chatHeight}px`);
+        });
+    </script>
     @if ($preloader == 'simple')
         @vite('resources/css/simple-preloader.css')
     @else

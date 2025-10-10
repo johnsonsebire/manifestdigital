@@ -249,7 +249,7 @@
 
         <!-- Main Chat Area -->
         <div class="flex-1 flex flex-col bg-gray-900">
-            <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0" x-ref="chatMessages" style="height: calc(100vh - 180px);">
+            <div class="flex-1 overflow-y-auto custom-scrollbar" x-ref="chatMessages">
                 <template x-if="messages.length === 0">
                     <div class="flex flex-col items-center justify-center h-full text-center px-4">
                         <div class="p-4 bg-gray-800/50 rounded-full mb-4">
@@ -318,6 +318,14 @@
                                 placeholder="Type a message..."
                                 class="flex-1 bg-transparent border-none text-white placeholder-gray-400 focus:outline-none"
                                 @keydown.enter.prevent="handleSendMessage"
+                                @emoji-selected.window="
+                                    const input = $refs.messageInput;
+                                    const start = input.selectionStart;
+                                    const end = input.selectionEnd;
+                                    input.value = input.value.substring(0, start) + $event.detail + input.value.substring(end);
+                                    input.focus();
+                                    input.setSelectionRange(start + $event.detail.length, start + $event.detail.length);
+                                "
                                 name="message"
                             />
                         </div>
@@ -353,7 +361,9 @@
 .chat-interface {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: var(--chat-height);
+    max-width: 1200px;
+    width: 100%;
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
