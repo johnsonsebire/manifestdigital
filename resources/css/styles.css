@@ -2967,36 +2967,69 @@ body.loading .notification-topbar {
    ======================== */
 
 /* Modern Purple Gradient Style */
+/* Modern Purple Style with Glassmorphism */
 .notification-topbar--modern-purple {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(
+        135deg, 
+        rgba(102, 126, 234, 0.85) 0%, 
+        rgba(118, 75, 162, 0.85) 100%
+    );
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 
+        0 8px 32px rgba(102, 126, 234, 0.3),
+        0 2px 8px rgba(118, 75, 162, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.notification-topbar--modern-purple .notification-content {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .notification-topbar--modern-purple .notification-cta {
-    background: #FF4900;
+    background: linear-gradient(135deg, #FF4900 0%, #FF6B3D 100%);
     color: #FFFFFF;
     font-weight: 700;
-    box-shadow: 0 2px 12px rgba(255, 73, 0, 0.4);
+    box-shadow: 
+        0 4px 16px rgba(255, 73, 0, 0.4),
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 107, 61, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .notification-topbar--modern-purple .notification-cta:hover {
-    background: #FF6B3D;
+    background: linear-gradient(135deg, #FF6B3D 0%, #FF8C5A 100%);
     color: #FFFFFF;
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 16px rgba(255, 73, 0, 0.5);
+    box-shadow: 
+        0 6px 24px rgba(255, 73, 0, 0.5),
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .notification-topbar--modern-purple .notification-close {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .notification-topbar--modern-purple .notification-close:hover {
-    background: #FF4900;
+    background: linear-gradient(135deg, #FF4900 0%, #FF6B3D 100%);
     color: #FFFFFF;
-    border-color: #FF4900;
+    border-color: rgba(255, 107, 61, 0.5);
     transform: rotate(90deg) scale(1.1);
-    box-shadow: 0 2px 8px rgba(255, 73, 0, 0.4);
+    box-shadow: 
+        0 4px 12px rgba(255, 73, 0, 0.4),
+        0 2px 4px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 /* Default Dark Style (explicit class for consistency) */
