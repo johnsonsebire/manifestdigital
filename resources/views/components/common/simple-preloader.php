@@ -6,7 +6,7 @@
         
         <div class="preloader-container">
             <div class="loader-logo">
-                <img src="images/logos/favicon.png" alt="Manifest Digital Logo" class="logo-image">
+                <img src="{{asset('@/images/logos/logo.png')}}" alt="Manifest Digital Logo" class="logo-image">
             </div>
             
             <div class="loading-dots">

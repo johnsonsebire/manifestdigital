@@ -12,7 +12,7 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('images/logos/favicon.png') }}">
-    
+
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Manifest Digital | Custom Web & App Development in Ghana | Est. 2014">
     <meta property="og:description"
@@ -36,7 +36,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome for social icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
+
     @vite(['resources/css/app.css', 'resources/css/styles.css', 'resources/js/scripts.js'])
 
     <!-- Additional CSS -->
@@ -44,20 +44,20 @@
 
     <!-- Anime.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-   @if($preloader=='simple')
-   @vite('resources/css/simple-preloader.css')
-   @else 
-   @vite('resources/css/advanced-preloader.css')
-   @endif 
+    @if ($preloader == 'simple')
+        @vite('resources/css/simple-preloader.css')
+    @else
+        @vite('resources/css/advanced-preloader.css')
+    @endif
 </head>
 
 <body class="loading">
 
-@if($preloader=='simple')
-<x-common.simple-preloader />
-@else 
-<x-common.advanced-preloader />
-@endif
+    @if ($preloader == 'simple')
+        <x-common.simple-preloader />
+    @else
+        <x-common.advanced-preloader />
+    @endif
 
     <x-layouts.frontend.primary-header :transparent="$transparentHeader" />
 
@@ -65,14 +65,13 @@
         {{ $slot }}
     </main>
 
-
     <x-layouts.frontend.footer />
-    @if($preloader=='simple')    
-    @push('scripts')
-    @vite('resources/js/simple-preloader.js')
-    @else 
-    @vite('resources/js/advanced-preloader.js')
-    @endif 
-</body>
+    @if ($preloader == 'simple')
+        @push('scripts')
+            @vite('resources/js/simple-preloader.js')
+        @else
+            @vite('resources/js/advanced-preloader.js')
+        @endif
+    </body>
 
-</html>
+    </html>

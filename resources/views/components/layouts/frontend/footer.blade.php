@@ -51,12 +51,7 @@
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
  <!-- Custom Scripts -->
- @vite(['resources/js/scripts.js','resources/js/app.js'])
+ @vite(['resources/js/scripts.js', 'resources/js/app.js'])
 
  <!-- Stack for additional scripts -->
  @stack('scripts')
-
-
- </body>
-
- </html>

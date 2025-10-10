@@ -139,10 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
              top: 0,
              behavior: 'smooth'
          });
-     });
+     
 
-     // Robust text rotation animation using Anime.js
-     document.addEventListener('DOMContentLoaded', function() {
+    
          const textRotate = document.querySelector('.text-rotate');
          const textContainer = document.querySelector('.text-rotate-container');
          const underlineSvg = document.querySelector('.underline-svg');

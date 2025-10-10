@@ -1,7 +1,7 @@
 @props([
     'title' => 'AI Chat',
     'description' => 'Chat with our AI assistant',
-    'showPreloader' => true
+    'preloader' => 'simple'
 ])
 
 <!DOCTYPE html>
@@ -125,10 +125,15 @@
     <!-- Scripts -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+     @if ($preloader == 'simple')
+        @vite('resources/css/simple-preloader.css')
+    @else
+        @vite('resources/css/advanced-preloader.css')
+    @endif
 </head>
 <body>
-    @if($showPreloader)
-        <x-common.preloader />
+    @if($preloader=='simple')
+        <x-common.simple-preloader />
     @endif
 
     <div class="app-container">
@@ -147,7 +152,12 @@
 
     <div class="gradient-background"></div>
     <div class="noise-overlay"></div>
-
+ @if ($preloader == 'simple')
+        @push('scripts')
+            @vite('resources/js/simple-preloader.js')
+        @else
+            @vite('resources/js/advanced-preloader.js')
+        @endif
     @stack('scripts')
     @vite(['resources/js/app.js'])
 </body>
