@@ -15,7 +15,7 @@ class PrimaryHeader extends Component
         bool $transparent = true,
         bool $showMegaMenu = false,
         bool $showDropdown = false,
-        array $navItems = null
+       
     ) {
         $this->transparent = $transparent;
         $this->showMegaMenu = $showMegaMenu;
@@ -23,7 +23,7 @@ class PrimaryHeader extends Component
         $this->navItems = $navItems ?? [
             ['label' => 'Home', 'url' => '/', 'type' => 'link'],
             ['label' => 'Projects', 'url' => 'projects', 'type' => 'link'],
-            ['label' => 'AI Sensei', 'url' => 'ai-sensei-chat', 'type' => 'link'],
+            ['label' => 'AI Sensei', 'url' => 'ai-sensei', 'type' => 'link'],
             ['label' => 'Services', 'type' => 'mega-menu'],
             ['label' => 'Company', 'type' => 'dropdown'],
             ['label' => 'Book a Call', 'url' => 'book-a-call', 'type' => 'link'],
