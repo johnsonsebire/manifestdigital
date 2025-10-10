@@ -27,7 +27,8 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': '/resources',
-            '~': '/resources'
+            '~': '/resources',
+            '@images': '/resources/images'
         }
     },
     server: {
@@ -36,7 +37,12 @@ export default defineConfig({
     build: {
         manifest: 'manifest.json',
         outDir: 'public/build',
+        assetsDir: 'assets',
         rollupOptions: {
+            input: {
+                app: 'resources/js/app.js',
+                styles: 'resources/css/styles.css',
+            },
             output: {
                 assetFileNames: (assetInfo) => {
                     let extType = assetInfo.name.split('.').at(1);
@@ -49,5 +55,7 @@ export default defineConfig({
                 entryFileNames: 'assets/js/[name]-[hash].js'
             }
         }
-    }
+    },
+    publicDir: 'resources',
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg']
 });

@@ -2,9 +2,9 @@
     'title' => 'Our Solutions are Built on Solid Foundations',
     'foundations' => [],
     'decorativeImages' => [
-        'topPipe' => 'frontend/images/decorative/purple_mem_3d_semi_pipe.svg',
-        'leftDonut' => 'frontend/images/decorative/mem_donut.svg',
-        'rightTriangle' => 'frontend/images/decorative/mem_dots_f_tri.svg'
+        'topPipe' => 'images/decorative/purple_mem_3d_semi_pipe.svg',
+        'leftDonut' => 'images/decorative/mem_donut.svg',
+        'rightTriangle' => 'images/decorative/mem_dots_f_tri.svg'
     ],
     'animateOnScroll' => true,
     'staggerChildren' => true

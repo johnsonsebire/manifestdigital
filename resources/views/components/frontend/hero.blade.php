@@ -8,8 +8,8 @@
     'ctaId' => 'view-pricing-btn',
     'tagline' => 'We deliver excellent solutions, no fluff.',
     'decorativeImages' => [
-        'leftDots' => asset('images/decorative/hero_left_mem_dots_f_circle3.svg'),
-        'rightCircles' => asset('images/decorative/hero_right_circle-con3.svg'),
+        'leftDots' => Vite::asset('resources/images/decorative/hero_left_mem_dots_f_circle3.svg'),
+        'rightCircles' => Vite::asset('resources/images/decorative/hero_right_circle-con3.svg'),
         'topCircle' => asset('images/decorative/hero_top_mem_stripe_circle2.png'),
         'underline' => asset('images/decorative/hero_underline.svg')
     ]

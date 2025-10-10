@@ -231,7 +231,7 @@ body {
 .logo { 
     width: 176px; 
     height: 60px; 
-    background-image: url('@/images/logos/logo.png');
+    background-image: url('/resources/images/logos/logo.png');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -1039,6 +1039,9 @@ body {
     transform: translateY(-50%); /* Adjust for vertical centering */
     animation: float-centered 12s infinite ease-in-out;
     z-index: -1; /* Behind content to avoid interference */
+    background-image: url('/resources/images/decorative/hero_left_mem_dots_f_circle3.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .hero .decorative-element.hero-right-circles {
@@ -1049,6 +1052,9 @@ body {
     transform: translateY(-50%); /* Adjust for vertical centering */
     animation: rotate-centered 15s infinite ease-in-out;
     z-index: -1; /* Behind content to avoid interference */
+    background-image: url('/resources/images/decorative/hero_right_circle-con3.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .hero .decorative-element.hero-top-circle {
@@ -1059,6 +1065,9 @@ body {
     animation: pulse 8s infinite ease-in-out;
     z-index: -1; /* Behind content to avoid interference */
     position: absolute; /* Reinforce absolute positioning */
+    background-image: url('/resources/images/decorative/hero_top_mem_stripe_circle2.png');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 .hero .subtitle { 
     font-weight: 600; 
@@ -1337,6 +1346,9 @@ body {
     transform: translateX(-50%);
     z-index: 10;
     animation: pulse 6s infinite ease-in-out;
+    background-image: url('/resources/images/decorative/purple_mem_3d_semi_pipe.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .section-four .decorative-element.left-donut {
@@ -1347,6 +1359,9 @@ body {
     bottom: -40px;
     z-index: 10;
     animation: float 10s infinite ease-in-out;
+    background-image: url('/resources/images/decorative/mem_donut.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .section-four .decorative-element.right-triangle {
@@ -1358,6 +1373,9 @@ body {
     transform: translateY(-50%);
     z-index: 10;
     animation: float 8s infinite ease-in-out;
+    background-image: url('/resources/images/decorative/mem_dots_f_tri.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 /* How It Works: y:1838-2632 */
@@ -1384,6 +1402,9 @@ body {
     top: -40px;
     z-index: 1;
     animation: pulse 14s infinite ease-in-out;
+    background-image: url('/resources/images/decorative/how_it_works_mem_dots_f_circle2.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 /* Why Us Section */
@@ -1469,6 +1490,9 @@ body {
     top: 100px;
     z-index: 1;
     animation: float 12s infinite ease-in-out;
+    background-image: url('/resources/images/decorative/left_under_cta_mem_dots_f_tri.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .why-us .decorative-element.why-right-shapes {
@@ -1479,6 +1503,9 @@ body {
     bottom: 100px;
     z-index: 1;
     animation: rotate 14s infinite ease-in-out;
+    background-image: url('/resources/images/decorative/right_under_cta_mem_dots_f_circle2.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 .columns { 
     display: grid; 
@@ -2947,7 +2974,8 @@ body.notification-visible .primary-header {
 
 /* Add top spacing for page content when notification is visible */
 body.notification-visible section:first-of-type {
- /*   padding-top: calc(5rem + 174px);  Original section padding + notification (56px) + header (118px) */
+    /*  Original section padding + notification (56px) + header (118px) */
+   padding-top: calc(5rem + 174px); 
 }
 
 body.notification-visible .hero {
@@ -4260,7 +4288,8 @@ body.notification-visible .hero {
     
     /* Add top spacing for page content when notification is visible on mobile */
     body.notification-visible section:first-of-type:not(.hero) {
-        /* padding-top: calc(5rem + 234px); Original section padding + notification (154px) + mobile header (80px) */
+        /* Original section padding + notification (154px) + mobile header (80px) */
+        padding-top: calc(5rem + 234px);
     }
     
     .cta { 
