@@ -10,11 +10,13 @@ class PrimaryHeader extends Component
     public $showMegaMenu;
     public $showDropdown;
     public $navItems;
+    public $notificationStyle;
 
     public function __construct(
         $transparent = true,
         bool $showMegaMenu = false,
         bool $showDropdown = false,
+        string $notificationStyle = 'dark'
        
     ) {
         // Ensure transparent is properly converted to boolean
@@ -27,6 +29,7 @@ class PrimaryHeader extends Component
         
         $this->showMegaMenu = $showMegaMenu;
         $this->showDropdown = $showDropdown;
+        $this->notificationStyle = $notificationStyle;
         $this->navItems = [
             ['label' => 'Home', 'url' => '/', 'type' => 'link'],
             ['label' => 'Projects', 'url' => 'projects', 'type' => 'link'],

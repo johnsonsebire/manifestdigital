@@ -2962,6 +2962,71 @@ body.loading .notification-topbar {
     box-shadow: 0 4px 12px rgba(255, 73, 0, 0.4);
 }
 
+/* ========================
+   Notification Style Variants
+   ======================== */
+
+/* Modern Purple Gradient Style */
+.notification-topbar--modern-purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.notification-topbar--modern-purple .notification-cta {
+    background: #FF4900;
+    color: #FFFFFF;
+    font-weight: 700;
+    box-shadow: 0 2px 12px rgba(255, 73, 0, 0.4);
+}
+
+.notification-topbar--modern-purple .notification-cta:hover {
+    background: #FF6B3D;
+    color: #FFFFFF;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 16px rgba(255, 73, 0, 0.5);
+}
+
+.notification-topbar--modern-purple .notification-close {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.notification-topbar--modern-purple .notification-close:hover {
+    background: #FF4900;
+    color: #FFFFFF;
+    border-color: #FF4900;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 2px 8px rgba(255, 73, 0, 0.4);
+}
+
+/* Default Dark Style (explicit class for consistency) */
+.notification-topbar--dark {
+    background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.notification-topbar--dark .notification-cta {
+    background: #FF4900;
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 73, 0, 0.3);
+}
+
+.notification-topbar--dark .notification-cta:hover {
+    background: #FF6B3D;
+    box-shadow: 0 4px 12px rgba(255, 73, 0, 0.4);
+}
+
+.notification-topbar--dark .notification-close {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.notification-topbar--dark .notification-close:hover {
+    background: #FF4900;
+    border-color: #FF4900;
+    box-shadow: 0 2px 8px rgba(255, 73, 0, 0.4);
+}
+
 /* Adjust positioning when notification is visible */
 body.notification-visible {
     padding-top: 0;

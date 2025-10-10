@@ -1,7 +1,7 @@
     <!-- Reading Tracker Progress Bar -->
     <div class="reading-tracker"></div>
 
-    <x-notification-topbar />
+    <x-notification-topbar :style="$notificationStyle" />
 
     <header class="primary-header {{ $transparent ? 'transparent' : '' }}">
         <a href="{{ url('/') }}" class="logo"></a>

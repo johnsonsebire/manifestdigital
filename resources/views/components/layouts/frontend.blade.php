@@ -1,23 +1,11 @@
 @props([
     'transparentHeader' => false,
     'preloader' => 'advanced',
+    'notificationStyle' => 'dark', // Options: 'dark', 'modern-purple'
     'title' => 'Manifest Digital | Custom Web & App Development in Ghana | Est. 2014'
 ])
 
 <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Transform your digital presence with Manifest Digital. Expert web development, mobile apps, and IT solutions for purpose-driven organizations in Ghana & worldwide. 10+ years experience since 2014.">
-    <meta name="keywords"
-        content="web development Ghana, custom app development, digital agency Ghana, UI/UX design services, enterprise solutions, IT consulting, affordable web design packages, SAP consulting, blockchain solutions">
-    <meta name="author" content="Manifest Digital">
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('images/logos/favicon.png') }}">>
 <html lang="en">
 
 <head>
@@ -89,7 +77,10 @@
         <x-common.advanced-preloader />
     @endif
 
-    <x-layouts.frontend.primary-header :transparent="$transparentHeader" />
+    <x-layouts.frontend.primary-header 
+        :transparent="$transparentHeader" 
+        :notificationStyle="$notificationStyle" 
+    />
 
     <main class="main-content">
         {{ $slot }}
