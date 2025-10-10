@@ -654,7 +654,7 @@ class ProjectsPerformanceOptimizer {
         };
 
         // Log to console in development
-        if (process?.env?.NODE_ENV === 'development' || !process) {
+        if (typeof process !== 'undefined' && process?.env?.NODE_ENV === 'development') {
             const emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌';
             console.log(`${emoji} ${name}: ${metric.value}${typeof value === 'number' ? 'ms' : ''}`);
         }

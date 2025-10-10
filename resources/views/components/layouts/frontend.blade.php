@@ -45,10 +45,18 @@
     <!-- Anime.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     @if ($preloader == 'simple')
-        @vite('resources/css/simple-preloader.css')
+        @vite(['resources/css/simple-preloader.css', 'resources/js/simple-preloader.js'])
     @else
-        @vite('resources/css/advanced-preloader.css')
+        @vite(['resources/css/advanced-preloader.css', 'resources/js/advanced-preloader.js'])
     @endif
+    
+    <!-- Initial state setup for preloader -->
+    <style>
+        .loading .main-content {
+            opacity: 0;
+            visibility: hidden;
+        }
+    </style>
 </head>
 
 <body class="loading">
@@ -66,12 +74,6 @@
     </main>
 
     <x-layouts.frontend.footer />
-    @if ($preloader == 'simple')
-        @push('scripts')
-            @vite('resources/js/simple-preloader.js')
-        @else
-            @vite('resources/js/advanced-preloader.js')
-        @endif
-    </body>
+</body>
 
-    </html>
+</html>

@@ -1,5 +1,5 @@
 <!-- Projects Grid Section -->
-<section class="projects-grid" x-data="projectsGrid" x-init="initGrid">
+<section class="projects-grid" x-data="projectsGrid">
     <div class="container">
         <!-- Projects Grid -->
         <div class="projects-grid-container" x-ref="gridContainer">
@@ -63,7 +63,11 @@
             observer: null,
 
             async init() {
-                await this.loadProjects();
+                try {
+                    await this.loadProjects();
+                } catch (error) {
+                    console.error('Error loading initial projects:', error);
+                }
                 this.setupInfiniteScroll();
                 
                 this.$watch('currentFilter', (value) => {
@@ -74,9 +78,9 @@
                     this.filterProjects();
                 });
                 
-                this.$on('filter-changed', ({ filter, searchTerm }) => {
-                    this.currentFilter = filter;
-                    this.searchTerm = searchTerm;
+                window.addEventListener('filter-changed', (event) => {
+                    this.currentFilter = event.detail.filter;
+                    this.searchTerm = event.detail.searchTerm;
                 });
             },
 

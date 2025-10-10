@@ -25,25 +25,14 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
-    resolve: {
-        alias: {
-            '@': '/resources',
-            '~': '/resources',
-            '@images': '/resources/images'
-        }
-    },
     server: {
         cors: true
     },
     build: {
-        manifest: 'manifest.json',
+        manifest: true,
         outDir: 'public/build',
         assetsDir: 'assets',
         rollupOptions: {
-            input: {
-                app: 'resources/js/app.js',
-                styles: 'resources/css/styles.css',
-            },
             output: {
                 assetFileNames: (assetInfo) => {
                     let extType = assetInfo.name.split('.').at(1);
@@ -57,6 +46,13 @@ export default defineConfig({
             }
         }
     },
-    publicDir: 'resources',
+    resolve: {
+        alias: {
+            '@': '/resources',
+            '~': '/resources',
+            '@images': '/resources/images',
+            '@css': '/resources/css'
+        }
+    },
     assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg']
 });

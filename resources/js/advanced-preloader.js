@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('preloader').style.display = 'none';
                 
                 // Animate main content
-                const mainContent = document.querySelector('body > *:not(#preloader):not(.notification-topbar)'+'.header, .main, .cta-footer');
+                const mainContent = document.querySelector('.main-content');
                 if (mainContent) {
                     anime({
                         targets: mainContent,
@@ -61,9 +61,12 @@ document.addEventListener('DOMContentLoaded', function() {
                              // Remove loading class and restore overflow after all animations complete
                              document.body.classList.remove('loading');
                              document.body.style.overflow = '';
-                            
                         }
                     });
+                } else {
+                    // If main content isn't found, still remove loading state
+                    document.body.classList.remove('loading');
+                    document.body.style.overflow = '';
                 }
             }
         });

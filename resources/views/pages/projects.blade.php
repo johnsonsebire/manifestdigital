@@ -1,7 +1,10 @@
 <x-layouts.frontend 
-    title="Our Projects | Manifest Digital Portfolio">
+    title="Our Projects | Manifest Digital Portfolio"
+    :transparent-header="false"
+    preloader='advanced'
+    >
     @push('styles')
-        @vite('resources/css/projects.css')
+        @vite(['resources/css/projects.css'])
     @endpush
     @section('meta')
         <meta name="description" content="Explore our portfolio of 40+ successful projects. From nonprofits to enterprises across Ghana, UK, and USA - see how Manifest Digital delivers data-driven digital solutions.">

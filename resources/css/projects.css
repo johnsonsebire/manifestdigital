@@ -150,8 +150,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('images/decorative/hero_left_mem_dots_f_circle3.svg') no-repeat left center,
-                        url('images/decorative/hero_right_circle-con3.svg') no-repeat right center;
+            background: #2d2d2d;
             opacity: 0.1;
             pointer-events: none;
         }
