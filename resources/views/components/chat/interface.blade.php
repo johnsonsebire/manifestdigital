@@ -311,8 +311,8 @@
             <div class="flex-1 overflow-y-auto custom-scrollbar" x-ref="chatMessages">
                 <template x-if="messages.length === 0">
                     <div class="flex flex-col items-center justify-center h-full text-center px-4">
-                        <div class="p-4 empty-state-icon-bg rounded-full mb-4">
-                            <svg class="w-12 h-12 empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-24 h-24 empty-state-icon-bg rounded-full mb-4 flex items-center justify-center relative">
+                            <svg class="w-12 h-12 empty-state-icon absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                             </svg>
                         </div>
@@ -445,11 +445,16 @@
     height: var(--chat-height);
     max-width: 1200px;
     width: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     overflow: hidden;
     position: relative;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .chat-header {
@@ -619,57 +624,99 @@
 }
 
 /* Theme System */
-/* Dark Theme (Default) */
+/* Dark Theme (Default) with Glassmorphism */
 .theme-dark {
-    background: #111827;
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 .theme-dark .sidebar-bg {
-    background: #111827;
+    background: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .sidebar-border {
-    border-color: #1f2937;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .main-bg {
-    background: #111827;
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
 }
 
 .theme-dark .footer-border {
-    border-color: #1f2937;
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 -4px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .input-bg {
-    background: #1f2937;
+    background: rgba(31, 41, 55, 0.6);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .theme-dark .input-border {
-    border-color: #374151;
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .message-avatar {
-    background: #374151;
+    background: rgba(55, 65, 81, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .message-bubble-assistant {
-    background: #1f2937;
+    background: rgba(31, 41, 55, 0.7);
+    backdrop-filter: blur(10px) saturate(150%);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
     color: #ffffff;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .theme-dark .message-bubble-user {
-    background: rgba(59, 130, 246, 0.1);
+    background: rgba(59, 130, 246, 0.15);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
     color: #60a5fa;
+    box-shadow: 
+        0 4px 16px rgba(59, 130, 246, 0.2),
+        inset 0 1px 0 rgba(96, 165, 250, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(96, 165, 250, 0.2);
 }
 
 .theme-dark .message-bubble-system {
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(239, 68, 68, 0.15);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
     color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    box-shadow: 
+        0 4px 16px rgba(239, 68, 68, 0.2),
+        inset 0 1px 0 rgba(248, 113, 113, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .theme-dark .message-timestamp {
-    color: #6b7280;
+    color: rgba(156, 163, 175, 0.8);
 }
 
 .theme-dark .message-text {
@@ -678,6 +725,16 @@
 
 .theme-dark .empty-state-icon-bg {
     background: rgba(31, 41, 55, 0.5);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .theme-dark .empty-state-icon {
@@ -686,14 +743,16 @@
 
 .theme-dark .empty-state-title {
     color: #e5e7eb;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .theme-dark .empty-state-text {
-    color: #9ca3af;
+    color: rgba(156, 163, 175, 0.8);
 }
 
 .theme-dark .audio-player {
     filter: invert(1) hue-rotate(180deg);
+    opacity: 0.9;
 }
 
 /* Light Theme */
@@ -756,6 +815,11 @@
 
 .theme-light .empty-state-icon-bg {
     background: #f3f4f6;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .theme-light .empty-state-icon {
