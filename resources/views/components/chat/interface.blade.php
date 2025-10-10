@@ -49,16 +49,34 @@
             const message = messageInput.value.trim();
             if (!message) return;
 
-            // Add user message
-            this.messages.push({
+            // Add user message with animation delay
+            const userMessage = {
                 type: 'user',
                 message: message,
                 timestamp: new Date().toLocaleTimeString()
-            });
-
-            // Clear input and show typing indicator
+            };
+            
+            // Clear input immediately
             messageInput.value = '';
-            this.isTyping = true;
+            
+            // Add user message with slight delay
+            setTimeout(() => {
+                this.messages.push(userMessage);
+                this.$nextTick(() => {
+                    anime({
+                        targets: this.$refs.chatMessages.lastElementChild,
+                        translateY: [20, 0],
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutCubic'
+                    });
+                });
+            }, 100);
+
+            // Show typing indicator with delay
+            setTimeout(() => {
+                this.isTyping = true;
+            }, 500);
 
             const url = '{{ route('ai.chat.message') }}';
             console.log('Sending message to:', url);
@@ -80,11 +98,35 @@
 
                 const data = await response.json();
                 
-                this.messages.push({
-                    type: 'assistant',
-                    message: data.message,
-                    timestamp: new Date().toLocaleTimeString()
-                });
+                // Delay the response to feel more natural
+                setTimeout(() => {
+                    this.isTyping = false;
+                    const response = {
+                        type: 'assistant',
+                        message: data.message,
+                        timestamp: new Date().toLocaleTimeString()
+                    };
+                    
+                    this.messages.push(response);
+                    this.$nextTick(() => {
+                        const lastMessage = this.$refs.chatMessages.lastElementChild;
+                        anime({
+                            targets: lastMessage,
+                            translateY: [20, 0],
+                            opacity: [0, 1],
+                            duration: 600,
+                            easing: 'easeOutCubic'
+                        });
+                        
+                        // Smooth scroll to bottom
+                        anime({
+                            targets: this.$refs.chatMessages,
+                            scrollTop: this.$refs.chatMessages.scrollHeight,
+                            duration: 600,
+                            easing: 'easeInOutQuad'
+                        });
+                    });
+                }, 1000);
             } catch (error) {
                 console.error('Error:', error);
                 this.messages.push({
@@ -189,19 +231,25 @@
             </div>
 
             <div class="p-4 border-t border-gray-800">
-                <button class="flex items-center justify-center gap-2 w-full p-2 text-gray-400 hover:text-gray-300 rounded">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Settings
-                </button>
+                <div class="relative">
+                    <button 
+                        @click="$dispatch('settings-toggle')"
+                        class="flex items-center justify-center gap-2 w-full p-2 text-gray-400 hover:text-gray-300 rounded"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Settings
+                    </button>
+                    <x-chat.settings-panel />
+                </div>
             </div>
         </div>
 
         <!-- Main Chat Area -->
         <div class="flex-1 flex flex-col bg-gray-900">
-            <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0" x-ref="chatMessages" style="max-height: calc(100vh - 180px);">
+            <div class="flex-1 overflow-y-auto custom-scrollbar min-h-0" x-ref="chatMessages" style="height: calc(100vh - 180px);">
                 <template x-if="messages.length === 0">
                     <div class="flex flex-col items-center justify-center h-full text-center px-4">
                         <div class="p-4 bg-gray-800/50 rounded-full mb-4">
@@ -234,7 +282,7 @@
 
                     <div class="flex flex-col">
                         <div class="flex items-center gap-2 mb-1" :class="msg.type === 'user' ? 'flex-row-reverse' : ''">
-                            <span class="text-sm font-medium" :class="msg.type === 'assistant' ? 'text-blue-400' : 'text-green-400'" x-text="msg.type.charAt(0).toUpperCase() + msg.type.slice(1)"></span>
+                            <span class="text-sm font-medium" :class="msg.type === 'assistant' ? 'text-blue-400' : 'text-green-400'" x-text="msg.type === 'assistant' ? 'AI Sensei' : 'You'"></span>
                             <span class="text-xs text-gray-500" x-text="msg.timestamp"></span>
                         </div>
                         <div class="p-3 rounded-lg" :class="msg.type === 'assistant' ? 'bg-gray-800 text-white' : 'bg-blue-500/10 text-blue-400'">
@@ -255,11 +303,14 @@
                     @csrf
                     <div class="flex-1 bg-gray-800 rounded-lg border border-gray-700 focus-within:border-blue-500">
                         <div class="flex items-center px-3 py-2 gap-2">
-                            <button type="button" @click="$dispatch('emoji-picker-toggle')" class="text-gray-400 hover:text-gray-300">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </button>
+                            <div class="relative">
+                                <button type="button" @click="$dispatch('emoji-picker-toggle')" class="text-gray-400 hover:text-gray-300">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </button>
+                                <x-chat.emoji-picker position="top" />
+                            </div>
                             
                             <input
                                 type="text"

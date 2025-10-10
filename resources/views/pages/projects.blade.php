@@ -24,4 +24,8 @@
 
     <!-- Stats Section -->
     <x-projects.stats-section />
+
+    @push('scripts')
+    @vite('resources/js/features/projects-performance-optimizer.js')
+    @endpush
 </x-layouts.frontend>

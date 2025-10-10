@@ -144,7 +144,7 @@
         <header class="main-header">
             <div class="header-content">
                 <a href="{{ route('home') }}" class="brand">
-                    <img src="{{ asset('frontend/images/logos/logo.png') }}" alt="Manifest Digital Logo">
+                    <img src="{{ asset('images/logos/logo.png') }}" alt="Manifest Digital Logo">
                 </a>
             </div>
         </header>
