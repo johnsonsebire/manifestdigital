@@ -99,13 +99,6 @@
             
             // Request data from the recorder
             this.mediaRecorder.requestData();
-            
-            // Wait for the data to be processed
-            setTimeout(() => {
-                if (this.audioUrl) {
-                    this.submitRecording();
-                }
-            }, 100);
         },
         
         cancelRecording() {
@@ -120,7 +113,7 @@
         },
         
         async submitRecording() {
-            if (!this.audioUrl || this.isSubmitting) return;
+            if (!this.audioUrl || this.isSubmitting || !this.audioChunks.length) return;
             
             try {
                 this.isSubmitting = true;

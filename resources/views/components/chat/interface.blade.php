@@ -20,12 +20,19 @@
         },
         
         setupAudioMessageHandler() {
+            // Remove any existing event listeners
+            this.$el.removeEventListener('audio-message', this.handleAudioMessage);
+            
             this.$watch('isRecording', (value) => {
                 // Disable text input while recording
                 this.$refs.messageInput.disabled = value;
             });
             
-            this.$el.addEventListener('audio-message', async (event) => {
+            // Define the handler as a method to allow removal
+            this.handleAudioMessage = async (event) => {
+                if (this.isProcessingAudio) return; // Prevent double processing
+                this.isProcessingAudio = true;
+                
                 const { audioBlob, duration } = event.detail;
                 
                 // Create FormData with audio file
@@ -80,8 +87,12 @@
                         status: 'error'
                     });
                     this.isTyping = false;
+                    this.isProcessingAudio = false;
                 }
-            });
+            };
+            
+            // Add the event listener
+            this.$el.addEventListener('audio-message', this.handleAudioMessage);
         },
         
         formatDuration(seconds) {
@@ -214,9 +225,6 @@
         }
     }"
     x-init="init"
-            
-        }
-    }"
     class="chat-interface"
 >
     <div class="flex h-full dark bg-gray-900">
@@ -276,7 +284,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-semibold text-gray-200 mb-2">Start a Conversation</h3>
-                        <p class="text-gray-400">Send a message to begin chatting with the AI assistant.</p>
+                        <p class="text-gray-400">Send a message to begin chatting with AI Sensei</p>
                     </div>
                 </template>
 
