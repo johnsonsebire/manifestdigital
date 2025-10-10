@@ -1,11 +1,12 @@
 @props([
     'title' => 'AI Chat',
     'description' => 'Chat with our AI assistant',
-    'preloader' => 'simple'
+    'preloader' => 'simple',
 ])
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,7 +51,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
+            background:
                 radial-gradient(circle at 15% 50%, rgba(255, 34, 0, 0.1), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(255, 85, 51, 0.1), transparent 25%);
             z-index: 0;
@@ -125,15 +126,18 @@
     <!-- Scripts -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-     @if ($preloader == 'simple')
+    @if ($preloader == 'simple')
         @vite('resources/css/simple-preloader.css')
     @else
         @vite('resources/css/advanced-preloader.css')
     @endif
 </head>
+
 <body>
-    @if($preloader=='simple')
+    @if ($preloader == 'simple')
         <x-common.simple-preloader />
+        @else 
+        <x-common.advanced-preloader />
     @endif
 
     <div class="app-container">
@@ -152,13 +156,14 @@
 
     <div class="gradient-background"></div>
     <div class="noise-overlay"></div>
- @if ($preloader == 'simple')
+    @if ($preloader == 'simple')
         @push('scripts')
             @vite('resources/js/simple-preloader.js')
         @else
             @vite('resources/js/advanced-preloader.js')
         @endif
-    @stack('scripts')
-    @vite(['resources/js/app.js'])
-</body>
-</html>
+        @stack('scripts')
+        @vite(['resources/js/app.js', 'resources/js/scripts.js'])
+    </body>
+
+    </html>

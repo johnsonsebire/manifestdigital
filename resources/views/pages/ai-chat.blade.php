@@ -11,6 +11,7 @@ $initialMessages = [
 <x-layouts.chat
     title="Chat with AI Assistant"
     description="Get instant help and answers from our AI assistant"
+    preloader='advanced'
 >
     <x-chat.interface
         :initialMessages="$initialMessages"
