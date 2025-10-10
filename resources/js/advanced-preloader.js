@@ -49,17 +49,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('preloader').style.display = 'none';
                 
                 // Animate main content
-                const mainContent = document.querySelector('body > *:not(#preloader):not(.notification-topbar)');
+                const mainContent = document.querySelector('body > *:not(#preloader):not(.notification-topbar)'+'.header, .main, .cta-footer');
                 if (mainContent) {
                     anime({
                         targets: mainContent,
                         opacity: [0, 1],
                         translateY: [30, 0],
                         duration: 1000,
-                        easing: 'easeOutQuad'
+                        easing: 'easeOutQuad',
+                        complete:function(){
+                             // Remove loading class and restore overflow after all animations complete
+                             document.body.classList.remove('loading');
+                             document.body.style.overflow = '';
+                            
+                        }
                     });
                 }
             }
         });
-    }, 4500);
+    }, 2500);
 });
