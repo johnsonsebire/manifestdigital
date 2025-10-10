@@ -384,12 +384,12 @@
     </div>
 
             <div class="p-4 main-bg footer-border">
-                <form @submit.prevent="handleSendMessage" class="flex items-end gap-2">
+                <form @submit.prevent="handleSendMessage" class="flex items-center gap-2">
                     @csrf
                     <div class="flex-1 input-bg rounded-lg border input-border focus-within:border-blue-500">
-                        <div class="flex items-center px-3 py-2 gap-2">
-                            <div class="relative">
-                                <button type="button" @click="$dispatch('emoji-picker-toggle')" class="text-gray-400 hover:text-gray-300">
+                        <div class="flex items-center px-3 py-2.5 gap-2">
+                            <div class="relative flex items-center">
+                                <button type="button" @click="$dispatch('emoji-picker-toggle')" class="text-gray-400 hover:text-gray-300 flex items-center justify-center">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -401,7 +401,7 @@
                                 type="text"
                                 x-ref="messageInput"
                                 placeholder="Type a message..."
-                                class="flex-1 bg-transparent border-none text-white placeholder-gray-400 focus:outline-none"
+                                class="flex-1 bg-transparent border-none text-white placeholder-gray-400 focus:outline-none py-0.5"
                                 @keydown.enter.prevent="handleSendMessage"
                                 @emoji-selected.window="
                                     const input = $refs.messageInput;
@@ -418,7 +418,7 @@
 
                     <x-chat.audio-recorder />
 
-                    <button type="submit" class="p-2 text-gray-400 hover:text-gray-300">
+                    <button type="submit" class="p-2.5 text-gray-400 hover:text-gray-300 flex items-center justify-center">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>

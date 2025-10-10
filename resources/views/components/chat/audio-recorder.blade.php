@@ -147,7 +147,7 @@
     <button 
         type="button"
         @click="isRecording ? stopRecording() : startRecording()"
-        class="p-2 rounded-full transition-colors duration-200"
+        class="p-2.5 rounded-full transition-colors duration-200 flex items-center justify-center"
         :class="isRecording ? 'text-red-500 bg-red-500/10' : 'text-gray-400 hover:text-gray-300'"
     >
         <template x-if="!isRecording">
