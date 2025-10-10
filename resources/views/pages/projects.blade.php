@@ -1,5 +1,8 @@
-<x-layouts.frontend>
-    
+<x-layouts.frontend 
+    title="Our Projects | Manifest Digital Portfolio">
+    @push('styles')
+        @vite('resources/css/projects.css')
+    @endpush
     @section('meta')
         <meta name="description" content="Explore our portfolio of 40+ successful projects. From nonprofits to enterprises across Ghana, UK, and USA - see how Manifest Digital delivers data-driven digital solutions.">
         <meta name="keywords" content="web development portfolio Ghana, digital agency projects, website design examples, mobile app portfolio, Ghana web development showcase">

@@ -1,4 +1,6 @@
-<x-layouts.frontend title="Manifest Digital | Custom Web & App Development in Ghana | Est. 2014">
+<x-layouts.frontend 
+    title="Manifest Digital | Custom Web & App Development in Ghana | Est. 2014"
+    :transparent-header="true">
 
     <x-frontend.hero />
     <x-frontend.project-slider />

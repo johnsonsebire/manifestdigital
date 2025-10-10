@@ -183,7 +183,7 @@
 </head>
 
 <body class="loading">
-    <x-layouts.frontend.primary-header />
+    <x-layouts.frontend.primary-header :transparent="$transparentHeader" />
 
     <main class="main-content">
         {{ $slot }}
