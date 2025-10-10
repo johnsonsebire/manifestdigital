@@ -57,7 +57,7 @@ $projectList = empty($projects) ? $defaultProjects : $projects;
     <div class="projects">
         @foreach($projectList as $project)
             <div class="project">
-                <img src="{{ asset('frontend/images/projects/' . $project['image']) }}" alt="{{ $project['name'] }}" />
+                <img src="{{ asset('images/projects/' . $project['image']) }}" alt="{{ $project['name'] }}" />
                 <a href="{{ $project['url'] }}" class="project-label" target="_blank">
                     <i class="fa-solid fa-up-right-from-square mx-2"></i> {{ $project['name'] }}
                 </a>

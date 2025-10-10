@@ -3,8 +3,8 @@
     'highlightColor' => '#ff2200',
     'content' => [],
     'decorativeImages' => [
-        'leftDots' => 'frontend/images/decorative/cta_left_mem_dots_f_circle2.svg',
-        'rightShapes' => 'frontend/images/decorative/mem_dots_f_tri.svg'
+        'leftDots' => 'images/decorative/cta_left_mem_dots_f_circle2.svg',
+        'rightShapes' => 'images/decorative/mem_dots_f_tri.svg'
     ],
     'animateOnScroll' => true
 ])

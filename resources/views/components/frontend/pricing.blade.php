@@ -3,8 +3,8 @@
     'subtitle' => 'Choose the perfect plan for your organization. Scale up or down anytime—no contracts, no surprises.',
     'pricingCategories' => [],
     'decorativeImages' => [
-        'leftStripes' => 'frontend/images/decorative/mem_dots_f_tri.svg',
-        'rightShape' => 'frontend/images/decorative/cta_left_mem_dots_f_circle2.svg'
+        'leftStripes' => 'images/decorative/mem_dots_f_tri.svg',
+        'rightShape' => 'images/decorative/cta_left_mem_dots_f_circle2.svg'
     ],
     'animateOnScroll' => true
 ])
@@ -489,7 +489,7 @@ $categoriesList = empty($pricingCategories) ? $defaultPricingCategories : $prici
                 @foreach($category['plans'] as $plan)
                     <div class="pricing-card{{ $plan['isPopular'] ? ' popular' : '' }}">
                         @if($plan['hasAccent'])
-                            <img src="{{ asset('frontend/images/decorative/cta_left_mem_dots_f_circle2.svg') }}" alt="" class="pricing-card-accent">
+                            <img src="{{ asset('images/decorative/cta_left_mem_dots_f_circle2.svg') }}" alt="" class="pricing-card-accent">
                         @endif
                         <h3>{{ $plan['name'] }}</h3>
                         <p class="pricing-tagline">{{ $plan['tagline'] }}</p>

@@ -2,8 +2,8 @@
     'title' => 'Forget about',
     'problems' => [],
     'decorativeImages' => [
-        'starLeft' => 'frontend/images/decorative/cta_left_mem_dots_f_circle2.svg',
-        'starRight' => 'frontend/images/decorative/mem_dots_f_tri.svg'
+        'starLeft' => 'images/decorative/cta_left_mem_dots_f_circle2.svg',
+        'starRight' => 'images/decorative/mem_dots_f_tri.svg'
     ],
     'animateOnScroll' => true,
     'staggerChildren' => true

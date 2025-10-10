@@ -8,18 +8,18 @@
     'ctaId' => 'view-pricing-btn',
     'tagline' => 'We deliver excellent solutions, no fluff.',
     'decorativeImages' => [
-        'leftDots' => 'frontend/images/decorative/hero_left_mem_dots_f_circle3.svg',
-        'rightCircles' => 'frontend/images/decorative/hero_right_circle-con3.svg',
-        'topCircle' => 'frontend/images/decorative/hero_top_mem_stripe_circle2.png',
-        'underline' => 'frontend/images/decorative/hero_underline.svg'
+        'leftDots' => asset('images/decorative/hero_left_mem_dots_f_circle3.svg'),
+        'rightCircles' => asset('images/decorative/hero_right_circle-con3.svg'),
+        'topCircle' => asset('images/decorative/hero_top_mem_stripe_circle2.png'),
+        'underline' => asset('images/decorative/hero_underline.svg')
     ]
 ])
 
 <section class="hero">
     <!-- Decorative elements for the hero section -->
-    <img src="{{ asset($decorativeImages['leftDots']) }}" alt="" class="decorative-element hero-left-dots">
-    <img src="{{ asset($decorativeImages['rightCircles']) }}" alt="" class="decorative-element hero-right-circles">
-    <img src="{{ asset($decorativeImages['topCircle']) }}" alt="" class="decorative-element hero-top-circle">
+    <img src="{{ $decorativeImages['leftDots'] }}" alt="" class="decorative-element hero-left-dots">
+    <img src="{{ $decorativeImages['rightCircles'] }}" alt="" class="decorative-element hero-right-circles">
+    <img src="{{ $decorativeImages['topCircle'] }}" alt="" class="decorative-element hero-top-circle">
 
     <h1>
         <div class="text-rotate-wrapper">
@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="underline-container">
-                    <img src="{{ asset($decorativeImages['underline']) }}" alt="" class="underline-svg">
+                    <img src="{{ $decorativeImages['underline'] }}" alt="" class="underline-svg">
                 </div>
             </div>
         </div>

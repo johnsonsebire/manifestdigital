@@ -2,7 +2,7 @@
     'title' => 'How it Works',
     'steps' => [],
     'ctaText' => 'Ready to Transform Your Digital Presence?',
-    'decorativeImage' => 'frontend/images/decorative/how_it_works_mem_dots_f_circle2.svg',
+    'decorativeImage' => 'images/decorative/how_it_works_mem_dots_f_circle2.svg',
     'animateOnScroll' => true,
     'staggerChildren' => true
 ])
@@ -31,7 +31,7 @@ $stepsList = empty($steps) ? $defaultSteps : $steps;
 
 <section class="how-it-works">
     <!-- Decorative element for how-it-works section -->
-    <img src="{{ $decorativeImage }}" alt="" class="decorative-element dots-circle">
+    <img src="{{ asset($decorativeImage) }}" alt="" class="decorative-element dots-circle">
     
     <h2{{ $animateOnScroll ? ' class=animate-on-scroll' : '' }}>{{ $title }}</h2>
     <div class="columns{{ $staggerChildren ? ' stagger-children' : '' }}">

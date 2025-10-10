@@ -1,5 +1,7 @@
 // AI Chat functionality
-window.chat = () => ({
+
+window.chat = function() {
+    return {
         messages: [],
         isTyping: false,
         audioContext: null,
@@ -55,7 +57,7 @@ window.chat = () => ({
             try {
                 const formData = new FormData();
                 formData.append('message', text);
-                
+
                 if (attachments) {
                     attachments.forEach((file, index) => {
                         formData.append(`attachments[${index}]`, file);
@@ -83,7 +85,6 @@ window.chat = () => ({
 
                 // Play notification sound
                 this.playNotificationSound();
-
             } catch (error) {
                 console.error('Message sending failed:', error);
                 this.messages.push({
@@ -131,7 +132,6 @@ window.chat = () => ({
                         attachments: []
                     }
                 });
-
             } catch (error) {
                 console.error('Voice processing failed:', error);
                 this.messages.push({
@@ -175,7 +175,7 @@ window.chat = () => ({
 
             const blob = new Blob([JSON.stringify(chat, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            
+
             const a = document.createElement('a');
             a.href = url;
             a.download = `chat-export-${new Date().toISOString()}.json`;
@@ -184,5 +184,5 @@ window.chat = () => ({
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
-    }));
-});
+    };
+};

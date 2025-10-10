@@ -49,9 +49,9 @@ $foundationsList = empty($foundations) ? $defaultFoundations : $foundations;
 
 <section class="section-four">
     <!-- Decorative elements for section-four -->
-    <img src="{{ $decorativeImages['topPipe'] }}" alt="" class="decorative-element top-pipe">
-    <img src="{{ $decorativeImages['leftDonut'] }}" alt="" class="decorative-element left-donut">
-    <img src="{{ $decorativeImages['rightTriangle'] }}" alt="" class="decorative-element right-triangle">
+    <img src="{{ asset($decorativeImages['topPipe']) }}" alt="" class="decorative-element top-pipe">
+    <img src="{{ asset($decorativeImages['leftDonut']) }}" alt="" class="decorative-element left-donut">
+    <img src="{{ asset($decorativeImages['rightTriangle']) }}" alt="" class="decorative-element right-triangle">
     
     <div class="content-box">
         <h2{{ $animateOnScroll ? ' class=animate-on-scroll' : '' }}>{{ $title }}</h2>

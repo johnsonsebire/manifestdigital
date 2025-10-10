@@ -23,7 +23,7 @@ class PagesController extends Controller
      */
     public function projects()
     {
-        return view('pages.projects');
+         return view('pages.projects');
     }
 
     /**

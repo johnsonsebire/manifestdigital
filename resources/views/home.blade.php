@@ -1,4 +1,4 @@
-<x-layouts.frontend :title="$title ?? null">
+<x-layouts.frontend title="Manifest Digital | Custom Web & App Development in Ghana | Est. 2014">
 
     <x-frontend.hero />
     <x-frontend.project-slider />
@@ -9,4 +9,5 @@
     <x-frontend.services-grid />
     <x-frontend.pricing />
     <x-frontend.testimonials />
+
 </x-layouts.frontend>

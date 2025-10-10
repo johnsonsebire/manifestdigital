@@ -2,7 +2,7 @@
     'title' => 'Comprehensive Digital Solutions',
     'subtitle' => 'From strategy to execution, we deliver end-to-end digital services that drive growth',
     'services' => [],
-    'accentImage' => 'frontend/images/decorative/cta_left_mem_dots_f_circle2.svg',
+    'accentImage' => 'images/decorative/cta_left_mem_dots_f_circle2.svg',
     'animateOnScroll' => true,
     'staggerChildren' => true
 ])
@@ -36,7 +36,7 @@ $servicesList = empty($services) ? $defaultServices : $services;
         @foreach($servicesList as $service)
             <div class="service-item">
                 @if($service['hasAccent'] ?? false)
-                    <img src="{{ $accentImage }}" alt="" class="service-accent">
+                    <img src="{{ asset($accentImage) }}" alt="" class="service-accent">
                 @endif
                 <h3>{{ $service['name'] }}</h3>
                 <div class="service-underline"></div>
