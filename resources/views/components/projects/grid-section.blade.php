@@ -5,33 +5,28 @@
         <template x-for="project in filteredProjects" :key="project.id">
             <div 
                 class="project-card" 
-                :class="project.category"
+                :data-category="project.category"
+                :data-id="project.id"
                 x-show="isVisible(project)"
                 x-transition:enter="fade-enter"
                 x-transition:enter-start="fade-enter-start"
                 x-transition:enter-end="fade-enter-end"
             >
-                <div class="project-image">
-                    <img :src="project.image" :alt="project.title" loading="lazy">
-                    <div class="project-overlay">
-                        <a :href="'/projects/' + project.slug" class="project-link">
-                            <i class="fas fa-link"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <h3 class="project-title" x-text="project.title"></h3>
-                    <p class="project-category" x-text="getCategoryLabel(project.category)"></p>
-                    <p class="project-description" x-text="project.description"></p>
-                    <div class="project-tech-stack">
-                        <template x-for="tech in project.technologies" :key="tech">
-                            <span class="tech-tag" x-text="tech"></span>
-                        </template>
-                    </div>
+                <img :src="project.image" :alt="project.title" loading="lazy">
+                <div class="project-card-content">
+                    <span class="project-category" x-text="project.displayCategory"></span>
+                    <h3 x-text="project.title"></h3>
+                    <a :href="project.url" class="project-link" target="_blank" rel="noopener noreferrer" @click.stop>
+                        <span>Visit Website</span>
+                        <i class="fa-solid fa-up-right-from-square"></i>
+                    </a>
                 </div>
             </div>
         </template>
     </div>
+    
+    <!-- Scroll Trigger for Infinite Scroll -->
+    <div x-ref="scrollTrigger" x-show="hasMore && !loading" style="height: 1px;"></div>
     
     <!-- Loading State -->
     <div class="loading-spinner" x-show="loading">
@@ -62,15 +57,8 @@
 
             async init() {
                 console.log('🚀 Projects Grid initialized');
-                try {
-                    console.log('📡 Loading initial projects...');
-                    await this.loadProjects();
-                    console.log('✅ Initial projects loaded:', this.projects.length);
-                } catch (error) {
-                    console.error('❌ Error loading initial projects:', error);
-                }
-                this.setupInfiniteScroll();
                 
+                // Set up watchers BEFORE loading projects
                 this.$watch('currentFilter', (value) => {
                     console.log('🔍 Filter changed:', value);
                     this.filterProjects();
@@ -86,6 +74,18 @@
                     this.currentFilter = event.detail.filter;
                     this.searchTerm = event.detail.searchTerm;
                 });
+                
+                // Load initial projects
+                try {
+                    console.log('📡 Loading initial projects...');
+                    await this.loadProjects();
+                    console.log('✅ Initial projects loaded:', this.projects.length);
+                    console.log('✅ Filtered projects:', this.filteredProjects.length);
+                } catch (error) {
+                    console.error('❌ Error loading initial projects:', error);
+                }
+                
+                this.setupInfiniteScroll();
             },
 
             async loadProjects() {
@@ -117,8 +117,10 @@
                     } else {
                         this.projects = [...this.projects, ...data.projects];
                         console.log('✨ Projects updated. Total:', this.projects.length);
+                        this.hasMore = data.hasMore; // Update hasMore from API response
                         this.filterProjects();
                         this.page++;
+                        console.log('📄 Next page will be:', this.page, '| Has more:', this.hasMore);
                     }
                 } catch (error) {
                     console.error('💥 Error loading projects:', error);
@@ -130,32 +132,36 @@
             },
 
             setupInfiniteScroll() {
+                console.log('🔄 Setting up infinite scroll');
                 const options = {
                     root: null,
-                    rootMargin: '0px',
+                    rootMargin: '200px', // Trigger 200px before reaching the element
                     threshold: 0.1
                 };
 
                 this.observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
-                        if (entry.isIntersecting) {
+                        if (entry.isIntersecting && !this.loading && this.hasMore) {
+                            console.log('📍 Scroll trigger intersected, loading more projects...');
                             this.loadProjects();
                         }
                     });
                 }, options);
 
-                // Observe the last project card
-                this.$watch('filteredProjects', () => {
-                    this.$nextTick(() => {
-                        const lastCard = this.$refs.gridContainer.lastElementChild;
-                        if (lastCard) {
-                            this.observer.observe(lastCard);
-                        }
-                    });
+                // Wait for the scroll trigger element to be available
+                this.$nextTick(() => {
+                    const trigger = this.$refs.scrollTrigger;
+                    if (trigger) {
+                        console.log('✅ Observing scroll trigger element');
+                        this.observer.observe(trigger);
+                    } else {
+                        console.warn('⚠️ Scroll trigger element not found');
+                    }
                 });
             },
 
             filterProjects() {
+                console.log('🔧 Filtering projects. Total:', this.projects.length, 'Filter:', this.currentFilter);
                 let filtered = this.projects;
 
                 // Apply category filter
@@ -170,14 +176,12 @@
                     const searchLower = this.searchTerm.toLowerCase();
                     filtered = filtered.filter(project =>
                         project.title.toLowerCase().includes(searchLower) ||
-                        project.description.toLowerCase().includes(searchLower) ||
-                        project.technologies.some(tech => 
-                            tech.toLowerCase().includes(searchLower)
-                        )
+                        (project.excerpt && project.excerpt.toLowerCase().includes(searchLower))
                     );
                 }
 
                 this.filteredProjects = filtered;
+                console.log('✅ Filtered results:', this.filteredProjects.length);
             },
 
             isVisible(project) {
