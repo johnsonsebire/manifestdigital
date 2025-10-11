@@ -1,7 +1,7 @@
 <x-layouts.frontend 
     title="Manifest Digital | Custom Web & App Development in Ghana | Est. 2014"
     :transparent-header="true"
-    preloader='advanced'
+    preloader='simple'
     notificationStyle='modern-purple'>
 
     <x-frontend.hero />
