@@ -3,7 +3,8 @@
     <!-- Projects Grid -->
     <div class="projects-grid" x-ref="gridContainer" x-show="filteredProjects.length > 0">
         <template x-for="project in filteredProjects" :key="project.id">
-            <div 
+            <a 
+                :href="'/projects/' + project.slug"
                 class="project-card" 
                 :data-category="project.category"
                 :data-id="project.id"
@@ -11,6 +12,7 @@
                 x-transition:enter="fade-enter"
                 x-transition:enter-start="fade-enter-start"
                 x-transition:enter-end="fade-enter-end"
+                style="text-decoration: none; color: inherit; display: block;"
             >
                 <img :src="project.image" :alt="project.title" loading="lazy">
                 <div class="project-card-content">
@@ -21,7 +23,7 @@
                         <i class="fa-solid fa-up-right-from-square"></i>
                     </a>
                 </div>
-            </div>
+            </a>
         </template>
     </div>
     

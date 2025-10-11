@@ -27,6 +27,29 @@ class PagesController extends Controller
     }
 
     /**
+     * Show the Project Detail page.
+     *
+     * @param string $slug
+     * @return \Illuminate\View\View
+     */
+    public function projectDetail($slug)
+    {
+        // Load projects data
+        $projectsFile = storage_path('app/projects-data.json');
+        $projects = json_decode(file_get_contents($projectsFile), true);
+        
+        // Find project by slug
+        $project = collect($projects)->firstWhere('slug', $slug);
+        
+        // Return 404 if project not found
+        if (!$project) {
+            abort(404, 'Project not found');
+        }
+        
+        return view('pages.project-detail', compact('project'));
+    }
+
+    /**
      * Show the Book a Call page.
      *
      * @return \Illuminate\View\View
