@@ -1,5 +1,5 @@
 @props([
-    'logo' => 'images/logos/logo.png',
+    'logo' => 'resources/images/logos/logo.png',
     'loadingText' => 'Loading amazing experiences...'
 ])
 
@@ -9,7 +9,7 @@
     <div class="preloader-container">
         <div class="preloader-content">
             <div class="preloader-logo">
-                <img src="{{ $logo }}" alt="Manifest Digital">
+                <img src="{{Vite::asset($logo)}}" alt="Manifest Digital">
             </div>
             <div class="preloader-dots">
                 <div class="preloader-dot"></div>
