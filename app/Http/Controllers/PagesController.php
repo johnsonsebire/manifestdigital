@@ -78,4 +78,19 @@ class PagesController extends Controller
     {
         return view('pages.about');
     }
+
+    public function opportunities()
+    {
+        return view('pages.opportunities');
+    }
+
+    public function solutions()
+    {
+        return view('pages.solutions');
+    }
+
+    public function policies()
+    {
+        return view('pages.policies');
+    }
 }

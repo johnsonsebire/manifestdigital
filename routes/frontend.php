@@ -18,3 +18,6 @@ Route::get('/projects/{slug}', [PagesController::class, 'projectDetail'])->name(
 Route::get('/book-a-call', [PagesController::class, 'bookACall'])->name('book-a-call');
 Route::get('/request-quote', [PagesController::class, 'requestQuote'])->name('request-quote');
 Route::get('/about', [PagesController::class, 'about'])->name('about');
+Route::get('/opportunities', [PagesController::class, 'opportunities'])->name('opportunities');
+Route::get('/solutions', [PagesController::class, 'solutions'])->name('solutions');
+Route::get('/policies', [PagesController::class, 'policies'])->name('policies');
