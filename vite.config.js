@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/css/projects.css',
                 'resources/css/book-a-call.css',
                 'resources/css/request-quote.css',
+                'resources/css/about.css',
                 'resources/css/simple-preloader.css',
                 'resources/css/advanced-preloader.css',
                 'resources/js/scripts.js',

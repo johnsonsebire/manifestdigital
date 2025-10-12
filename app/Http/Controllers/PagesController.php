@@ -68,4 +68,14 @@ class PagesController extends Controller
     {
         return view('pages.request-quote');
     }
+
+    /**
+     * Show the About Us page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function about()
+    {
+        return view('pages.about');
+    }
 }
