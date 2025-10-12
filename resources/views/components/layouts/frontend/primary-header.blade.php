@@ -21,7 +21,7 @@
         </nav>
         <div class="header-right">
             <a href="{{ route('login') }}" class="login">Login</a>
-            <a href="{{ url('quote-request') }}" class="btn-primary">Get a Quote</a>
+            <a href="{{ route('request-quote') }}" class="btn-primary">Get a Quote</a>
         </div>
         
         <!-- Mobile menu toggle -->
@@ -54,6 +54,6 @@
         </nav>
         <div class="mobile-nav-buttons">
             <a href="{{ route('login') }}" class="login">Login</a>
-            <a href="{{ url('quote-request') }}" class="btn-primary">Get a Quote</a>
+            <a href="{{ route('request-quote') }}" class="btn-primary">Get a Quote</a>
         </div>
     </div>
