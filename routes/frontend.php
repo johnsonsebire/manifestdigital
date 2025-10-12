@@ -21,3 +21,6 @@ Route::get('/about', [PagesController::class, 'about'])->name('about');
 Route::get('/opportunities', [PagesController::class, 'opportunities'])->name('opportunities');
 Route::get('/solutions', [PagesController::class, 'solutions'])->name('solutions');
 Route::get('/policies', [PagesController::class, 'policies'])->name('policies');
+Route::get('/blog', [PagesController::class, 'blog'])->name('blog');
+Route::get('/blog/{slug}', [PagesController::class, 'blogDetail'])->name('blog.show');
+Route::get('/contact', [PagesController::class, 'contact'])->name('contact');
