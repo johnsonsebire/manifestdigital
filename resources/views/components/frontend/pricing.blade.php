@@ -83,7 +83,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Basic Design',
                 'tagline' => 'Essential design services',
-                'price' => ['currency' => 'GH₵', 'amount' => '800', 'period' => '/project'],
+                'price' => ['currency' => 'GH₵', 'amount' => '2,500', 'period' => '/project'],
                 'cancelText' => '1-2 weeks delivery',
                 'ctaText' => 'Get Started',
                 'ctaUrl' => '#',
@@ -102,7 +102,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Professional Design',
                 'tagline' => 'Complete design system',
-                'price' => ['currency' => 'GH₵', 'amount' => '2,500', 'period' => '/project'],
+                'price' => ['currency' => 'GH₵', 'amount' => '6,000', 'period' => '/project'],
                 'cancelText' => '2-4 weeks delivery',
                 'ctaText' => 'Get Professional',
                 'ctaUrl' => '#',
@@ -123,7 +123,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Enterprise Design',
                 'tagline' => 'Full-scale UX solution',
-                'price' => ['currency' => 'GH₵', 'amount' => '6,000+', 'period' => ''],
+                'price' => ['currency' => 'GH₵', 'amount' => '10,000+', 'period' => ''],
                 'cancelText' => 'Custom timeline',
                 'ctaText' => 'Contact Us',
                 'ctaUrl' => '#',
@@ -264,9 +264,9 @@ $defaultPricingCategories = [
         'title' => 'App Development',
         'plans' => [
             [
-                'name' => 'Basic App',
+                'name' => 'Simple App',
                 'tagline' => 'Simple mobile app',
-                'price' => ['currency' => 'GH₵', 'amount' => '3,000', 'period' => 'one-time'],
+                'price' => ['currency' => 'GH₵', 'amount' => '5,000', 'period' => 'starting'],
                 'cancelText' => '2-4 weeks delivery',
                 'ctaText' => 'Get Started',
                 'ctaUrl' => '#',
@@ -284,7 +284,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Professional App',
                 'tagline' => 'Full-featured app',
-                'price' => ['currency' => 'GH₵', 'amount' => '8,000', 'period' => 'one-time'],
+                'price' => ['currency' => 'GH₵', 'amount' => '25,000', 'period' => 'starting'],
                 'cancelText' => '6-8 weeks delivery',
                 'ctaText' => 'Get Started',
                 'ctaUrl' => '#',
@@ -303,7 +303,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Enterprise App',
                 'tagline' => 'Complex solutions',
-                'price' => ['currency' => 'GH₵', 'amount' => '20,000+', 'period' => ''],
+                'price' => ['currency' => 'GH₵', 'amount' => '50,000+', 'period' => ''],
                 'cancelText' => 'Custom timeline',
                 'ctaText' => 'Contact Us',
                 'ctaUrl' => '#',
@@ -327,7 +327,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Hourly Consulting',
                 'tagline' => 'Pay as you go',
-                'price' => ['currency' => 'GH₵', 'amount' => '200', 'period' => '/hour'],
+                'price' => ['currency' => 'GH₵', 'amount' => '500', 'period' => '/hour'],
                 'cancelText' => 'Minimum 2 hours',
                 'ctaText' => 'Book Session',
                 'ctaUrl' => '#',
@@ -344,7 +344,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Monthly Retainer',
                 'tagline' => 'Ongoing support',
-                'price' => ['currency' => 'GH₵', 'amount' => '2,000', 'period' => '/month'],
+                'price' => ['currency' => 'GH₵', 'amount' => '5,000', 'period' => '/month'],
                 'cancelText' => '10 hours included',
                 'ctaText' => 'Get Started',
                 'ctaUrl' => '#',
@@ -385,7 +385,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Individual Training',
                 'tagline' => 'One-on-one sessions',
-                'price' => ['currency' => 'GH₵', 'amount' => '150', 'period' => '/hour'],
+                'price' => ['currency' => 'GH₵', 'amount' => '3,000', 'period' => '/period'],
                 'cancelText' => 'Flexible scheduling',
                 'ctaText' => 'Book Now',
                 'ctaUrl' => '#',
@@ -402,7 +402,7 @@ $defaultPricingCategories = [
             [
                 'name' => 'Team Training',
                 'tagline' => 'Groups of 5-10',
-                'price' => ['currency' => 'GH₵', 'amount' => '1,500', 'period' => '/day'],
+                'price' => ['currency' => 'GH₵', 'amount' => '2,000', 'period' => '/period'],
                 'cancelText' => 'Full-day workshop',
                 'ctaText' => 'Book Workshop',
                 'ctaUrl' => '#',

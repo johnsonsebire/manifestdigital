@@ -37,27 +37,28 @@
 }
 
 @layer base {
-
-    *,
-    ::after,
-    ::before,
-    ::backdrop,
-    ::file-selector-button {
+    /* Scope these styles to only dashboard layout */
+    .dashboard-layout *,
+    .dashboard-layout ::after,
+    .dashboard-layout ::before,
+    .dashboard-layout ::backdrop,
+    .dashboard-layout ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
 }
 
-[data-flux-field]:not(ui-radio, ui-checkbox) {
+/* Scope Flux UI styles to dashboard layout only */
+.dashboard-layout [data-flux-field]:not(ui-radio, ui-checkbox) {
     @apply grid gap-2;
 }
 
-[data-flux-label] {
+.dashboard-layout [data-flux-label] {
     @apply  !mb-0 !leading-tight;
 }
 
-input:focus[data-flux-control],
-textarea:focus[data-flux-control],
-select:focus[data-flux-control] {
+.dashboard-layout input:focus[data-flux-control],
+.dashboard-layout textarea:focus[data-flux-control],
+.dashboard-layout select:focus[data-flux-control] {
     @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-accent-foreground;
 }
 
