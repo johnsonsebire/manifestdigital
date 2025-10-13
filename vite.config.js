@@ -38,24 +38,7 @@ export default defineConfig({
     server: {
         cors: true
     },
-    build: {
-        manifest: true,
-        outDir: 'public/build',
-        assetsDir: 'assets',
-        rollupOptions: {
-            output: {
-                assetFileNames: (assetInfo) => {
-                    let extType = assetInfo.name.split('.').at(1);
-                    if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
-                        return `assets/images/[name]-[hash][extname]`;
-                    }
-                    return `assets/[ext]/[name]-[hash][extname]`;
-                },
-                chunkFileNames: 'assets/js/[name]-[hash].js',
-                entryFileNames: 'assets/js/[name]-[hash].js'
-            }
-        }
-    },
+
     resolve: {
         alias: {
             '@': '/resources',

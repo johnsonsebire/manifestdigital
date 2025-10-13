@@ -3084,7 +3084,7 @@ body.notification-visible .primary-header:not(.transparent) {
 }
 
 /* Add top spacing for page content when notification is visible */
-body.notification-visible section:first-of-type {
+body.notification-visible section:first-of-type:not(.cta-footer) {
     /*  Original section padding + notification (56px) + header (118px) */
    padding-top: calc(5rem + 174px); 
 }
@@ -4398,7 +4398,7 @@ body.notification-visible .hero {
     }
     
     /* Add top spacing for page content when notification is visible on mobile */
-    body.notification-visible section:first-of-type:not(.hero) {
+    body.notification-visible section:first-of-type:not(.hero):not(.cta-footer) {
         /* Original section padding + notification (154px) + mobile header (80px) */
         padding-top: calc(5rem + 234px);
     }
