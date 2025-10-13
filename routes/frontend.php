@@ -25,3 +25,7 @@ Route::get('/policies', [PagesController::class, 'policies'])->name('policies');
 Route::get('/blog', [PagesController::class, 'blog'])->name('blog');
 Route::get('/blog/{slug}', [PagesController::class, 'blogDetail'])->name('blog.show');
 Route::get('/contact', [PagesController::class, 'contact'])->name('contact');
+
+// Team Profile Form Routes
+Route::get('/team-profile/create', [App\Http\Controllers\TeamProfileController::class, 'create'])->name('team-profile.create');
+Route::post('/team-profile/store', [App\Http\Controllers\TeamProfileController::class, 'store'])->name('team-profile.store');

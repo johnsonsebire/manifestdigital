@@ -102,4 +102,26 @@ class PagesController extends Controller
     public function blog(){
         return view('pages.blog');
     }
+
+    /**
+     * Show the Blog Detail page.
+     *
+     * @param string $slug
+     * @return \Illuminate\View\View
+     */
+    public function blogDetail($slug)
+    {
+        // In a real application, you would load the blog post data here
+        return view('pages.blog-detail');
+    }
+
+    /**
+     * Show the Contact page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function contact()
+    {
+        return view('pages.contact');
+    }
 }
