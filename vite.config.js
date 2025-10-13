@@ -18,6 +18,7 @@ export default defineConfig({
                 'resources/css/ai-chat.css',
                 'resources/css/simple-preloader.css',
                 'resources/css/advanced-preloader.css',
+                'resources/css/opportunities.css',
                 'resources/js/scripts.js',
                 'resources/js/ai-chat.js',
                 'resources/js/simple-preloader.js',

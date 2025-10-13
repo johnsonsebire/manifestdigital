@@ -19,6 +19,7 @@ Route::get('/book-a-call', [PagesController::class, 'bookACall'])->name('book-a-
 Route::get('/request-quote', [PagesController::class, 'requestQuote'])->name('request-quote');
 Route::get('/about', [PagesController::class, 'about'])->name('about');
 Route::get('/opportunities', [PagesController::class, 'opportunities'])->name('opportunities');
+Route::get('/application-success', [PagesController::class, 'applicationSuccess'])->name('application.success');
 Route::get('/solutions', [PagesController::class, 'solutions'])->name('solutions');
 Route::get('/policies', [PagesController::class, 'policies'])->name('policies');
 Route::get('/blog', [PagesController::class, 'blog'])->name('blog');

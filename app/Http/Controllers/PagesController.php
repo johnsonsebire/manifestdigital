@@ -84,6 +84,11 @@ class PagesController extends Controller
         return view('pages.opportunities');
     }
 
+    public function applicationSuccess()
+    {
+        return view('pages.application-success');
+    }
+
     public function solutions()
     {
         return view('pages.solutions');

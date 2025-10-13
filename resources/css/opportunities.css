@@ -1,0 +1,527 @@
+/* Opportunities Hero Styles */
+.opportunities-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #FFFCFA 0%, #FFF8F3 50%, #FFFCFA 100%);
+    overflow: hidden;
+    padding: 120px 0 80px;
+}
+
+.opportunities-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255, 73, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(255, 107, 53, 0.06) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.opportunities-hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.opportunities-hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+    line-height: 1.1;
+}
+
+.opportunities-hero .subtitle {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 40px;
+    line-height: 1.4;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.opportunities-hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin: 60px 0;
+    flex-wrap: wrap;
+}
+
+.hero-stat {
+    text-align: center;
+}
+
+.hero-stat-number {
+    display: block;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #FF4900;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.hero-stat-label {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.opportunities-hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 40px;
+    flex-wrap: wrap;
+}
+
+.hero-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #FF4900 0%, #FF6B35 100%);
+    color: white;
+    padding: 16px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 73, 0, 0.3);
+}
+
+.hero-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 73, 0, 0.4);
+    color: white;
+}
+
+.hero-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    color: #FF4900;
+    padding: 16px 32px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: 2px solid #FF4900;
+}
+
+.hero-btn-secondary:hover {
+    background: #FF4900;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 73, 0, 0.3);
+}
+
+.opportunities-hero-decorative {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.hero-decoration {
+    position: absolute;
+    opacity: 0.6;
+    animation: float 6s ease-in-out infinite;
+}
+
+.hero-decoration.left {
+    left: -30px;
+    top: 20%;
+    width: 60px;
+}
+
+.hero-decoration.right {
+    right: -40px;
+    top: 60%;
+    width: 80px;
+    animation-delay: -2s;
+}
+
+.hero-decoration.center {
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    animation-delay: -4s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Life at Manifest Value Cards */
+.life-value-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 73, 0, 0.15);
+}
+
+.life-value-card:hover .rounded-circle {
+    transform: scale(1.1);
+}
+
+/* Benefits Cards Styles */
+.benefits-card {
+    transition: all 0.3s ease;
+}
+
+.benefits-card:hover {
+    transform: translateY(-5px);
+}
+
+.benefits-card:hover .rounded-circle {
+    transform: scale(1.1);
+}
+
+.benefits-card .list-unstyled li {
+    transition: color 0.3s ease;
+}
+
+.benefits-card:hover .list-unstyled li {
+    color: #333 !important;
+}
+
+/* Team Testimonials Styles */
+.team-testimonials {
+    position: relative;
+}
+
+.testimonial-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ddd;
+    border: none;
+    margin: 0 4px;
+    transition: all 0.3s ease;
+}
+
+.testimonial-indicator.active {
+    background: #FF4900;
+}
+
+.carousel-item {
+    padding: 20px 0;
+}
+
+.testimonial-content blockquote {
+    position: relative;
+    padding: 20px 30px;
+    margin: 0;
+    border: none;
+}
+
+.testimonial-quote-left,
+.testimonial-quote-right {
+    position: absolute;
+    font-size: 2rem;
+    color: #FF4900;
+    opacity: 0.8;
+    z-index: 1;
+}
+
+.testimonial-quote-left {
+    top: -10px;
+    left: -10px;
+}
+
+.testimonial-quote-right {
+    bottom: -10px;
+    right: -10px;
+}
+
+.testimonial-photo-container {
+    transition: transform 0.3s ease;
+}
+
+.testimonial-photo-container:hover {
+    transform: scale(1.05);
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    opacity: 0.7;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+}
+
+.carousel-control-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Opportunities Filters */
+.opportunities-filters-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.opportunities-filters-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-btn {
+    background: white;
+    border: 2px solid #e0e0e0;
+    color: #666;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.filter-btn:hover {
+    border-color: #FF4900;
+    color: #FF4900;
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #FF4900 0%, #FF6B35 100%);
+    border-color: #FF4900;
+    color: white;
+}
+
+/* Opportunity Cards */
+.opportunity-card {
+    transition: all 0.3s ease;
+}
+
+.opportunity-card:hover {
+    transform: translateY(-5px);
+}
+
+.opportunity-card .card {
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.opportunity-card:hover .card {
+    box-shadow: 0 10px 30px rgba(255, 73, 0, 0.1);
+}
+
+/* Application Form Styles */
+.career-application-progress {
+    margin-bottom: 2rem;
+}
+
+.career-progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.career-progress-step.active {
+    opacity: 1;
+}
+
+.career-step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.career-progress-step.active .career-step-circle {
+    background: linear-gradient(135deg, #FF4900 0%, #FF6B35 100%);
+    color: white;
+}
+
+.career-step-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.career-progress-line {
+    flex: 1;
+    height: 2px;
+    background: #e0e0e0;
+    margin: 25px 0 0;
+    position: relative;
+}
+
+.career-form-step {
+    display: none;
+}
+
+.career-form-step.active {
+    display: block;
+}
+
+.file-upload-area {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-area:hover {
+    border-color: #FF4900 !important;
+}
+
+.file-upload-content {
+    transition: all 0.3s ease;
+}
+
+.file-upload-area.dragover .file-upload-content {
+    border-color: #FF4900;
+    background: rgba(255, 73, 0, 0.05);
+}
+
+/* Success Animation */
+.success-checkmark {
+    animation: checkmarkBounce 0.8s ease-out;
+}
+
+@keyframes checkmarkBounce {
+    0% { transform: scale(0) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+}
+
+/* Pulse animation for success rings */
+@keyframes pulse-ring {
+    0% { transform: scale(0.8); opacity: 1; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .opportunities-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .opportunities-hero .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .opportunities-hero-stats {
+        gap: 30px;
+    }
+    
+    .hero-stat-number {
+        font-size: 2rem;
+    }
+    
+    .opportunities-hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .hero-btn-primary,
+    .hero-btn-secondary {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+    
+    .testimonial-content {
+        padding: 0 !important;
+    }
+    
+    .career-application-progress {
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    
+    .opportunities-filters-tabs {
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .opportunities-hero {
+        background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+    
+    .opportunities-hero h1 {
+        color: #fff;
+    }
+}
+
+/* Accessibility Enhancements */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: #FF4900;
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 9999;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .hero-decoration {
+        animation: none;
+    }
+    
+    .loading-dots .dot {
+        animation: none;
+    }
+}
