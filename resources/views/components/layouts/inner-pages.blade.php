@@ -1,6 +1,47 @@
-/* About Us Page Specific Styles */
+@props([
+    'transparentHeader' => false,
+    'preloader' => 'advanced',
+    'notificationStyle' => 'dark', // Options: 'dark', 'modern-purple', 'detailed'
+    'title' => 'About Us | Manifest Digital - Ghana\'s Leading Digital Solutions Agency',
+])
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about Manifest Digital - Ghana's leading digital solutions agency. Our story, mission, and the expert team behind innovative web and mobile solutions.">
+    <meta name="keywords" content="about Manifest Digital, digital agency Ghana, web development team, our story, company mission">
+    <meta name="author" content="Manifest Digital">
 
- /* About Hero Section */
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/logos/favicon.png') }}">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="About Us | Manifest Digital">
+    <meta property="og:description" content="Discover the story behind Manifest Digital and meet the team transforming businesses across Ghana with innovative digital solutions.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://manifestghana.com/about-us">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About Us | Manifest Digital">
+    <meta name="twitter:description" content="Learn about our mission, values, and the expert team behind Ghana's leading digital solutions agency.">
+    
+    <title>{{$title}}</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for social icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+   @vite(['resources/css/styles.css', 'resources/js/scripts.js'])
+    
+    <style>
+        /* About Us Page Specific Styles */
+        
+        /* About Hero Section */
         .about-hero {
             background: linear-gradient(135deg, rgba(255, 34, 0, 0.9), rgba(255, 107, 0, 0.9));
             min-height: 60vh;
@@ -507,7 +548,7 @@
             visibility: visible;
         }
 
-        .team-modal .modal-content {
+        .modal-content {
             background: white;
             border-radius: 20px;
             max-width: 900px;
@@ -517,8 +558,6 @@
             position: relative;
             transform: translateY(30px);
             transition: transform 0.3s ease;
-            border: none;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .team-modal.active .modal-content {
@@ -532,7 +571,7 @@
             width: 40px;
             height: 40px;
             border: none;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -565,7 +604,7 @@
             height: 150px;
             border-radius: 50%;
             border: 6px solid rgba(255, 255, 255, 0.2);
-            margin: 0 auto;
+            margin: 0 auto 1.5rem;
             overflow: hidden;
             background: rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
@@ -632,7 +671,7 @@
             margin-bottom: 0;
         }
 
-        .modal-section .section-title {
+        .modal-section h3 {
             font-size: 1.5rem;
             font-weight: 700;
             color: #1a1a1a;
@@ -701,21 +740,6 @@
             content: '▪';
             color: #FF4900;
             font-weight: bold;
-        }
-
-        .skills-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .skill-tag {
-            background: #FF4900;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 500;
         }
 
         .experience-timeline {
@@ -1236,3 +1260,32 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+    </style>
+  <!-- Initial state setup for preloader -->
+    <style>
+        .loading .main-content {
+            opacity: 0;
+            visibility: hidden;
+        }
+    </style>
+      @if ($preloader == 'simple')
+        @vite(['resources/css/simple-preloader.css', 'resources/js/simple-preloader.js'])
+    @else
+        @vite(['resources/css/advanced-preloader.css', 'resources/js/advanced-preloader.js'])
+    @endif
+
+</head>
+<body class="loading">
+    <!-- Reading Tracker Progress Bar -->
+    <div class="reading-tracker"></div>
+    <x-notification-topbar :style="$notificationStyle" />
+
+
+    {{-- @if ($preloader == 'simple')
+        <x-common.simple-preloader />
+    @else
+        <x-common.advanced-preloader />
+    @endif --}}
+
+    <x-common.header />
+  {{$slot}}

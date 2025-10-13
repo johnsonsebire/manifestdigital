@@ -98,4 +98,8 @@ class PagesController extends Controller
     {
         return view('pages.policies');
     }
+
+    public function blog(){
+        return view('pages.blog');
+    }
 }

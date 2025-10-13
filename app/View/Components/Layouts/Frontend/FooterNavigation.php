@@ -25,7 +25,7 @@ class FooterNavigation extends Component
         $this->navigationGroups = $navigationGroups ?? [
             [
                 'links' => [
-                    ['label' => 'About Us', 'url' => 'about'],
+                    ['label' => 'About Us', 'url' => 'about-us'],
                     ['label' => 'Opportunities', 'url' => 'opportunities'],
                     ['label' => 'Our Blog', 'url' => 'blog'],
                     ['label' => 'Solutions', 'url' => 'solutions'],

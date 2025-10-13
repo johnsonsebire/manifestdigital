@@ -1,4 +1,4 @@
-<x-layouts.frontend title="Book a Call - Schedule Your Free Consultation" :transparent-header="false" preloader='advanced'>
+<x-layouts.frontend title="Book a Call - Schedule Your Free Consultation" :transparent-header="false" preloader='none'>
 
     @push('styles')
         @vite(['resources/css/book-a-call.css'])

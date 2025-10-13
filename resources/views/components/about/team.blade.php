@@ -192,7 +192,7 @@
     </section>
 
 
-<!-- Team Member Modals -->
+<!-- Team Member Modal -->
 <div class="team-modal" id="teamModal">
     <div class="modal-content">
         <button class="modal-close" onclick="closeTeamModal()">

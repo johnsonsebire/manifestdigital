@@ -22,4 +22,4 @@ yarn-error.log
 /.vscode
 /.zed
 deploy.php
-/deploy.php
+deploy-old.php

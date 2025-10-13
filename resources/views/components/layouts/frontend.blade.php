@@ -2,7 +2,7 @@
     'transparentHeader' => false,
     'preloader' => 'advanced',
     'notificationStyle' => 'dark', // Options: 'dark', 'modern-purple'
-    'title' => 'Manifest Digital | Custom Web & App Development in Ghana | Est. 2014'
+    'title' => 'Manifest Digital | Custom Web & App Development in Ghana | Est. 2014',
 ])
 
 <!DOCTYPE html>
@@ -59,7 +59,7 @@
     @else
         @vite(['resources/css/advanced-preloader.css', 'resources/js/advanced-preloader.js'])
     @endif
-    
+
     <!-- Initial state setup for preloader -->
     <style>
         .loading .main-content {
@@ -69,18 +69,15 @@
     </style>
 </head>
 
-<body class="loading">
+<body @if($preloader != 'none') class="loading" @endif>
 
     @if ($preloader == 'simple')
         <x-common.simple-preloader />
-    @else
+    @elseif($preloader=='advanced')
         <x-common.advanced-preloader />
     @endif
 
-    <x-layouts.frontend.primary-header 
-        :transparent="$transparentHeader" 
-        :notificationStyle="$notificationStyle" 
-    />
+    <x-layouts.frontend.primary-header :transparent="$transparentHeader" :notificationStyle="$notificationStyle" />
 
     <main class="main-content">
         {{ $slot }}
