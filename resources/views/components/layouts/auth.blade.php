@@ -1,3 +1,3 @@
-<x-layouts.auth.manifest :title="$title ?? null">
+<x-layouts.auth.simple :title="$title ?? null">
     {{ $slot }}
-</x-layouts.auth.manifest>
+</x-layouts.auth.simple>
