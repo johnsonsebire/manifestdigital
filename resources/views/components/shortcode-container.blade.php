@@ -1,0 +1,3 @@
+@props(['processedContent'])
+
+{!! $processedContent !!}

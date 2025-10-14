@@ -15,6 +15,18 @@
                 <flux:navlist.group :heading="__('Platform')" class="grid">
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                 </flux:navlist.group>
+                
+                @can('view-forms')
+                <flux:navlist.group :heading="__('Content')" class="grid">
+                    <flux:navlist.item icon="document-text" :href="route('admin.forms.index')" :current="request()->routeIs('admin.forms.*')" wire:navigate>
+                        {{ __('Forms') }}
+                    </flux:navlist.item>
+                    
+                    <flux:navlist.item icon="inbox-arrow-down" :href="route('admin.form-submissions.index')" :current="request()->routeIs('admin.form-submissions.*')" wire:navigate>
+                        {{ __('Form Submissions') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+                @endcan
             </flux:navlist>
 
             <flux:spacer />

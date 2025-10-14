@@ -9,12 +9,18 @@ class Frontend extends Component
     public $title;
     public $transparentHeader;
     public $preloader;
+    public $notificationStyle;
 
-    public function __construct($title = null, $transparentHeader = false, $preloader='simple')
-    {
+    public function __construct(
+        $title = null, 
+        $transparentHeader = false, 
+        $preloader = 'simple',
+        $notificationStyle = 'dark'
+    ) {
         $this->title = $title;
         $this->transparentHeader = $transparentHeader;
-        $this->preloader=$preloader;
+        $this->preloader = $preloader;
+        $this->notificationStyle = $notificationStyle;
     }
 
     public function render()

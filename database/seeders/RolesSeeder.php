@@ -74,6 +74,14 @@ class RolesSeeder extends Seeder
             // Basic operations
             'view-reports',
             'manage-settings',
+            
+            // Form Management
+            'view-forms',
+            'create-forms',
+            'edit-forms',
+            'delete-forms',
+            'view-form-submissions',
+            'export-form-submissions',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -99,7 +107,9 @@ class RolesSeeder extends Seeder
                 'view-users', 'create-users', 'edit-users',
                 'view-roles', 'assign-roles',
                 'access-dashboard', 'access-admin-panel',
-                'view-reports', 'manage-settings'
+                'view-reports', 'manage-settings',
+                'view-forms', 'create-forms', 'edit-forms', 'delete-forms',
+                'view-form-submissions', 'export-form-submissions'
             ];
             $administrator->givePermissionTo($adminPermissions);
             $this->command->info('Assigned admin permissions to Administrator role');
