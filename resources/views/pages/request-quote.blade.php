@@ -245,6 +245,9 @@
                         if (currentStep === 5) {
                             updateSummary();
                         }
+                        
+                        // Scroll to top of the form for better UX
+                        scrollToFormTop();
                     } else {
                         alert('Please complete all required fields before proceeding.');
                     }
@@ -253,7 +256,20 @@
                 window.prevStep = function () {
                     currentStep--;
                     switchToStep(currentStep);
+                    
+                    // Scroll to top of the form for better UX
+                    scrollToFormTop();
                 };
+
+                function scrollToFormTop() {
+                    const quoteContainer = document.querySelector('.quote-container');
+                    if (quoteContainer) {
+                        quoteContainer.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }
 
                 function switchToStep(step) {
                     // Hide all steps
@@ -275,14 +291,26 @@
                     });
                 }
 
-                // Submit quote - Now submits to Laravel backend
+                // Submit quote - Collect all form data and submit to Laravel backend
                 window.submitQuote = function () {
                     const submitBtn = document.getElementById('submitBtn');
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
-                    // Submit the actual form to the backend
-                    document.getElementById('quoteForm').submit();
+                    // Remove display:none from ALL steps so their inputs are included in form submission
+                    // Use position:absolute and opacity:0 instead to hide them visually
+                    document.querySelectorAll('.quote-step').forEach(step => {
+                        step.style.display = 'block';
+                        step.style.position = 'absolute';
+                        step.style.opacity = '0';
+                        step.style.pointerEvents = 'none';
+                        step.style.zIndex = '-1';
+                    });
+
+                    // Small delay to ensure DOM updates, then submit
+                    setTimeout(() => {
+                        document.getElementById('quoteForm').submit();
+                    }, 150);
                 };
             });
         </script>
