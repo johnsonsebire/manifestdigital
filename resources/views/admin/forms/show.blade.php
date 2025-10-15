@@ -64,6 +64,18 @@
                         <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Success Message</dt>
                         <dd class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $form->success_message }}</dd>
                     </div>
+
+                    @if($form->success_page_url)
+                    <div class="sm:col-span-2">
+                        <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Success Page URL</dt>
+                        <dd class="mt-1 text-sm">
+                            <a href="{{ $form->success_page_url }}" target="_blank" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+                                {{ $form->success_page_url }}
+                                <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+                            </a>
+                        </dd>
+                    </div>
+                    @endif
                     
                     <div class="sm:col-span-2">
                         <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Shortcode</dt>

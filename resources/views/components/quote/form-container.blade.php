@@ -24,26 +24,55 @@
         </div>
     </div>
 
-    <!-- Quote Form Content -->
-    <div class="quote-content">
-        <!-- Step 1: Service Selection -->
-        <x-quote.step-service />
+    <!-- Wrap all steps in a single form -->
+    <form id="quoteForm" action="{{ route('forms.submit', 'request-quote') }}" method="POST">
+        @csrf
         
-        <!-- Step 2: Project Details -->
-        <x-quote.step-details />
+        <!-- Success/Error Messages -->
+        @if(session('success'))
+            <div class="alert alert-success" style="margin: 20px; padding: 20px; background: #d1e7dd; border: 2px solid #badbcc; border-radius: 12px; color: #0f5132;">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger" style="margin: 20px; padding: 20px; background: #f8d7da; border: 2px solid #f5c2c7; border-radius: 12px; color: #842029;">
+                <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="alert alert-danger" style="margin: 20px; padding: 20px; background: #f8d7da; border: 2px solid #f5c2c7; border-radius: 12px; color: #842029;">
+                <strong><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</strong>
+                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         
-        <!-- Step 3: Budget & Timeline -->
-        <x-quote.step-budget-timeline />
-        
-        <!-- Step 4: Contact Information -->
-        <x-quote.step-contact />
-        
-        <!-- Step 5: Review & Submit -->
-        <x-quote.step-review />
-        
-        <!-- Success Message -->
-        <x-quote.step-success />
-    </div>
+        <!-- Quote Form Content -->
+        <div class="quote-content">
+            <!-- Step 1: Service Selection -->
+            <x-quote.step-service />
+            
+            <!-- Step 2: Project Details -->
+            <x-quote.step-details />
+            
+            <!-- Step 3: Budget & Timeline -->
+            <x-quote.step-budget-timeline />
+            
+            <!-- Step 4: Contact Information -->
+            <x-quote.step-contact />
+            
+            <!-- Step 5: Review & Submit -->
+            <x-quote.step-review />
+            
+            <!-- Success Message -->
+            <x-quote.step-success />
+        </div>
+    </form>
 </div>
 
 <!-- Add some spacing after the quote container -->

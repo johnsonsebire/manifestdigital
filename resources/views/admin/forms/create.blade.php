@@ -69,6 +69,17 @@
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
+
+                        <div>
+                            <label for="success_page_url" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Success Page URL (Optional)</label>
+                            <input type="url" name="success_page_url" id="success_page_url" value="{{ old('success_page_url') }}"
+                                class="mt-1 block w-full border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                                placeholder="https://example.com/thank-you">
+                            <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">If provided, users will be redirected to this page after successful submission instead of showing the success message on the same page.</p>
+                            @error('success_page_url')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
                         
                         <div class="space-y-4">
                             <div class="flex items-center">

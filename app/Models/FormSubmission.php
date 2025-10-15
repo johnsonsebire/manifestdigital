@@ -26,6 +26,7 @@ class FormSubmission extends Model
      */
     protected $casts = [
         'data' => 'array',
+        'submitted_at' => 'datetime',
     ];
 
     /**

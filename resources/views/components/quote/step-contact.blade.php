@@ -103,10 +103,10 @@
     </form>
 
     <div class="btn-navigation">
-        <button class="btn-secondary" onclick="prevStep()">
+        <button type="button" class="btn-secondary" onclick="prevStep()">
             <i class="fas fa-arrow-left"></i> Previous
         </button>
-        <button class="btn-quote" onclick="nextStep()">
+        <button type="button" class="btn-quote" onclick="nextStep()">
             Review Quote <i class="fas fa-arrow-right"></i>
         </button>
     </div>

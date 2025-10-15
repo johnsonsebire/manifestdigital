@@ -103,7 +103,13 @@ class FormField extends Model
 
         // Add custom validation rules if defined
         if (!empty($this->validation_rules)) {
-            $rules = array_merge($rules, $this->validation_rules);
+            // If validation_rules is a string (like "required|email"), convert to array
+            if (is_string($this->validation_rules)) {
+                $customRules = explode('|', $this->validation_rules);
+                $rules = array_merge($rules, $customRules);
+            } elseif (is_array($this->validation_rules)) {
+                $rules = array_merge($rules, $this->validation_rules);
+            }
         }
 
         return $rules;

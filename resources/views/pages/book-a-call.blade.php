@@ -50,63 +50,14 @@
             // ========================
             // Booking Form Submission
             // ========================
-            const bookingForm = document.getElementById('bookingForm');
-            const successMessage = document.getElementById('successMessage');
-
+            // Form now submits to backend via Laravel form builder module
+            // The old client-side JavaScript has been removed to allow proper form submission
+            
             // Set minimum date to today
             const preferredDateInput = document.getElementById('preferredDate');
             if (preferredDateInput) {
                 const today = new Date().toISOString().split('T')[0];
                 preferredDateInput.setAttribute('min', today);
-            }
-
-            if (bookingForm) {
-                bookingForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
-                    // Get form data
-                    const formData = new FormData(bookingForm);
-                    const data = Object.fromEntries(formData);
-
-                    // Here you would normally send the data to your backend
-                    // For now, we'll simulate a successful submission
-                    console.log('Booking request:', data);
-
-                    // Show success message
-                    bookingForm.style.display = 'none';
-                    successMessage.classList.add('show');
-
-                    // Scroll to success message
-                    successMessage.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-
-                    // You can also send an email notification here
-                    // Example using mailto (opens default email client):
-                    const emailBody = `
-New Consultation Request:
-
-Name: ${data.firstName} ${data.lastName}
-Email: ${data.email}
-Phone: ${data.phone}
-Meeting Type: ${data.meetingType}
-Preferred Date: ${data.preferredDate}
-Preferred Time: ${data.preferredTime}
-Timezone: ${data.timezone}
-Project Details: ${data.projectDetails || 'Not provided'}
-                `.trim();
-
-                    // Optional: Auto-send email (opens mail client)
-                    // window.location.href = `mailto:business@manifestghana.com?subject=New Consultation Request&body=${encodeURIComponent(emailBody)}`;
-
-                    // Reset form after 3 seconds
-                    setTimeout(() => {
-                        bookingForm.reset();
-                        bookingForm.style.display = 'block';
-                        successMessage.classList.remove('show');
-                    }, 5000);
-                });
             }
 
             // ========================

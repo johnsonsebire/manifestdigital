@@ -4,6 +4,10 @@
         <p>Help us understand your budget range and project timeline to provide the most accurate quote.</p>
     </div>
 
+    <!-- Hidden inputs to store selections -->
+    <input type="hidden" name="budget" id="budgetInput" value="">
+    <input type="hidden" name="timeline" id="timelineInput" value="">
+
     <div class="form-section">
         <h3>
             <div class="form-section-icon"><i class="fas fa-dollar-sign"></i></div>
@@ -80,10 +84,10 @@
     </div>
 
     <div class="btn-navigation">
-        <button class="btn-secondary" onclick="prevStep()">
+        <button type="button" class="btn-secondary" onclick="prevStep()">
             <i class="fas fa-arrow-left"></i> Previous
         </button>
-        <button class="btn-quote" onclick="nextStep()">
+        <button type="button" class="btn-quote" onclick="nextStep()">
             Next Step <i class="fas fa-arrow-right"></i>
         </button>
     </div>

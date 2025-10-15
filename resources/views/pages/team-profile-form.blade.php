@@ -12,7 +12,7 @@
     
     <div class="container">
         <div class="team-profile-form">
-            <form action="{{ route('team-profile.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('forms.submit', 'team-profile') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 @if(session('success'))
@@ -80,29 +80,14 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="email" class="form-label">Email <span class="required">*</span></label>
-                            <input type="email" id="email" name="contact[email]" class="form-control" required value="{{ old('contact.email') }}">
+                            <label for="contact_email" class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" id="contact_email" name="contact_email" class="form-control" required value="{{ old('contact_email') }}">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" id="phone" name="contact[phone]" class="form-control" value="{{ old('contact.phone') }}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="location" class="form-label">Location</label>
-                            <input type="text" id="location" name="contact[location]" class="form-control" value="{{ old('contact.location') }}">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="linkedin" class="form-label">LinkedIn Profile</label>
-                            <input type="url" id="linkedin" name="contact[linkedin]" class="form-control" value="{{ old('contact.linkedin') }}">
+                            <label for="contact_phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="contact_phone" name="contact_phone" class="form-control" value="{{ old('contact_phone') }}">
                         </div>
                     </div>
                 </div>
@@ -110,14 +95,29 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="github" class="form-label">GitHub Profile</label>
-                            <input type="url" id="github" name="contact[github]" class="form-control" value="{{ old('contact.github') }}">
+                            <label for="contact_location" class="form-label">Location</label>
+                            <input type="text" id="contact_location" name="contact_location" class="form-control" value="{{ old('contact_location') }}">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="other_social" class="form-label">Other Social Media</label>
-                            <input type="text" id="other_social" name="contact[other_social]" class="form-control" value="{{ old('contact.other_social') }}">
+                            <label for="contact_linkedin" class="form-label">LinkedIn Profile</label>
+                            <input type="url" id="contact_linkedin" name="contact_linkedin" class="form-control" value="{{ old('contact_linkedin') }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="contact_github" class="form-label">GitHub Profile</label>
+                            <input type="url" id="contact_github" name="contact_github" class="form-control" value="{{ old('contact_github') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="contact_other_social" class="form-label">Other Social Media</label>
+                            <input type="text" id="contact_other_social" name="contact_other_social" class="form-control" value="{{ old('contact_other_social') }}">
                             <small class="form-text text-muted">Format: platform:username (e.g., dribbble:username)</small>
                         </div>
                     </div>
@@ -262,8 +262,13 @@
                     </button>
                 </div>
 
+                <!-- Hidden fields for JSON serialized data -->
+                <input type="hidden" name="skills" id="skills_json">
+                <input type="hidden" name="experience" id="experience_json">
+                <input type="hidden" name="achievements" id="achievements_json">
+
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary btn-lg">Submit Profile</button>
+                    <button type="submit" class="btn btn-primary btn-lg" id="submitProfileBtn">Submit Profile</button>
                     <button type="reset" class="btn btn-outline-secondary btn-lg">Reset Form</button>
                 </div>
             </form>
@@ -275,6 +280,64 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            // Serialize array fields to JSON before form submission
+            form.addEventListener('submit', function(e) {
+                // Collect skills
+                const skills = [];
+                document.querySelectorAll('.skill-category-group').forEach(group => {
+                    const categoryInput = group.querySelector('input[name*="[category]"]');
+                    const itemsInput = group.querySelector('input[name*="[items]"]');
+                    
+                    if (categoryInput && itemsInput && categoryInput.value && itemsInput.value) {
+                        skills.push({
+                            category: categoryInput.value,
+                            items: itemsInput.value
+                        });
+                    }
+                });
+                document.getElementById('skills_json').value = JSON.stringify(skills);
+                
+                // Collect experience
+                const experiences = [];
+                document.querySelectorAll('.experience-item').forEach(item => {
+                    const titleInput = item.querySelector('input[name*="[title]"]');
+                    const companyInput = item.querySelector('input[name*="[company]"]');
+                    const durationInput = item.querySelector('input[name*="[duration]"]');
+                    const locationInput = item.querySelector('input[name*="[location]"]');
+                    const descriptionInput = item.querySelector('textarea[name*="[description]"]');
+                    
+                    if (titleInput && companyInput && durationInput && descriptionInput) {
+                        experiences.push({
+                            title: titleInput.value,
+                            company: companyInput.value,
+                            duration: durationInput.value,
+                            location: locationInput ? locationInput.value : '',
+                            description: descriptionInput.value
+                        });
+                    }
+                });
+                document.getElementById('experience_json').value = JSON.stringify(experiences);
+                
+                // Collect achievements
+                const achievements = [];
+                document.querySelectorAll('.achievement-item').forEach(item => {
+                    const titleInput = item.querySelector('input[name*="[title]"]');
+                    const yearInput = item.querySelector('input[name*="[year]"]');
+                    const descriptionInput = item.querySelector('textarea[name*="[description]"]');
+                    
+                    if (titleInput && descriptionInput) {
+                        achievements.push({
+                            title: titleInput.value,
+                            year: yearInput ? yearInput.value : '',
+                            description: descriptionInput.value
+                        });
+                    }
+                });
+                document.getElementById('achievements_json').value = JSON.stringify(achievements);
+            });
+            
             // Add more skill categories
             let skillIndex = 1;
             document.getElementById('add-skill-category').addEventListener('click', function() {

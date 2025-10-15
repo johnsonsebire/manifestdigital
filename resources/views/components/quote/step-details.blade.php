@@ -13,22 +13,31 @@
 
             <div class="form-group">
                 <label class="form-label" for="projectTitle">Project Title</label>
-                <input type="text" class="form-input" id="projectTitle" name="title"
-                    placeholder="Give your project a name" required>
+                <input type="text" class="form-input" id="projectTitle" name="projectTitle"
+                    placeholder="Give your project a name" required value="{{ old('projectTitle') }}">
+                @error('projectTitle')
+                    <span class="text-danger" style="font-size: 14px; color: #dc3545;">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-group">
                 <label class="form-label" for="projectDescription">Project Description</label>
-                <textarea class="form-textarea" id="projectDescription" name="description"
+                <textarea class="form-textarea" id="projectDescription" name="projectDescription"
                     placeholder="Describe your project in detail. What are your goals? What problems are you trying to solve?"
-                    required></textarea>
+                    required>{{ old('projectDescription') }}</textarea>
+                @error('projectDescription')
+                    <span class="text-danger" style="font-size: 14px; color: #dc3545;">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label class="form-label" for="targetAudience">Target Audience</label>
-                    <input type="text" class="form-input" id="targetAudience" name="audience"
-                        placeholder="Who is your target audience?">
+                    <input type="text" class="form-input" id="targetAudience" name="targetAudience"
+                        placeholder="Who is your target audience?" value="{{ old('targetAudience') }}">
+                    @error('targetAudience')
+                        <span class="text-danger" style="font-size: 14px; color: #dc3545;">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="form-group">
                     <label class="form-label" for="industry">Industry</label>
@@ -100,10 +109,10 @@
     </form>
 
     <div class="btn-navigation">
-        <button class="btn-secondary" onclick="prevStep()">
+        <button type="button" class="btn-secondary" onclick="prevStep()">
             <i class="fas fa-arrow-left"></i> Previous
         </button>
-        <button class="btn-quote" onclick="nextStep()">
+        <button type="button" class="btn-quote" onclick="nextStep()">
             Next Step <i class="fas fa-arrow-right"></i>
         </button>
     </div>

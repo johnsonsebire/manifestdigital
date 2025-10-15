@@ -105,11 +105,19 @@
 }
 
 .quote-step {
-    display: none;
+    /* Hide visually but keep in DOM so form fields submit */
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .quote-step.active {
-    display: block;
+    /* Show the active step */
+    position: relative;
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .step-header {

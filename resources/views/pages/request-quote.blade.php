@@ -20,35 +20,41 @@
                 // Service selection
                 const serviceCards = document.querySelectorAll('.service-card');
                 const step1NextBtn = document.getElementById('step1Next');
+                const serviceInput = document.getElementById('serviceInput');
 
                 serviceCards.forEach(card => {
                     card.addEventListener('click', function () {
                         serviceCards.forEach(c => c.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedService = this.dataset.service;
+                        serviceInput.value = selectedService; // Update hidden input
                         step1NextBtn.disabled = false;
                     });
                 });
 
                 // Budget selection
                 const budgetOptions = document.querySelectorAll('.budget-option');
+                const budgetInput = document.getElementById('budgetInput');
 
                 budgetOptions.forEach(option => {
                     option.addEventListener('click', function () {
                         budgetOptions.forEach(o => o.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedBudget = this.dataset.budget;
+                        budgetInput.value = selectedBudget; // Update hidden input
                     });
                 });
 
                 // Timeline selection
                 const timelineOptions = document.querySelectorAll('.timeline-option');
+                const timelineInput = document.getElementById('timelineInput');
 
                 timelineOptions.forEach(option => {
                     option.addEventListener('click', function () {
                         timelineOptions.forEach(o => o.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedTimeline = this.dataset.timeline;
+                        timelineInput.value = selectedTimeline; // Update hidden input
                     });
                 });
 
@@ -269,20 +275,14 @@
                     });
                 }
 
-                // Submit quote
+                // Submit quote - Now submits to Laravel backend
                 window.submitQuote = function () {
                     const submitBtn = document.getElementById('submitBtn');
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
 
-                    // Simulate API call
-                    setTimeout(() => {
-                        switchToStep('success');
-                        document.getElementById('success').classList.add('active');
-
-                        // Hide progress bar on success
-                        document.querySelector('.quote-progress').style.display = 'none';
-                    }, 2000);
+                    // Submit the actual form to the backend
+                    document.getElementById('quoteForm').submit();
                 };
             });
         </script>

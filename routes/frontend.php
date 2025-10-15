@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PagesController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\FormSubmissionController;
 
 
 
@@ -29,3 +30,6 @@ Route::get('/contact', [PagesController::class, 'contact'])->name('contact');
 // Team Profile Form Routes
 Route::get('/team-profile/create', [App\Http\Controllers\TeamProfileController::class, 'create'])->name('team-profile.create');
 Route::post('/team-profile/store', [App\Http\Controllers\TeamProfileController::class, 'store'])->name('team-profile.store');
+
+// Form Builder Routes - Public form submission
+Route::post('/forms/{slug}/submit', [FormSubmissionController::class, 'submitForm'])->name('forms.submit');

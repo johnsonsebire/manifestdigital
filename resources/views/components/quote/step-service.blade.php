@@ -4,6 +4,9 @@
         <p>Select the primary service you're looking for. You can add additional services in the next step.</p>
     </div>
 
+    <!-- Hidden input to store selected service -->
+    <input type="hidden" name="service" id="serviceInput" value="">
+
     <div class="service-grid" id="serviceGrid">
         <div class="service-card" data-service="website">
             <div class="check-icon"><i class="fas fa-check"></i></div>
@@ -56,7 +59,7 @@
 
     <div class="btn-navigation">
         <div></div>
-        <button class="btn-quote" onclick="nextStep()" id="step1Next" disabled>
+        <button type="button" class="btn-quote" onclick="nextStep()" id="step1Next" disabled>
             Next Step <i class="fas fa-arrow-right"></i>
         </button>
     </div>

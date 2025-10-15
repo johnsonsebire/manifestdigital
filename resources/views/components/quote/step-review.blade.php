@@ -16,10 +16,10 @@
     </div>
 
     <div class="btn-navigation">
-        <button class="btn-secondary" onclick="prevStep()">
+        <button type="button" class="btn-secondary" onclick="prevStep()">
             <i class="fas fa-arrow-left"></i> Previous
         </button>
-        <button class="btn-quote" onclick="submitQuote()" id="submitBtn">
+        <button type="button" class="btn-quote" onclick="submitQuote()" id="submitBtn">
             <i class="fas fa-paper-plane"></i> Submit Quote Request
         </button>
     </div>

@@ -17,6 +17,7 @@ class Form extends Model
         'slug',
         'description',
         'success_message',
+        'success_page_url',
         'submit_button_text',
         'store_submissions',
         'send_notifications',
