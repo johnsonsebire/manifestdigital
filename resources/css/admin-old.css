@@ -1,0 +1,1203 @@
+/* ============================================
+   MANIFEST DIGITAL - ADMIN BACKEND THEME
+   Brand Colors: #FF4900 (Orange), #000000 (Black), #FFFCFA (Off-white)
+   Complete Light & Dark Mode Support
+   ============================================ */
+
+/* ============================================
+   CSS VARIABLES
+   ============================================ */
+:root {
+    /* Brand Colors */
+    --brand-orange: #FF4900;
+    --brand-orange-hover: #E64200;
+    --brand-orange-light: #FF6B35;
+    --brand-black: #000000;
+    --brand-off-white: #FFFCFA;
+    
+    /* Light Mode */
+    --bg-light: #f9fafb;
+    --bg-card-light: #ffffff;
+    --text-primary-light: #111827;
+    --text-secondary-light: #6b7280;
+    --border-light: #e5e7eb;
+    --hover-light: #fef3ed;
+    
+    /* Dark Mode */
+    --bg-dark: #1a1f2e;
+    --bg-card-dark: #242b3d;
+    --bg-sidebar-dark: #1e2433;
+    --text-primary-dark: #f1f5f9;
+    --text-secondary-dark: #94a3b8;
+    --border-dark: #334155;
+    --hover-dark: #2d3548;
+    
+    /* Status Colors */
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    
+    /* Form Fields */
+    --input-height: 2.75rem;
+    --input-padding-x: 1rem;
+    --input-padding-y: 0.625rem;
+    --input-font-size: 0.9375rem;
+}
+
+/* ============================================
+   GLOBAL RESETS & BASE STYLES
+   ============================================ */
+
+/* Force proper backgrounds */
+html.dark {
+    background-color: var(--bg-dark) !important;
+}
+
+html:not(.dark) {
+    background-color: var(--bg-light) !important;
+}
+
+.dashboard-layout {
+    min-height: 100vh;
+}
+
+/* Light Mode Base */
+html:not(.dark) body,
+html:not(.dark) .dashboard-layout {
+    background-color: var(--bg-light) !important;
+    color: var(--text-primary-light) !important;
+}
+
+/* Dark Mode Base */
+html.dark body,
+html.dark .dashboard-layout {
+    background-color: var(--bg-dark) !important;
+    color: var(--text-primary-dark) !important;
+}
+
+/* ============================================
+   SIDEBAR - COMPLETE REDESIGN
+   ============================================ */
+
+/* Light Mode Sidebar */
+html:not(.dark) flux-sidebar,
+html:not(.dark) [data-flux-sidebar] {
+    background-color: var(--bg-card-light) !important;
+    border-right: 1px solid var(--border-light) !important;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Dark Mode Sidebar */
+html.dark flux-sidebar,
+html.dark [data-flux-sidebar] {
+    background-color: var(--bg-sidebar-dark) !important;
+    border-right: 1px solid var(--border-dark) !important;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Sidebar Navigation Items - Light Mode */
+html:not(.dark) [data-flux-navlist-item] {
+    color: var(--text-primary-light) !important;
+    border-radius: 0.5rem;
+    margin: 0.125rem 0.5rem;
+    transition: all 0.2s ease;
+}
+
+html:not(.dark) [data-flux-navlist-item] * {
+    color: var(--text-primary-light) !important;
+}
+
+html:not(.dark) [data-flux-navlist-item]:hover {
+    background-color: var(--hover-light) !important;
+}
+
+html:not(.dark) [data-flux-navlist-item]:hover * {
+    color: var(--brand-orange) !important;
+}
+
+html:not(.dark) [data-flux-navlist-item][aria-current="page"] {
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%) !important;
+}
+
+html:not(.dark) [data-flux-navlist-item][aria-current="page"] * {
+    color: white !important;
+    font-weight: 600;
+}
+
+/* Sidebar Navigation Items - Dark Mode */
+html.dark [data-flux-navlist-item] {
+    color: var(--text-primary-dark) !important;
+    border-radius: 0.5rem;
+    margin: 0.125rem 0.5rem;
+    transition: all 0.2s ease;
+}
+
+html.dark [data-flux-navlist-item] * {
+    color: var(--text-primary-dark) !important;
+}
+
+html.dark [data-flux-navlist-item]:hover {
+    background-color: var(--hover-dark) !important;
+}
+
+html.dark [data-flux-navlist-item]:hover * {
+    color: var(--brand-orange-light) !important;
+}
+
+html.dark [data-flux-navlist-item][aria-current="page"] {
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%) !important;
+}
+
+html.dark [data-flux-navlist-item][aria-current="page"] * {
+    color: white !important;
+    font-weight: 600;
+}
+
+/* Sidebar Group Headings */
+html:not(.dark) [data-flux-navlist-group] > div:first-child,
+html:not(.dark) [data-flux-navlist-group] [class*="text-xs"] {
+    color: var(--text-secondary-light) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+}
+
+html.dark [data-flux-navlist-group] > div:first-child,
+html.dark [data-flux-navlist-group] [class*="text-xs"] {
+    color: var(--text-secondary-dark) !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* ============================================
+   BASE LAYOUT STYLES
+   ============================================ */
+
+/* Light Mode Base */
+body:not(.dark) .dashboard-layout,
+html:not(.dark) .dashboard-layout {
+    background-color: var(--admin-bg-light);
+    color: var(--admin-text-light);
+}
+
+/* Dark Mode Base */
+.dark,
+.dark body,
+.dark .dashboard-layout {
+    background-color: var(--admin-bg-dark) !important;
+    color: var(--admin-text-dark) !important;
+}
+
+/* Ensure all text is visible in dark mode */
+.dark .dashboard-layout *,
+.dark .dashboard-layout h1,
+.dark .dashboard-layout h2,
+.dark .dashboard-layout h3,
+.dark .dashboard-layout h4,
+.dark .dashboard-layout h5,
+.dark .dashboard-layout h6,
+.dark .dashboard-layout p,
+.dark .dashboard-layout span,
+.dark .dashboard-layout div {
+    color: inherit !important;
+}
+
+/* Override specific text colors for dark mode */
+.dark .text-zinc-900 {
+    color: var(--admin-text-dark) !important;
+}
+
+.dark .text-zinc-600,
+.dark .text-zinc-700,
+.dark .text-zinc-800 {
+    color: var(--admin-text-secondary-dark) !important;
+}
+
+.dark .text-zinc-400,
+.dark .text-zinc-500 {
+    color: #94a3b8 !important;
+}
+
+.dark .text-zinc-300 {
+    color: #cbd5e1 !important;
+}
+
+.dark .text-white {
+    color: #ffffff !important;
+}
+
+/* Force all button text to be visible */
+.dark button,
+.dark a {
+    color: inherit;
+}
+
+/* Flux component text fixes for dark mode */
+.dark [data-flux-button],
+.dark [data-flux-link],
+.dark [data-flux-menu-item] {
+    color: var(--admin-text-dark) !important;
+}
+
+.dark [data-flux-button] *,
+.dark [data-flux-link] *,
+.dark [data-flux-menu-item] * {
+    color: inherit !important;
+}
+
+/* Tabs and navigation items */
+.dark [role="tab"],
+.dark [role="tablist"] button,
+.dark nav a,
+.dark nav button {
+    color: var(--admin-text-secondary-dark) !important;
+}
+
+.dark [role="tab"][aria-selected="true"],
+.dark nav a.active,
+.dark nav button.active {
+    color: var(--admin-text-dark) !important;
+}
+
+/* ============================================
+   BUTTON STYLES - BRAND COLORS
+   ============================================ */
+
+/* Primary Buttons (Brand Orange) - Light Mode */
+body:not(.dark) .bg-primary-600,
+body:not(.dark) .bg-primary-700,
+html:not(.dark) .bg-primary-600,
+html:not(.dark) .bg-primary-700,
+body:not(.dark) button[type="submit"]:not(.bg-red-600):not(.bg-red-700),
+html:not(.dark) button[type="submit"]:not(.bg-red-600):not(.bg-red-700) {
+    background-color: var(--brand-primary) !important;
+    color: white !important;
+    border: 1px solid var(--brand-primary);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+}
+
+body:not(.dark) .bg-primary-600:hover,
+body:not(.dark) .bg-primary-700:hover,
+html:not(.dark) .bg-primary-600:hover,
+html:not(.dark) .bg-primary-700:hover,
+body:not(.dark) button[type="submit"]:not(.bg-red-600):not(.bg-red-700):hover,
+html:not(.dark) button[type="submit"]:not(.bg-red-600):not(.bg-red-700):hover {
+    background-color: var(--brand-primary-hover) !important;
+    box-shadow: 0 2px 4px 0 rgba(255, 73, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* Primary Buttons - Dark Mode */
+.dark .bg-primary-600,
+.dark .bg-primary-700,
+.dark button[type="submit"]:not(.bg-red-600):not(.bg-red-700) {
+    background-color: var(--brand-primary) !important;
+    color: white !important;
+    border: 1px solid var(--brand-primary);
+}
+
+.dark .bg-primary-600:hover,
+.dark .bg-primary-700:hover,
+.dark button[type="submit"]:not(.bg-red-600):not(.bg-red-700):hover {
+    background-color: var(--brand-primary-light) !important;
+    box-shadow: 0 0 0 2px rgba(255, 73, 0, 0.2);
+}
+
+/* Delete/Danger Buttons - Light Mode */
+body:not(.dark) .bg-red-600,
+body:not(.dark) .bg-red-700,
+html:not(.dark) .bg-red-600,
+html:not(.dark) .bg-red-700 {
+    background-color: var(--admin-error) !important;
+    color: white !important;
+    border: 1px solid var(--admin-error);
+    font-weight: 500;
+}
+
+body:not(.dark) .bg-red-600:hover,
+body:not(.dark) .bg-red-700:hover,
+html:not(.dark) .bg-red-600:hover,
+html:not(.dark) .bg-red-700:hover {
+    background-color: #dc2626 !important;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+}
+
+/* Delete/Danger Buttons - Dark Mode */
+.dark .bg-red-600,
+.dark .bg-red-700 {
+    background-color: #dc2626 !important;
+    color: white !important;
+}
+
+.dark .bg-red-600:hover,
+.dark .bg-red-700:hover {
+    background-color: #b91c1c !important;
+}
+
+/* Secondary/Cancel Buttons - Light Mode */
+body:not(.dark) .border-zinc-300,
+html:not(.dark) .border-zinc-300,
+body:not(.dark) button[type="button"]:not([class*="bg-"]),
+html:not(.dark) button[type="button"]:not([class*="bg-"]) {
+    border-color: var(--admin-border-light) !important;
+    background-color: white !important;
+    color: var(--admin-text-light) !important;
+}
+
+body:not(.dark) .border-zinc-300:hover,
+html:not(.dark) .border-zinc-300:hover {
+    background-color: var(--admin-hover-light) !important;
+    border-color: #d1d5db !important;
+}
+
+/* Secondary/Cancel Buttons - Dark Mode */
+.dark .border-zinc-300,
+.dark button[type="button"]:not([class*="bg-"]) {
+    border-color: var(--admin-border-dark) !important;
+    background-color: var(--admin-card-dark) !important;
+    color: var(--admin-text-dark) !important;
+}
+
+.dark .border-zinc-300:hover {
+    background-color: var(--admin-hover-dark) !important;
+}
+
+/* ============================================
+   CARDS & CONTAINERS
+   ============================================ */
+
+/* Card Styles - Light Mode */
+body:not(.dark) .bg-white,
+html:not(.dark) .bg-white,
+body:not(.dark) [data-flux-card],
+html:not(.dark) [data-flux-card] {
+    background-color: white !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--admin-border-light);
+}
+
+/* Card Styles - Dark Mode */
+.dark .bg-white,
+.dark [data-flux-card] {
+    background-color: var(--admin-card-dark) !important;
+    border: 1px solid var(--admin-border-dark);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode card text visibility */
+.dark .bg-white *,
+.dark [data-flux-card] * {
+    color: inherit;
+}
+
+.dark .bg-white h1,
+.dark .bg-white h2,
+.dark .bg-white h3 {
+    color: var(--admin-text-dark) !important;
+}
+
+.dark .bg-white p {
+    color: var(--admin-text-secondary-dark) !important;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+/* Table Header - Light Mode */
+body:not(.dark) .bg-zinc-50,
+html:not(.dark) .bg-zinc-50,
+body:not(.dark) table thead,
+html:not(.dark) table thead {
+    background-color: #f9fafb !important;
+    border-bottom: 2px solid var(--admin-border-light);
+}
+
+body:not(.dark) table thead th,
+html:not(.dark) table thead th {
+    color: var(--admin-text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+/* Table Rows - Light Mode */
+body:not(.dark) table tbody tr,
+html:not(.dark) table tbody tr {
+    border-bottom: 1px solid var(--admin-border-light);
+}
+
+body:not(.dark) table tbody tr:hover,
+html:not(.dark) table tbody tr:hover {
+    background-color: #fef3ed !important; /* Light orange tint */
+}
+
+body:not(.dark) table tbody td,
+html:not(.dark) table tbody td {
+    color: var(--admin-text-light);
+}
+
+/* Table Header - Dark Mode */
+.dark .bg-zinc-50,
+.dark table thead {
+    background-color: #1e293b !important;
+    border-bottom: 2px solid var(--admin-border-dark);
+}
+
+.dark table thead th {
+    color: var(--admin-text-dark);
+}
+
+/* Table Rows - Dark Mode */
+.dark table tbody tr {
+    border-bottom: 1px solid var(--admin-border-dark);
+}
+
+.dark table tbody tr:hover {
+    background-color: #334155 !important;
+}
+
+.dark table tbody td {
+    color: var(--admin-text-dark);
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+
+/* Active Badge - Light Mode */
+body:not(.dark) .bg-green-100,
+html:not(.dark) .bg-green-100 {
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
+    font-weight: 600;
+    border: 1px solid #a7f3d0;
+}
+
+/* Inactive Badge - Light Mode */
+body:not(.dark) .bg-zinc-100,
+html:not(.dark) .bg-zinc-100 {
+    background-color: #f3f4f6 !important;
+    color: #374151 !important;
+    font-weight: 600;
+    border: 1px solid #d1d5db;
+}
+
+/* Active Badge - Dark Mode */
+.dark .bg-green-100 {
+    background-color: #064e3b !important;
+    color: #6ee7b7 !important;
+    border: 1px solid #065f46;
+}
+
+/* Inactive Badge - Dark Mode */
+.dark .bg-zinc-100 {
+    background-color: #374151 !important;
+    color: #e5e7eb !important;
+    border: 1px solid #4b5563;
+}
+
+/* ============================================
+   FORM INPUTS & FIELDS - COMPREHENSIVE STYLING
+   ============================================ */
+
+/* All Input Types - Light Mode */
+body:not(.dark) input[type="text"],
+body:not(.dark) input[type="email"],
+body:not(.dark) input[type="password"],
+body:not(.dark) input[type="number"],
+body:not(.dark) input[type="url"],
+body:not(.dark) input[type="tel"],
+body:not(.dark) input[type="date"],
+body:not(.dark) input[type="time"],
+body:not(.dark) input[type="search"],
+body:not(.dark) textarea,
+body:not(.dark) select,
+html:not(.dark) input[type="text"],
+html:not(.dark) input[type="email"],
+html:not(.dark) input[type="password"],
+html:not(.dark) input[type="number"],
+html:not(.dark) input[type="url"],
+html:not(.dark) input[type="tel"],
+html:not(.dark) input[type="date"],
+html:not(.dark) input[type="time"],
+html:not(.dark) input[type="search"],
+html:not(.dark) textarea,
+html:not(.dark) select {
+    background-color: white !important;
+    border: 1.5px solid var(--admin-border-light) !important;
+    border-radius: 0.5rem !important;
+    color: var(--admin-text-light) !important;
+    font-size: var(--admin-input-font-size) !important;
+    height: var(--admin-input-height) !important;
+    padding: var(--admin-input-padding-y) var(--admin-input-padding-x) !important;
+    transition: all 0.2s ease !important;
+    line-height: 1.5 !important;
+}
+
+body:not(.dark) textarea,
+html:not(.dark) textarea {
+    height: auto !important;
+    min-height: 6rem !important;
+    resize: vertical !important;
+}
+
+body:not(.dark) select,
+html:not(.dark) select {
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E") !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+    padding-right: 2.5rem !important;
+}
+
+/* Input Focus States - Light Mode */
+body:not(.dark) input:focus,
+body:not(.dark) textarea:focus,
+body:not(.dark) select:focus,
+html:not(.dark) input:focus,
+html:not(.dark) textarea:focus,
+html:not(.dark) select:focus {
+    border-color: var(--brand-primary) !important;
+    outline: 2px solid rgba(255, 73, 0, 0.2) !important;
+    outline-offset: 0px !important;
+    box-shadow: 0 0 0 3px rgba(255, 73, 0, 0.1) !important;
+}
+
+/* Input Placeholder - Light Mode */
+body:not(.dark) input::placeholder,
+body:not(.dark) textarea::placeholder,
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+    color: #9ca3af !important;
+    opacity: 1 !important;
+}
+
+/* All Input Types - Dark Mode */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="url"],
+.dark input[type="tel"],
+.dark input[type="date"],
+.dark input[type="time"],
+.dark input[type="search"],
+.dark textarea,
+.dark select {
+    background-color: #1e293b !important;
+    border: 1.5px solid var(--admin-border-dark) !important;
+    border-radius: 0.5rem !important;
+    color: var(--admin-text-dark) !important;
+    font-size: var(--admin-input-font-size) !important;
+    height: var(--admin-input-height) !important;
+    padding: var(--admin-input-padding-y) var(--admin-input-padding-x) !important;
+    transition: all 0.2s ease !important;
+}
+
+.dark textarea {
+    height: auto !important;
+    min-height: 6rem !important;
+    resize: vertical !important;
+}
+
+.dark select {
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%23cbd5e1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E") !important;
+    background-position: right 0.5rem center !important;
+    background-repeat: no-repeat !important;
+    background-size: 1.5em 1.5em !important;
+    padding-right: 2.5rem !important;
+}
+
+/* Input Focus States - Dark Mode */
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+    border-color: var(--brand-primary) !important;
+    outline: 2px solid rgba(255, 73, 0, 0.3) !important;
+    outline-offset: 0px !important;
+    box-shadow: 0 0 0 3px rgba(255, 73, 0, 0.15) !important;
+}
+
+/* Input Placeholder - Dark Mode */
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+
+/* Form Labels - Light Mode */
+body:not(.dark) label,
+html:not(.dark) label {
+    color: var(--admin-text-light) !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    margin-bottom: 0.375rem !important;
+}
+
+/* Form Labels - Dark Mode */
+.dark label {
+    color: var(--admin-text-dark) !important;
+    font-weight: 500 !important;
+}
+
+/* Disabled Inputs - Light Mode */
+body:not(.dark) input:disabled,
+body:not(.dark) textarea:disabled,
+body:not(.dark) select:disabled,
+html:not(.dark) input:disabled,
+html:not(.dark) textarea:disabled,
+html:not(.dark) select:disabled {
+    background-color: #f3f4f6 !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+}
+
+/* Disabled Inputs - Dark Mode */
+.dark input:disabled,
+.dark textarea:disabled,
+.dark select:disabled {
+    background-color: #0f172a !important;
+    color: #475569 !important;
+    cursor: not-allowed !important;
+}
+
+/* ============================================
+   LINKS & TEXT COLORS
+   ============================================ */
+
+/* Primary Links - Light Mode */
+body:not(.dark) .text-primary-600,
+html:not(.dark) .text-primary-600,
+body:not(.dark) a:not([class*="bg-"]):not([class*="inline-flex"]),
+html:not(.dark) a:not([class*="bg-"]):not([class*="inline-flex"]) {
+    color: var(--brand-primary) !important;
+}
+
+body:not(.dark) .text-primary-600:hover,
+html:not(.dark) .text-primary-600:hover,
+body:not(.dark) a:not([class*="bg-"]):not([class*="inline-flex"]):hover,
+html:not(.dark) a:not([class*="bg-"]):not([class*="inline-flex"]):hover {
+    color: var(--brand-primary-hover) !important;
+    text-decoration: underline;
+}
+
+/* Primary Links - Dark Mode */
+.dark .text-primary-600,
+.dark a:not([class*="bg-"]):not([class*="inline-flex"]) {
+    color: var(--brand-primary-light) !important;
+}
+
+.dark .text-primary-600:hover,
+.dark a:not([class*="bg-"]):not([class*="inline-flex"]):hover {
+    color: var(--brand-primary) !important;
+}
+
+/* Headings - Light Mode */
+body:not(.dark) h1,
+body:not(.dark) h2,
+body:not(.dark) h3,
+body:not(.dark) h4,
+body:not(.dark) h5,
+body:not(.dark) h6,
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6 {
+    color: var(--admin-text-light) !important;
+}
+
+/* Headings - Dark Mode */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+    color: var(--admin-text-dark) !important;
+}
+
+/* Ensure page titles are visible in dark mode */
+.dark .text-2xl,
+.dark .text-3xl,
+.dark .text-xl {
+    color: var(--admin-text-dark) !important;
+}
+
+/* Description text in dark mode */
+.dark .text-sm.text-zinc-600 {
+    color: var(--admin-text-secondary-dark) !important;
+}
+
+/* ============================================
+   SIDEBAR NAVIGATION
+   ============================================ */
+
+/* Sidebar - Light Mode */
+body:not(.dark) [data-flux-sidebar],
+html:not(.dark) [data-flux-sidebar] {
+    background-color: white !important;
+    border-color: var(--admin-border-light) !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+body:not(.dark) [data-flux-navlist-item],
+html:not(.dark) [data-flux-navlist-item] {
+    color: var(--admin-text-light) !important;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+body:not(.dark) [data-flux-navlist-item]:hover,
+html:not(.dark) [data-flux-navlist-item]:hover {
+    background-color: #fef3ed !important; /* Light orange tint */
+    color: var(--brand-primary) !important;
+}
+
+body:not(.dark) [data-flux-navlist-item][aria-current="page"],
+html:not(.dark) [data-flux-navlist-item][aria-current="page"] {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-light) 100%) !important;
+    color: white !important;
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(255, 73, 0, 0.2);
+}
+
+/* Sidebar - Dark Mode */
+.dark [data-flux-sidebar] {
+    background-color: #0f172a !important;
+    border-color: var(--admin-border-dark) !important;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.dark flux-sidebar,
+.dark [data-flux-sidebar],
+.dark .bg-zinc-50 {
+    background-color: #0f172a !important;
+}
+
+.dark [data-flux-navlist-item] {
+    color: var(--admin-text-dark) !important;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.dark [data-flux-navlist-item] * {
+    color: var(--admin-text-dark) !important;
+}
+
+.dark [data-flux-navlist-item]:hover {
+    background-color: #1e293b !important;
+    color: var(--brand-primary-light) !important;
+}
+
+.dark [data-flux-navlist-item]:hover * {
+    color: var(--brand-primary-light) !important;
+}
+
+.dark [data-flux-navlist-item][aria-current="page"] {
+    background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-primary-light) 100%) !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+.dark [data-flux-navlist-item][aria-current="page"] * {
+    color: white !important;
+}
+
+/* Sidebar headings and labels */
+.dark [data-flux-sidebar] .text-xs,
+.dark [data-flux-sidebar] .text-sm,
+.dark [data-flux-sidebar] span,
+.dark [data-flux-sidebar] div {
+    color: var(--admin-text-secondary-dark) !important;
+}
+
+/* Platform heading in sidebar */
+.dark [data-flux-navlist-group] [class*="heading"],
+.dark [data-flux-navlist-group] > div:first-child {
+    color: #94a3b8 !important;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   TOAST NOTIFICATION SYSTEM
+   ============================================ */
+
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 24rem;
+}
+
+.toast {
+    display: flex;
+    align-items: start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid;
+    animation: slideInRight 0.3s ease-out;
+    transition: all 0.3s ease;
+    min-width: 20rem;
+}
+
+.dark .toast {
+    background: #1f2937;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+.toast.removing {
+    animation: slideOutRight 0.3s ease-in;
+}
+
+.toast-success {
+    border-left-color: var(--admin-success);
+}
+
+.toast-error {
+    border-left-color: var(--admin-error);
+}
+
+.toast-warning {
+    border-left-color: var(--admin-warning);
+}
+
+.toast-info {
+    border-left-color: var(--admin-primary);
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+}
+
+.toast-success .toast-icon {
+    color: var(--admin-success);
+}
+
+.toast-error .toast-icon {
+    color: var(--admin-error);
+}
+
+.toast-warning .toast-icon {
+    color: var(--admin-warning);
+}
+
+.toast-info .toast-icon {
+    color: var(--admin-primary);
+}
+
+.toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-title {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.dark .toast-title {
+    color: #f9fafb;
+}
+
+.toast-message {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.dark .toast-message {
+    color: #d1d5db;
+}
+
+.toast-close {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.toast-close:hover {
+    color: #6b7280;
+}
+
+.dark .toast-close:hover {
+    color: #f3f4f6;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.dark .toast-progress {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.toast-progress-bar {
+    height: 100%;
+    background: currentColor;
+    border-radius: 0 0 0 0.5rem;
+    animation: progress linear;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes progress {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+    #toast-container {
+        top: auto;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        max-width: none;
+    }
+
+    .toast {
+        min-width: auto;
+    }
+}
+
+/* ============================================
+   MODALS
+   ============================================ */
+
+/* Modal - Light Mode */
+body:not(.dark) [data-flux-modal],
+html:not(.dark) [data-flux-modal] {
+    background-color: white !important;
+}
+
+body:not(.dark) [data-flux-modal-backdrop],
+html:not(.dark) [data-flux-modal-backdrop] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Modal - Dark Mode */
+.dark [data-flux-modal] {
+    background-color: var(--admin-card-dark) !important;
+}
+
+.dark [data-flux-modal-backdrop] {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Modal Text Wrapping Fix */
+[data-flux-modal] dialog {
+    max-width: 28rem !important; /* Fixed width ~448px */
+    width: 90vw !important; /* Responsive on mobile */
+    overflow-x: hidden !important;
+}
+
+[data-flux-modal] dialog * {
+    max-width: 100% !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+[data-flux-modal] dialog h2,
+[data-flux-modal] dialog h3,
+[data-flux-modal] dialog [data-flux-modal-title] {
+    word-break: keep-all !important;
+    white-space: normal !important;
+    hyphens: none !important;
+}
+
+[data-flux-modal] dialog p {
+    white-space: normal !important;
+    word-break: keep-all !important;
+    text-align: left !important;
+}
+
+/* ============================================
+   DROPDOWNS
+   ============================================ */
+
+/* Dropdown - Light Mode */
+body:not(.dark) [data-flux-dropdown-menu],
+html:not(.dark) [data-flux-dropdown-menu] {
+    background-color: white !important;
+    border: 1px solid var(--admin-border-light) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+body:not(.dark) [data-flux-menu-item]:hover,
+html:not(.dark) [data-flux-menu-item]:hover {
+    background-color: #fef3ed !important; /* Light orange tint */
+    color: var(--brand-primary) !important;
+}
+
+/* Dropdown - Dark Mode */
+.dark [data-flux-dropdown-menu] {
+    background-color: var(--admin-card-dark) !important;
+    border: 1px solid var(--admin-border-dark) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark [data-flux-menu-item]:hover {
+    background-color: var(--admin-hover-dark) !important;
+}
+
+/* Sidebar Improvements for Dark Mode */
+.dark [data-flux-sidebar] {
+    background-color: var(--admin-card-dark) !important;
+    border-color: var(--admin-border-dark) !important;
+}
+
+.dark [data-flux-navlist-item] {
+    color: var(--admin-text-dark) !important;
+}
+
+.dark [data-flux-navlist-item]:hover {
+    background-color: var(--admin-hover-dark) !important;
+}
+
+.dark [data-flux-navlist-item][aria-current="page"] {
+    background-color: #1e40af !important;
+    color: #93c5fd !important;
+}
+
+/* Modal Improvements - Light Mode */
+body:not(.dark) [data-flux-modal],
+html:not(.dark) [data-flux-modal] {
+    background-color: white !important;
+}
+
+body:not(.dark) [data-flux-modal-backdrop],
+html:not(.dark) [data-flux-modal-backdrop] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Modal Improvements - Dark Mode */
+.dark [data-flux-modal] {
+    background-color: var(--admin-card-dark) !important;
+}
+
+.dark [data-flux-modal-backdrop] {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+}
+
+/* Dropdown Improvements - Light Mode */
+body:not(.dark) [data-flux-dropdown-menu],
+html:not(.dark) [data-flux-dropdown-menu] {
+    background-color: white !important;
+    border: 1px solid var(--admin-border-light) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+body:not(.dark) [data-flux-menu-item]:hover,
+html:not(.dark) [data-flux-menu-item]:hover {
+    background-color: var(--admin-hover-light) !important;
+}
+
+/* Dropdown Improvements - Dark Mode */
+.dark [data-flux-dropdown-menu] {
+    background-color: var(--admin-card-dark) !important;
+    border: 1px solid var(--admin-border-dark) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark [data-flux-menu-item]:hover {
+    background-color: var(--admin-hover-dark) !important;
+}
+
+/* Modal Text Wrapping Fix */
+[data-flux-modal] dialog {
+    max-width: 28rem !important; /* Fixed width ~448px */
+    width: 90vw !important; /* Responsive on mobile */
+    overflow-x: hidden !important;
+}
+
+[data-flux-modal] dialog * {
+    max-width: 100% !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: left !important; /* Left align all text */
+}
+
+[data-flux-modal] dialog h2,
+[data-flux-modal] dialog h3,
+[data-flux-modal] dialog [data-flux-modal-title] {
+    word-break: keep-all !important; /* Keep words together */
+    overflow-wrap: break-word !important;
+    hyphens: none !important; /* No hyphenation */
+    white-space: normal !important;
+    text-align: left !important;
+}
+
+[data-flux-modal] dialog p {
+    white-space: normal !important;
+    word-break: keep-all !important; /* Keep words together */
+    overflow-wrap: break-word !important;
+    hyphens: none !important; /* No hyphenation */
+    text-align: left !important;
+}
+
+[data-flux-modal] dialog strong {
+    word-break: keep-all !important;
+    hyphens: none !important;
+}

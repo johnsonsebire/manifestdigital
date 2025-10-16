@@ -33,17 +33,17 @@ class FormSubmissionController extends Controller
      */
     public function submitForm(Request $request, $slug)
     {
-        \Log::info('Form submission attempt', ['slug' => $slug, 'data' => $request->all()]);
+        Log::info('Form submission attempt', ['slug' => $slug, 'data' => $request->all()]);
         
         try {
             // Find the form
             $form = Form::where('slug', $slug)->firstOrFail();
             
-            \Log::info('Form found', ['form_id' => $form->id, 'form_name' => $form->name]);
+            Log::info('Form found', ['form_id' => $form->id, 'form_name' => $form->name]);
 
             // Check if form is active
             if (!$form->isActive()) {
-                \Log::warning('Form not active', ['form_id' => $form->id]);
+                Log::warning('Form not active', ['form_id' => $form->id]);
                 return back()->with('error', 'This form is currently not accepting submissions.');
             }
 
