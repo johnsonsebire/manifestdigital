@@ -32,7 +32,7 @@
                                         {{ $field->label }}
                                     </th>
                                 @endforeach
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
@@ -58,8 +58,8 @@
                                         </td>
                                     @endforeach
                                     
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <div class="flex justify-end space-x-2">
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                                        <div class="flex justify-start space-x-2">
                                             @can('view-form-submissions')
                                             <flux:button color="secondary" size="xs" :href="route('admin.form-submissions.view', $submission->id)" wire:navigate>
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

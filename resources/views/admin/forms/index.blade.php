@@ -1,90 +1,45 @@
 <x-layouts.app :title="__('Forms Management')">
-    <!-- Initialize JavaScript functions FIRST before any buttons are rendered -->
+    <!-- Initialize JavaScript functions -->
     <script>
-        // Immediately invoked function to ensure functions are available globally
-        (function() {
-            'use strict';
+        // Define functions immediately
+        window.copyToClipboard = function(text) {
+            console.log('[copyToClipboard] Called with:', text);
             
-            console.log('[Forms Page] Initializing form action handlers...');
-            
-            // Wait for toast to be available with retry mechanism
-            function waitForToast(callback, maxAttempts = 50) {
-                let attempts = 0;
-                const checkToast = setInterval(() => {
-                    attempts++;
-                    if (window.toast) {
-                        clearInterval(checkToast);
-                        console.log('[Forms Page] Toast manager found after', attempts, 'attempts');
-                        callback();
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(checkToast);
-                        console.warn('[Forms Page] Toast manager not found after', maxAttempts, 'attempts');
-                        callback(); // Continue anyway with fallback alerts
-                    }
-                }, 100); // Check every 100ms
+            if (!navigator.clipboard) {
+                alert('Clipboard not supported in this browser');
+                return;
             }
             
-            // Make the clipboard function available globally
-            window.copyToClipboard = function(text) {
-                console.log('[copyToClipboard] Called with:', text);
-                console.log('[copyToClipboard] Toast available:', !!window.toast);
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('[copyToClipboard] Successfully copied');
                 
-                if (!navigator.clipboard) {
-                    console.error('[copyToClipboard] Clipboard API not available');
-                    if (window.toast) {
-                        window.toast.error('Clipboard not supported in this browser');
+                // Try to use toast, fallback to alert
+                setTimeout(() => {
+                    if (window.toast && typeof window.toast.success === 'function') {
+                        window.toast.success('Shortcode copied to clipboard!');
                     } else {
-                        alert('Clipboard not supported in this browser');
-                    }
-                    return;
-                }
-                
-                navigator.clipboard.writeText(text).then(() => {
-                    console.log('[copyToClipboard] Successfully copied:', text);
-                    // Show toast notification
-                    if (window.toast) {
-                        console.log('[copyToClipboard] Showing success toast');
-                        window.toast.success('Shortcode copied to clipboard');
-                    } else {
-                        console.warn('[copyToClipboard] Toast not available, using alert');
                         alert('Shortcode copied to clipboard!');
                     }
-                }).catch(err => {
-                    console.error('[copyToClipboard] Failed:', err);
-                    // Show error notification
-                    if (window.toast) {
-                        window.toast.error('Failed to copy to clipboard');
+                }, 50);
+            }).catch(err => {
+                console.error('[copyToClipboard] Failed:', err);
+                
+                setTimeout(() => {
+                    if (window.toast && typeof window.toast.error === 'function') {
+                        window.toast.error('Failed to copy');
                     } else {
-                        alert('Failed to copy to clipboard: ' + err.message);
+                        alert('Failed to copy: ' + err.message);
                     }
-                });
-            };
-            
-            // Handle form deletion with feedback
-            window.handleFormDelete = function(event, formTitle) {
-                console.log('[handleFormDelete] Called for:', formTitle);
-                console.log('[handleFormDelete] Toast available:', !!window.toast);
-                
-                // Show processing toast
-                if (window.toast) {
-                    window.toast.info('Deleting form: ' + formTitle + '...');
-                } else {
-                    console.log('[handleFormDelete] Toast not available yet');
-                }
-                
-                // Allow the form to submit normally
-                return true;
-            };
-            
-            // Initialize once DOM and toast are ready
-            waitForToast(() => {
-                console.log('[Forms Page] Handlers initialized successfully');
-                console.log('[Forms Page] copyToClipboard type:', typeof window.copyToClipboard);
-                console.log('[Forms Page] handleFormDelete type:', typeof window.handleFormDelete);
-                console.log('[Forms Page] Toast status:', window.toast ? 'Available' : 'Not available');
+                }, 50);
             });
-        })();
-    </script>
+        };
+        
+        window.handleFormDelete = function(event, formTitle) {
+            console.log('[handleFormDelete] Called for:', formTitle);
+            return true;
+        };
+        
+        console.log('[Forms Page] Handlers ready');
     </script>
     
     <div class="p-6">
@@ -116,7 +71,7 @@
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Submissions</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Status</th>
                             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Last Updated</th>
-                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                 
@@ -153,8 +108,8 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 {{ $form->updated_at->format('M d, Y H:i') }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+                            <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                                <div class="flex justify-start space-x-2 rtl:space-x-reverse">
                                     @can('edit-forms')
                                     <a href="{{ route('admin.forms.edit', $form->id) }}" wire:navigate 
                                         class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"

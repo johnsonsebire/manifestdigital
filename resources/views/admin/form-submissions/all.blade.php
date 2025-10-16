@@ -43,7 +43,7 @@
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Submitted By</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">IP Address</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Submitted At</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         
@@ -74,8 +74,8 @@
                                         {{ $submission->created_at->format('M d, Y H:i') }}
                                     </td>
                                     
-                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                        <div class="flex justify-end space-x-2 rtl:space-x-reverse">
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                                        <div class="flex justify-start space-x-2 rtl:space-x-reverse">
                                             <a href="{{ route('admin.form-submissions.show', $submission->id) }}" wire:navigate
                                                 class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

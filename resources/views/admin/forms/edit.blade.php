@@ -81,6 +81,66 @@
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input type="hidden" name="store_submissions" value="0">
+                                <input type="checkbox" name="store_submissions" id="store_submissions" value="1" {{ old('store_submissions', $form->store_submissions) ? 'checked' : '' }}
+                                    class="h-4 w-4 text-primary-600 border-zinc-300 rounded focus:ring-primary-500">
+                                <label for="store_submissions" class="ml-3 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                    Store Submissions
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="hidden" name="send_notifications" value="0">
+                                <input type="checkbox" name="send_notifications" id="send_notifications" value="1" {{ old('send_notifications', $form->send_notifications) ? 'checked' : '' }}
+                                    class="h-4 w-4 text-primary-600 border-zinc-300 rounded focus:ring-primary-500">
+                                <label for="send_notifications" class="ml-3 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                    Send Notifications
+                                </label>
+                            </div>
+                            
+                            <div id="notification_email_container" class="ml-7 {{ old('send_notifications', $form->send_notifications) ? '' : 'hidden' }}">
+                                <label for="notification_email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Notification Email</label>
+                                <input type="email" name="notification_email" id="notification_email" value="{{ old('notification_email', $form->notification_email) }}"
+                                    class="mt-1 block w-full border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+                                @error('notification_email')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="hidden" name="is_active" value="0">
+                                <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', $form->is_active) ? 'checked' : '' }}
+                                    class="h-4 w-4 text-primary-600 border-zinc-300 rounded focus:ring-primary-500">
+                                <label for="is_active" class="ml-3 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                    Active
+                                </label>
+                            </div>
+                            
+                            <div class="flex items-center">
+                                <input type="hidden" name="requires_login" value="0">
+                                <input type="checkbox" name="requires_login" id="requires_login" value="1" {{ old('requires_login', $form->requires_login) ? 'checked' : '' }}
+                                    class="h-4 w-4 text-primary-600 border-zinc-300 rounded focus:ring-primary-500">
+                                <label for="requires_login" class="ml-3 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                    Requires Login
+                                </label>
+                            </div>
+                            
+                            <div>
+                                <label for="recaptcha_status" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">reCAPTCHA</label>
+                                <select name="recaptcha_status" id="recaptcha_status"
+                                    class="mt-1 block w-full py-2 px-3 border border-zinc-300 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                                    <option value="disabled" {{ old('recaptcha_status', $form->recaptcha_status) == 'disabled' ? 'selected' : '' }}>Disabled</option>
+                                    <option value="v2" {{ old('recaptcha_status', $form->recaptcha_status) == 'v2' ? 'selected' : '' }}>reCAPTCHA v2</option>
+                                    <option value="v3" {{ old('recaptcha_status', $form->recaptcha_status) == 'v3' ? 'selected' : '' }}>reCAPTCHA v3</option>
+                                </select>
+                                @error('recaptcha_status')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="mt-6">
@@ -397,5 +457,17 @@
             
             console.log('Form field management initialized successfully');
         }
+        
+        // Handle notification email toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendNotifications = document.getElementById('send_notifications');
+            const notificationEmailContainer = document.getElementById('notification_email_container');
+            
+            if (sendNotifications && notificationEmailContainer) {
+                sendNotifications.addEventListener('change', function() {
+                    notificationEmailContainer.classList.toggle('hidden', !this.checked);
+                });
+            }
+        });
     </script>
 </x-layouts.app>
