@@ -9,6 +9,8 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/css/app.css',
+                'resources/css/admin.css',
+                'resources/css/admin-enhanced.css',
                 'resources/css/styles.css',
                 'resources/css/projects.css',
                 'resources/css/book-a-call.css',
