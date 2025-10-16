@@ -1,0 +1,725 @@
+/* ============================================
+   MANIFEST DIGITAL - ENHANCED ADMIN THEME
+   Complete Modern Design System
+   ============================================ */
+
+/* ============================================
+   HEADER & NAVBAR
+   ============================================ */
+
+/* Light Mode Header */
+html:not(.dark) flux-header,
+html:not(.dark) [data-flux-header] {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid var(--border-light) !important;
+    box-shadow: 0 1px 3px var(--shadow-light);
+}
+
+/* Dark Mode Header */
+html.dark flux-header,
+html.dark [data-flux-header] {
+    background: rgba(26, 31, 46, 0.95) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    border-bottom: 1px solid var(--border-dark) !important;
+    box-shadow: 0 1px 6px var(--shadow-dark);
+}
+
+/* Navbar Items */
+[data-flux-navbar-item] {
+    transition: all var(--transition-base) var(--ease-smooth);
+    position: relative;
+}
+
+html:not(.dark) [data-flux-navbar-item]:hover {
+    color: var(--brand-orange) !important;
+}
+
+html.dark [data-flux-navbar-item]:hover {
+    color: var(--brand-orange-light) !important;
+}
+
+[data-flux-navbar-item][aria-current="page"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+}
+
+/* ============================================
+   PROFILE DROPDOWN
+   ============================================ */
+
+[data-flux-profile] {
+    transition: all var(--transition-base) var(--ease-smooth);
+    border-radius: var(--radius-md);
+}
+
+html:not(.dark) [data-flux-profile]:hover {
+    background-color: var(--hover-light) !important;
+    transform: scale(1.02);
+}
+
+html.dark [data-flux-profile]:hover {
+    background-color: var(--hover-dark) !important;
+    transform: scale(1.02);
+}
+
+/* ============================================
+   TABLES - ENHANCED
+   ============================================ */
+
+/* Table Wrapper */
+.table-wrapper {
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+}
+
+/* Table Headers with Gradient */
+html:not(.dark) thead {
+    background: linear-gradient(135deg, var(--bg-light) 0%, var(--bg-light-secondary) 100%);
+    border-bottom: 2px solid var(--brand-orange);
+}
+
+html.dark thead {
+    background: linear-gradient(135deg, var(--bg-sidebar-dark) 0%, var(--bg-dark-secondary) 100%);
+    border-bottom: 2px solid var(--brand-orange-light);
+}
+
+/* Table rows - Simple hover without any positioning or pseudo-elements */
+/* All hover effects are handled by admin.css to prevent misalignment */
+
+/* ============================================
+   CARDS - ENHANCED
+   ============================================ */
+
+html:not(.dark) .card,
+html:not(.dark) [data-flux-card] {
+    background: var(--bg-card-light);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: 0 1px 3px var(--shadow-light), 
+                0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: all var(--transition-base) var(--ease-smooth);
+}
+
+html:not(.dark) .card:hover,
+html:not(.dark) [data-flux-card]:hover {
+    box-shadow: 0 4px 12px var(--shadow-light-lg),
+                0 2px 6px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+html.dark .card,
+html.dark [data-flux-card] {
+    background: var(--bg-card-dark);
+    border: 1px solid var(--border-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: 0 4px 8px var(--shadow-dark),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-base) var(--ease-smooth);
+}
+
+html.dark .card:hover,
+html.dark [data-flux-card]:hover {
+    box-shadow: 0 8px 16px var(--shadow-dark-lg),
+                0 0 0 1px rgba(255, 107, 53, 0.2);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   PAGINATION
+   ============================================ */
+
+nav[role="navigation"] {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+nav[role="navigation"] a,
+nav[role="navigation"] span {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base) var(--ease-smooth);
+    min-width: 2.5rem;
+    text-align: center;
+}
+
+html:not(.dark) nav[role="navigation"] a {
+    color: var(--text-primary-light);
+    border: 1px solid var(--border-light);
+}
+
+html:not(.dark) nav[role="navigation"] a:hover {
+    background-color: var(--hover-light);
+    color: var(--brand-orange);
+    border-color: var(--brand-orange);
+    transform: translateY(-1px);
+}
+
+html:not(.dark) nav[role="navigation"] span[aria-current="page"] {
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+    color: white;
+    border: 1px solid var(--brand-orange);
+    box-shadow: 0 2px 8px rgba(255, 73, 0, 0.25);
+}
+
+html.dark nav[role="navigation"] a {
+    color: var(--text-primary-dark);
+    border: 1px solid var(--border-dark);
+}
+
+html.dark nav[role="navigation"] a:hover {
+    background-color: var(--hover-dark);
+    color: var(--brand-orange-light);
+    border-color: var(--brand-orange-light);
+    transform: translateY(-1px);
+}
+
+html.dark nav[role="navigation"] span[aria-current="page"] {
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+    color: white;
+    border: 1px solid var(--brand-orange-light);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.empty-state {
+    padding: var(--spacing-xl);
+    text-align: center;
+}
+
+.empty-state svg {
+    margin: 0 auto var(--spacing-md);
+    transition: all var(--transition-slow) var(--ease-smooth);
+}
+
+.empty-state:hover svg {
+    transform: scale(1.05) rotate(5deg);
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+.loading-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--border-light-subtle) 25%,
+        var(--hover-light) 50%,
+        var(--border-light-subtle) 75%
+    );
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+html.dark .loading-skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--border-dark-subtle) 25%,
+        var(--hover-dark) 50%,
+        var(--border-dark-subtle) 75%
+    );
+    background-size: 200% 100%;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ============================================
+   STATUS PILLS WITH GLOW
+   ============================================ */
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    transition: all var(--transition-base) var(--ease-smooth);
+}
+
+.status-pill-success {
+    background-color: var(--success-light);
+    color: var(--success-dark);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+}
+
+.status-pill-success:hover {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2),
+                0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+html.dark .status-pill-success {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: var(--success);
+}
+
+.status-pill-error {
+    background-color: var(--error-light);
+    color: var(--error-dark);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+}
+
+.status-pill-error:hover {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2),
+                0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+html.dark .status-pill-error {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--error);
+}
+
+.status-pill-warning {
+    background-color: var(--warning-light);
+    color: var(--warning-dark);
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+}
+
+.status-pill-warning:hover {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2),
+                0 2px 8px rgba(245, 158, 11, 0.15);
+}
+
+html.dark .status-pill-warning {
+    background-color: rgba(245, 158, 11, 0.2);
+    color: var(--warning);
+}
+
+/* ============================================
+   SEARCH & FILTERS
+   ============================================ */
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding-left: 2.5rem !important;
+}
+
+.search-box svg {
+    position: absolute;
+    left: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+    transition: all var(--transition-base) var(--ease-smooth);
+}
+
+.search-box input:focus + svg {
+    opacity: 1;
+    color: var(--brand-orange);
+}
+
+html.dark .search-box input:focus + svg {
+    color: var(--brand-orange-light);
+}
+
+/* ============================================
+   TOOLTIPS
+   ============================================ */
+
+[data-flux-tooltip] {
+    position: relative;
+}
+
+/* ============================================
+   SCROLL SHADOWS
+   ============================================ */
+
+.scroll-shadow {
+    position: relative;
+}
+
+.scroll-shadow::before,
+.scroll-shadow::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 20px;
+    pointer-events: none;
+    transition: opacity var(--transition-base) var(--ease-smooth);
+    z-index: 10;
+}
+
+.scroll-shadow::before {
+    top: 0;
+    background: linear-gradient(to bottom, var(--bg-card-light), transparent);
+}
+
+.scroll-shadow::after {
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-card-light), transparent);
+}
+
+html.dark .scroll-shadow::before {
+    background: linear-gradient(to bottom, var(--bg-card-dark), transparent);
+}
+
+html.dark .scroll-shadow::after {
+    background: linear-gradient(to top, var(--bg-card-dark), transparent);
+}
+
+/* ============================================
+   BREADCRUMBS
+   ============================================ */
+
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) 0;
+}
+
+.breadcrumbs a {
+    transition: color var(--transition-base) var(--ease-smooth);
+}
+
+html:not(.dark) .breadcrumbs a:hover {
+    color: var(--brand-orange);
+}
+
+html.dark .breadcrumbs a:hover {
+    color: var(--brand-orange-light);
+}
+
+/* ============================================
+   ACTION BUTTONS IN TABLES
+   ============================================ */
+
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+}
+
+.action-btn {
+    padding: 0.375rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast) var(--ease-smooth);
+}
+
+html:not(.dark) .action-btn {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+}
+
+html:not(.dark) .action-btn:hover {
+    background-color: var(--hover-light);
+    transform: scale(1.1);
+}
+
+html.dark .action-btn {
+    background-color: var(--bg-dark-secondary);
+    border: 1px solid var(--border-dark);
+}
+
+html.dark .action-btn:hover {
+    background-color: var(--hover-dark);
+    transform: scale(1.1);
+}
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+
+.stat-card {
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-base) var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 73, 0, 0.1), transparent);
+    border-radius: 50%;
+    transform: translate(30%, -30%);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+}
+
+html:not(.dark) .stat-card {
+    background: var(--bg-card-light);
+    border: 1px solid var(--border-light);
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+html:not(.dark) .stat-card:hover {
+    box-shadow: 0 8px 24px var(--shadow-light-lg),
+                0 0 0 1px rgba(255, 73, 0, 0.1);
+}
+
+html.dark .stat-card {
+    background: var(--bg-card-dark);
+    border: 1px solid var(--border-dark);
+    box-shadow: 0 4px 12px var(--shadow-dark);
+}
+
+html.dark .stat-card:hover {
+    box-shadow: 0 12px 32px var(--shadow-dark-lg),
+                0 0 0 1px rgba(255, 107, 53, 0.15);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ============================================
+   FORM GROUPS
+   ============================================ */
+
+.form-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.form-help {
+    font-size: 0.8125rem;
+    margin-top: var(--spacing-xs);
+}
+
+html:not(.dark) .form-help {
+    color: var(--text-tertiary-light);
+}
+
+html.dark .form-help {
+    color: var(--text-tertiary-dark);
+}
+
+.form-error {
+    font-size: 0.8125rem;
+    color: var(--error);
+    margin-top: var(--spacing-xs);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+/* ============================================
+   CHECKBOXES & RADIOS - MODERN
+   ============================================ */
+
+input[type="checkbox"],
+input[type="radio"] {
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base) var(--ease-smooth);
+    cursor: pointer;
+}
+
+html:not(.dark) input[type="checkbox"],
+html:not(.dark) input[type="radio"] {
+    border: 2px solid var(--border-light);
+    background-color: var(--bg-card-light);
+}
+
+html:not(.dark) input[type="checkbox"]:checked,
+html:not(.dark) input[type="radio"]:checked {
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+    border-color: var(--brand-orange);
+    box-shadow: 0 2px 8px rgba(255, 73, 0, 0.25);
+}
+
+html.dark input[type="checkbox"],
+html.dark input[type="radio"] {
+    border: 2px solid var(--border-dark);
+    background-color: var(--bg-card-dark);
+}
+
+html.dark input[type="checkbox"]:checked,
+html.dark input[type="radio"]:checked {
+    background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+    border-color: var(--brand-orange-light);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+input[type="radio"] {
+    border-radius: 50%;
+}
+
+/* ============================================
+   TABS
+   ============================================ */
+
+.tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    border-bottom: 2px solid var(--border-light);
+    margin-bottom: var(--spacing-lg);
+}
+
+html.dark .tabs {
+    border-bottom-color: var(--border-dark);
+}
+
+.tab {
+    padding: var(--spacing-md) var(--spacing-lg);
+    cursor: pointer;
+    transition: all var(--transition-base) var(--ease-smooth);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    position: relative;
+}
+
+html:not(.dark) .tab:hover {
+    color: var(--brand-orange);
+}
+
+html.dark .tab:hover {
+    color: var(--brand-orange-light);
+}
+
+.tab.active {
+    color: var(--brand-orange);
+    border-bottom-color: var(--brand-orange);
+    font-weight: 600;
+}
+
+html.dark .tab.active {
+    color: var(--brand-orange-light);
+    border-bottom-color: var(--brand-orange-light);
+}
+
+/* ============================================
+   PROGRESS BARS
+   ============================================ */
+
+.progress {
+    height: 0.5rem;
+    background-color: var(--border-light-subtle);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+html.dark .progress {
+    background-color: var(--border-dark-subtle);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--brand-orange) 0%, var(--brand-orange-light) 100%);
+    transition: width var(--transition-slow) var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ============================================
+   DIVIDERS
+   ============================================ */
+
+.divider {
+    height: 1px;
+    margin: var(--spacing-lg) 0;
+    position: relative;
+}
+
+html:not(.dark) .divider {
+    background: linear-gradient(90deg, transparent, var(--border-light), transparent);
+}
+
+html.dark .divider {
+    background: linear-gradient(90deg, transparent, var(--border-dark), transparent);
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 768px) {
+    :root {
+        --spacing-md: 0.75rem;
+        --spacing-lg: 1rem;
+        --spacing-xl: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+}

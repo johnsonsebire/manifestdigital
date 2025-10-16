@@ -20,7 +20,7 @@ class FormController extends Controller
     {
         $this->authorize('view-forms');
         
-        $forms = Form::latest()->paginate(10);
+        $forms = Form::withCount('submissions')->latest()->paginate(10);
         
         return view('admin.forms.index', compact('forms'));
     }
