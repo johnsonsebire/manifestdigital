@@ -28,7 +28,6 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])->prefix
     Route::put('forms/{id}/fields/reorder', [FormController::class, 'reorderFields'])->name('forms.fields.reorder');
     
     // Form submissions
-    Route::get('form-submissions', [AdminFormSubmissionController::class, 'all'])->name('form-submissions.all');
     Route::resource('form-submissions', AdminFormSubmissionController::class)->except(['create', 'store', 'edit', 'update']);
     Route::get('form-submissions/{id}/export/pdf', [AdminFormSubmissionController::class, 'exportSubmissionToPdf'])->name('form-submissions.export-pdf');
     Route::get('form-submissions/{id}/export/excel', [AdminFormSubmissionController::class, 'exportSubmissionToExcel'])->name('form-submissions.export-excel');

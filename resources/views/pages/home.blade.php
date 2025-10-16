@@ -3,10 +3,7 @@
     :transparentHeader="true"
     preloader="advanced"
     notificationStyle="modern-purple">
-
     <x-frontend.hero />
-   
-   
     <x-frontend.project-slider />
     <x-frontend.foundations-section />
     <x-frontend.how-it-works />
@@ -15,5 +12,4 @@
     <x-frontend.services-grid />
     <x-frontend.pricing />
     <x-frontend.testimonials />
-
 </x-layouts.frontend>

@@ -56,7 +56,7 @@ class SuperAdminSeeder extends Seeder
         if (app()->environment('local', 'development')) {
             $this->command->info('----------------------------------------');
             $this->command->info('Super Admin Login Details:');
-            $this->command->info('Email: johnson@manifestdigital.com');
+            $this->command->info('Email: johnson@manifestghana.com');
             $this->command->info('Password: ' . (env('SUPER_ADMIN_PASSWORD') ? '[from .env file]' : 'Admin@123!'));
             $this->command->info('----------------------------------------');
             $this->command->warn('Remember to secure your .env file in production!');

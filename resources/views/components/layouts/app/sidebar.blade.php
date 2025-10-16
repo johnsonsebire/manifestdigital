@@ -31,15 +31,17 @@
 
             <flux:spacer />
 
+            @unless(auth()->user()->hasRole('Customer'))
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
+                <flux:navlist.item icon="envelope" href="https://mail.zoho.com" target="_blank">
+                {{ __('Staff Email') }}
                 </flux:navlist.item>
 
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
+                <flux:navlist.item icon="question-mark-circle" href="https://support.manifestghana.com" target="_blank">
+                {{ __('Support Desk') }}
                 </flux:navlist.item>
             </flux:navlist>
+            @endunless
 
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">

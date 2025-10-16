@@ -1,5 +1,5 @@
 <x-layouts.app :title="__('Submission Details')">
-    <flux:section padded>
+    <div class="p-6">
         <header class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Submission Details</h1>
@@ -90,5 +90,5 @@
             </form>
         </div>
         @endcan
-    </flux:section>
+    </div>
 </x-layouts.app>

@@ -1,8 +1,8 @@
-<x-app-layout>
-    <flux:section padded>
-        <flux:section.header class="flex justify-between items-center">
+<x-layouts.app :title="__('Form Submissions')">
+    <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
             <div>
-                <flux:heading.h1>Form Submissions</flux:heading.h1>
+                <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Form Submissions</h1>
                 <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                     {{ isset($form) ? "Submissions for: {$form->title}" : "All form submissions" }}
                 </p>
@@ -13,11 +13,9 @@
                     @if(isset($form))
                     <div class="flex space-x-2">
                         <flux:button color="secondary" :href="route('admin.form-submissions.export.excel', $form->id)">
-                            <x-heroicon-m-document-arrow-down class="w-5 h-5 me-1" />
                             Export Excel
                         </flux:button>
                         <flux:button color="secondary" :href="route('admin.form-submissions.export.pdf', $form->id)">
-                            <x-heroicon-m-document-arrow-down class="w-5 h-5 me-1" />
                             Export PDF
                         </flux:button>
                     </div>
@@ -25,16 +23,15 @@
                 @endcan
                 
                 <flux:button color="zinc" :href="route('admin.forms.index')" wire:navigate>
-                    <x-heroicon-m-arrow-left class="w-5 h-5 me-1" />
                     Back to Forms
                 </flux:button>
             </div>
-        </flux:section.header>
+        </div>
         
         @if(session('success'))
-            <flux:alert class="mb-6" color="success" icon="check-circle" title="Success">
+            <div class="mb-6 p-4 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-lg">
                 {{ session('success') }}
-            </flux:alert>
+            </div>
         @endif
         
         <flux:card>
@@ -76,12 +73,12 @@
                             <flux:table.cell>
                                 <div class="flex space-x-2 rtl:space-x-reverse">
                                     <flux:button size="sm" color="info" :href="route('admin.form-submissions.show', $submission->id)" wire:navigate>
-                                        <x-heroicon-m-eye class="w-4 h-4" />
+                                        View
                                     </flux:button>
                                     
                                     @can('delete-form-submissions')
                                     <flux:button size="sm" color="danger" x-data="" @click="$dispatch('open-modal', 'delete-submission-{{ $submission->id }}')">
-                                        <x-heroicon-m-trash class="w-4 h-4" />
+                                        Delete
                                     </flux:button>
                                     
                                     <!-- Delete Modal -->
@@ -112,7 +109,6 @@
                         <flux:table.row>
                             <flux:table.cell colspan="{{ isset($form) ? '5' : '6' }}" class="text-center py-8">
                                 <div class="flex flex-col items-center justify-center space-y-2">
-                                    <x-heroicon-o-inbox class="w-12 h-12 text-zinc-400" />
                                     <p class="font-medium text-zinc-500 dark:text-zinc-400">No submissions found</p>
                                 </div>
                             </flux:table.cell>
@@ -127,5 +123,5 @@
                 </div>
             @endif
         </flux:card>
-    </flux:section>
-</x-app-layout>
+    </div>
+</x-layouts.app>

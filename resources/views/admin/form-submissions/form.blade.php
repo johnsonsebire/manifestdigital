@@ -1,5 +1,5 @@
 <x-layouts.app :title="__('Form Submissions')">
-    <flux:section padded>
+    <div class="p-6">
         <header class="flex justify-between items-center mb-6">
             <div>
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">{{ $form->name }} - Submissions</h1>
@@ -99,5 +99,5 @@
                 <p class="text-zinc-600 dark:text-zinc-400">No submissions have been received for this form yet.</p>
             </div>
         @endif
-    </flux:section>
+    </div>
 </x-layouts.app>
