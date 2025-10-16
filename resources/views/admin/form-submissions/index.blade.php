@@ -34,52 +34,62 @@
             </div>
         @endif
         
-        <flux:card>
-            <flux:table>
-                <x-slot:header>
-                    <flux:table.head>ID</flux:table.head>
-                    @if(!isset($form))
-                    <flux:table.head>Form</flux:table.head>
-                    @endif
-                    <flux:table.head>Submitted By</flux:table.head>
-                    <flux:table.head>IP Address</flux:table.head>
-                    <flux:table.head>Submitted At</flux:table.head>
-                    <flux:table.head>Actions</flux:table.head>
-                </x-slot:header>
-                
-                <x-slot:body>
+        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <thead class="bg-zinc-50 dark:bg-zinc-900">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">ID</th>
+                            @if(!isset($form))
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Form</th>
+                            @endif
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Submitted By</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">IP Address</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Submitted At</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white dark:bg-zinc-800 divide-y divide-zinc-200 dark:divide-zinc-700">
                     @forelse($submissions as $submission)
-                        <flux:table.row>
-                            <flux:table.cell>{{ $submission->id }}</flux:table.cell>
+                        <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-700/50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                                {{ $submission->id }}
+                            </td>
                             
                             @if(!isset($form))
-                            <flux:table.cell>
-                                <a href="{{ route('admin.forms.show', $submission->form_id) }}" class="text-primary-600 hover:underline" wire:navigate>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <a href="{{ route('admin.forms.show', $submission->form_id) }}" class="text-blue-600 dark:text-blue-400 hover:underline" wire:navigate>
                                     {{ $submission->form->title }}
                                 </a>
-                            </flux:table.cell>
+                            </td>
                             @endif
                             
-                            <flux:table.cell>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
                                 {{ $submission->user_id ? $submission->user->name : 'Guest' }}
-                            </flux:table.cell>
+                            </td>
                             
-                            <flux:table.cell>
-                                <flux:badge color="zinc" class="font-mono">{{ $submission->ip_address }}</flux:badge>
-                            </flux:table.cell>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold font-mono rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200">
+                                    {{ $submission->ip_address }}
+                                </span>
+                            </td>
                             
-                            <flux:table.cell>{{ $submission->created_at->format('M d, Y H:i') }}</flux:table.cell>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-zinc-100">
+                                {{ $submission->created_at->format('M d, Y H:i') }}
+                            </td>
                             
-                            <flux:table.cell>
-                                <div class="flex space-x-2 rtl:space-x-reverse">
-                                    <flux:button size="sm" color="info" :href="route('admin.form-submissions.show', $submission->id)" wire:navigate>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">
+                                    <a href="{{ route('admin.form-submissions.show', $submission->id) }}" wire:navigate 
+                                       class="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition">
                                         View
-                                    </flux:button>
+                                    </a>
                                     
                                     @can('delete-form-submissions')
-                                    <flux:button size="sm" color="danger" x-data="" @click="$dispatch('open-modal', 'delete-submission-{{ $submission->id }}')">
+                                    <button x-data="" @click="$dispatch('open-modal', 'delete-submission-{{ $submission->id }}')" 
+                                            class="inline-flex items-center px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs rounded transition">
                                         Delete
-                                    </flux:button>
+                                    </button>
                                     
                                     <!-- Delete Modal -->
                                     <x-modal name="delete-submission-{{ $submission->id }}" title="Delete Submission">
@@ -87,41 +97,44 @@
                                             <p class="mb-6">Are you sure you want to delete this submission? This action cannot be undone.</p>
                                             
                                             <div class="flex justify-end gap-4">
-                                                <flux:button color="zinc" x-on:click="$dispatch('close')">
+                                                <button x-on:click="$dispatch('close')" 
+                                                        class="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-zinc-200 rounded hover:bg-zinc-300 dark:hover:bg-zinc-600 transition">
                                                     Cancel
-                                                </flux:button>
+                                                </button>
                                                 
-                                                <form action="{{ route('admin.form-submissions.destroy', $submission->id) }}" method="POST">
+                                                <form action="{{ route('admin.form-submissions.destroy', $submission->id) }}" method="POST" class="inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <flux:button type="submit" color="danger">
+                                                    <button type="submit" 
+                                                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition">
                                                         Delete Submission
-                                                    </flux:button>
+                                                    </button>
                                                 </form>
                                             </div>
                                         </div>
                                     </x-modal>
                                     @endcan
                                 </div>
-                            </flux:table.cell>
-                        </flux:table.row>
+                            </td>
+                        </tr>
                     @empty
-                        <flux:table.row>
-                            <flux:table.cell colspan="{{ isset($form) ? '5' : '6' }}" class="text-center py-8">
+                        <tr>
+                            <td colspan="{{ isset($form) ? '5' : '6' }}" class="px-6 py-8 text-center">
                                 <div class="flex flex-col items-center justify-center space-y-2">
                                     <p class="font-medium text-zinc-500 dark:text-zinc-400">No submissions found</p>
                                 </div>
-                            </flux:table.cell>
-                        </flux:table.row>
+                            </td>
+                        </tr>
                     @endforelse
-                </x-slot:body>
-            </flux:table>
+                </tbody>
+            </table>
+        </div>
             
-            @if($submissions->hasPages())
-                <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700">
-                    {{ $submissions->links() }}
-                </div>
-            @endif
-        </flux:card>
+        @if($submissions->hasPages())
+            <div class="px-4 py-3 border-t border-zinc-200 dark:border-zinc-700">
+                {{ $submissions->links() }}
+            </div>
+        @endif
+    </div>
     </div>
 </x-layouts.app>
