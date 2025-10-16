@@ -38,6 +38,47 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-6">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Submission Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                @php
+                    $submitterInfo = $submission->getSubmitterInfo();
+                @endphp
+                
+                @if($submitterInfo['first_name'] || $submitterInfo['last_name'] || $submitterInfo['email'])
+                    <div class="md:col-span-2 border-b border-gray-200 dark:border-gray-700 pb-4 mb-2">
+                        <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Submitter Details</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            @if($submitterInfo['first_name'])
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">First Name</p>
+                                    <p class="text-base font-medium text-gray-900 dark:text-white">
+                                        {{ $submitterInfo['first_name'] }}
+                                    </p>
+                                </div>
+                            @endif
+                            
+                            @if($submitterInfo['last_name'])
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Last Name</p>
+                                    <p class="text-base font-medium text-gray-900 dark:text-white">
+                                        {{ $submitterInfo['last_name'] }}
+                                    </p>
+                                </div>
+                            @endif
+                            
+                            @if($submitterInfo['email'])
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Email</p>
+                                    <p class="text-base font-medium text-gray-900 dark:text-white">
+                                        <a href="mailto:{{ $submitterInfo['email'] }}" 
+                                           class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline">
+                                            {{ $submitterInfo['email'] }}
+                                        </a>
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
+                
                 <div>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Submitted At</p>
                     <p class="text-base font-medium text-gray-900 dark:text-white">
@@ -68,7 +109,7 @@
                     @foreach($submission->data as $key => $value)
                         <div class="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
                             <dt class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                {{ ucwords(str_replace('_', ' ', $key)) }}
+                                {{ \App\Models\FormSubmission::formatFieldName($key) }}
                             </dt>
                             <dd class="text-base text-gray-900 dark:text-white">
                                 @if(is_array($value))
@@ -101,6 +142,22 @@
 
         <!-- Export/Print Actions -->
         <div class="mt-6 flex gap-3">
+            <a href="{{ route('admin.form-submissions.export-pdf', $submission->id) }}" 
+               class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                Export to PDF
+            </a>
+            
+            <a href="{{ route('admin.form-submissions.export-excel', $submission->id) }}" 
+               class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Export to Excel
+            </a>
+            
             <button onclick="window.print()" 
                     class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

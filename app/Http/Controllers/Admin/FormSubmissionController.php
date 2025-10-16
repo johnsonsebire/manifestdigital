@@ -207,4 +207,134 @@ class FormSubmissionController extends Controller
         
         return $pdf->download($filename);
     }
+    
+    /**
+     * Export a single submission to PDF.
+     */
+    public function exportSubmissionToPdf($id)
+    {
+        $this->authorize('view-form-submissions');
+        
+        $submission = FormSubmission::with(['form.fields', 'user'])->findOrFail($id);
+        $submitterInfo = $submission->getSubmitterInfo();
+        
+        $pdf = PDF::loadView('admin.form-submissions.single-pdf-export', [
+            'submission' => $submission,
+            'submitterInfo' => $submitterInfo
+        ]);
+        
+        $filename = 'submission_' . $submission->id . '_' . date('Y-m-d_His') . '.pdf';
+        
+        return $pdf->download($filename);
+    }
+    
+    /**
+     * Export a single submission to Excel.
+     */
+    public function exportSubmissionToExcel($id)
+    {
+        $this->authorize('view-form-submissions');
+        
+        $submission = FormSubmission::with(['form.fields', 'user'])->findOrFail($id);
+        $submitterInfo = $submission->getSubmitterInfo();
+        
+        // Create a new spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        // Set title
+        $sheet->setTitle('Submission #' . $submission->id);
+        
+        // Add header
+        $sheet->setCellValue('A1', 'Field Name');
+        $sheet->setCellValue('B1', 'Value');
+        $sheet->getStyle('A1:B1')->getFont()->setBold(true);
+        
+        $row = 2;
+        
+        // Add submitter info section
+        if ($submitterInfo['first_name'] || $submitterInfo['last_name'] || $submitterInfo['email']) {
+            $sheet->setCellValue('A' . $row, '--- Submitter Information ---');
+            $sheet->mergeCells('A' . $row . ':B' . $row);
+            $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+            $row++;
+            
+            if ($submitterInfo['first_name']) {
+                $sheet->setCellValue('A' . $row, 'First Name');
+                $sheet->setCellValue('B' . $row, $submitterInfo['first_name']);
+                $row++;
+            }
+            
+            if ($submitterInfo['last_name']) {
+                $sheet->setCellValue('A' . $row, 'Last Name');
+                $sheet->setCellValue('B' . $row, $submitterInfo['last_name']);
+                $row++;
+            }
+            
+            if ($submitterInfo['email']) {
+                $sheet->setCellValue('A' . $row, 'Email');
+                $sheet->setCellValue('B' . $row, $submitterInfo['email']);
+                $row++;
+            }
+            
+            $row++; // Empty row
+        }
+        
+        // Add submission metadata
+        $sheet->setCellValue('A' . $row, '--- Submission Details ---');
+        $sheet->mergeCells('A' . $row . ':B' . $row);
+        $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+        $row++;
+        
+        $sheet->setCellValue('A' . $row, 'Submitted At');
+        $sheet->setCellValue('B' . $row, $submission->created_at->format('M d, Y \a\t h:i A'));
+        $row++;
+        
+        $sheet->setCellValue('A' . $row, 'Form');
+        $sheet->setCellValue('B' . $row, $submission->form->name);
+        $row++;
+        
+        $sheet->setCellValue('A' . $row, 'IP Address');
+        $sheet->setCellValue('B' . $row, $submission->ip_address ?? 'N/A');
+        $row++;
+        
+        $row++; // Empty row
+        
+        // Add form data
+        $sheet->setCellValue('A' . $row, '--- Submitted Data ---');
+        $sheet->mergeCells('A' . $row . ':B' . $row);
+        $sheet->getStyle('A' . $row)->getFont()->setBold(true);
+        $row++;
+        
+        foreach ($submission->data as $key => $value) {
+            $fieldName = FormSubmission::formatFieldName($key);
+            $fieldValue = is_array($value) ? implode(', ', $value) : $value;
+            
+            $sheet->setCellValue('A' . $row, $fieldName);
+            $sheet->setCellValue('B' . $row, $fieldValue);
+            $row++;
+        }
+        
+        // Auto-size columns
+        $sheet->getColumnDimension('A')->setAutoSize(true);
+        $sheet->getColumnDimension('B')->setAutoSize(true);
+        
+        // Create file
+        $filename = 'submission_' . $submission->id . '_' . date('Y-m-d_His') . '.xlsx';
+        $writer = new Xlsx($spreadsheet);
+        
+        // Create the storage path if it doesn't exist
+        if (!Storage::disk('public')->exists('exports')) {
+            Storage::disk('public')->makeDirectory('exports');
+        }
+        
+        $path = storage_path('app/public/exports/' . $filename);
+        $writer->save($path);
+        
+        // Return download response
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend();
+    }
 }
+

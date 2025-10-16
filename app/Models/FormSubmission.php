@@ -52,4 +52,99 @@ class FormSubmission extends Model
     {
         return $this->data[$fieldName] ?? null;
     }
+
+    /**
+     * Format field name to human-readable format.
+     * Converts: ProjectTitle => Project Title, first_name => First Name
+     */
+    public static function formatFieldName($fieldName)
+    {
+        // Handle camelCase: ProjectTitle => Project Title
+        $formatted = preg_replace('/([a-z])([A-Z])/', '$1 $2', $fieldName);
+        
+        // Handle snake_case and spaces: project_title => Project Title
+        $formatted = str_replace(['_', '-'], ' ', $formatted);
+        
+        // Capitalize first letter of each word
+        return ucwords($formatted);
+    }
+
+    /**
+     * Get submitter's first name from form data.
+     */
+    public function getFirstName()
+    {
+        // Try common field name variations
+        $possibleKeys = ['first_name', 'firstName', 'FirstName', 'fname', 'name'];
+        
+        foreach ($possibleKeys as $key) {
+            if (isset($this->data[$key])) {
+                return $this->data[$key];
+            }
+        }
+        
+        // Try to extract from full name
+        if (isset($this->data['full_name']) || isset($this->data['name'])) {
+            $fullName = $this->data['full_name'] ?? $this->data['name'];
+            $nameParts = explode(' ', $fullName);
+            return $nameParts[0] ?? null;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get submitter's last name from form data.
+     */
+    public function getLastName()
+    {
+        // Try common field name variations
+        $possibleKeys = ['last_name', 'lastName', 'LastName', 'lname', 'surname'];
+        
+        foreach ($possibleKeys as $key) {
+            if (isset($this->data[$key])) {
+                return $this->data[$key];
+            }
+        }
+        
+        // Try to extract from full name
+        if (isset($this->data['full_name']) || isset($this->data['name'])) {
+            $fullName = $this->data['full_name'] ?? $this->data['name'];
+            $nameParts = explode(' ', $fullName);
+            array_shift($nameParts); // Remove first name
+            return implode(' ', $nameParts) ?: null;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get submitter's email from form data.
+     */
+    public function getEmail()
+    {
+        // Try common field name variations
+        $possibleKeys = ['email', 'Email', 'email_address', 'emailAddress'];
+        
+        foreach ($possibleKeys as $key) {
+            if (isset($this->data[$key])) {
+                return $this->data[$key];
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * Get submitter information (first name, last name, email).
+     */
+    public function getSubmitterInfo()
+    {
+        return [
+            'first_name' => $this->getFirstName(),
+            'last_name' => $this->getLastName(),
+            'email' => $this->getEmail(),
+        ];
+    }
 }
+

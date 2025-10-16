@@ -33,7 +33,7 @@ class SuperAdminSeeder extends Seeder
         if (!$user->exists) {
             $user->fill([
                 'name' => 'Super Administrator',
-                'email' => 'johnson@manifestdigital.com',
+                'email' => 'johnson@manifestghana.com',
                 'password' => Hash::make($password),
                 'email_verified_at' => now(),
             ]);
