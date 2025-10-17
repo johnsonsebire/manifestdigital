@@ -36,6 +36,25 @@ Route::post('/services/{slug}/price', [App\Http\Controllers\ServiceController::c
 Route::get('/categories', [App\Http\Controllers\CategoryController::class, 'index'])->name('categories.index');
 Route::get('/categories/{slug}', [App\Http\Controllers\CategoryController::class, 'show'])->name('categories.show');
 
+// Shopping Cart Routes
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+Route::post('/cart/add', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+Route::patch('/cart/update/{cartKey}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{cartKey}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/clear', [App\Http\Controllers\CartController::class, 'clear'])->name('cart.clear');
+Route::get('/cart/summary', [App\Http\Controllers\CartController::class, 'summary'])->name('cart.summary');
+
+// Checkout Routes
+Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
+Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/success/{uuid}', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
+
+// Payment Routes
+Route::post('/payment/initiate/{uuid}', [App\Http\Controllers\PaymentController::class, 'initiate'])->name('payment.initiate');
+Route::get('/payment/callback/{gateway}', [App\Http\Controllers\PaymentController::class, 'callback'])->name('payment.callback');
+Route::post('/payment/webhook/{gateway}', [App\Http\Controllers\PaymentController::class, 'webhook'])->name('payment.webhook');
+Route::get('/payment/bank-transfer/{uuid}', [App\Http\Controllers\PaymentController::class, 'bankTransfer'])->name('payment.bank-transfer');
+
 // Team Profile Form Routes
 Route::get('/team-profile/create', [App\Http\Controllers\TeamProfileController::class, 'create'])->name('team-profile.create');
 Route::post('/team-profile/store', [App\Http\Controllers\TeamProfileController::class, 'store'])->name('team-profile.store');

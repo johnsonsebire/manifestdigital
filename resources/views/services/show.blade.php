@@ -270,37 +270,55 @@
         // Add to cart function
         function addToCart() {
             const serviceId = {{ $service->id }};
-            const variantId = variantSelect ? variantSelect.value : null;
+            const variantId = variantSelect ? (variantSelect.value || null) : null;
             const quantity = parseInt(quantityInput.value) || 1;
-            let price = basePrice;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 
-            if (variantId) {
-                const selectedOption = variantSelect.options[variantSelect.selectedIndex];
-                price = parseFloat(selectedOption.dataset.price);
-            }
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Adding...';
 
-            // TODO: Implement actual cart functionality
-            // For now, just show alert
-            alert(`Added to cart!\nService: {{ $service->title }}\nQuantity: ${quantity}\nPrice: $${(price * quantity).toFixed(2)}`);
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    service_id: serviceId,
+                    variant_id: variantId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                button.disabled = false;
+                button.textContent = originalText;
 
-            // In production, this would be an AJAX call to add to cart:
-            // fetch('/cart/add', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            //     },
-            //     body: JSON.stringify({
-            //         service_id: serviceId,
-            //         variant_id: variantId,
-            //         quantity: quantity,
-            //         price: price
-            //     })
-            // })
-            // .then(response => response.json())
-            // .then(data => {
-            //     // Update cart UI, show notification, etc.
-            // });
+                if (data.success) {
+                    // Show success message
+                    alert('✓ Added to cart successfully!\n\nGo to cart to checkout.');
+                    
+                    // Optional: Update cart count in navbar if you have one
+                    // updateCartCount(data.cart.count);
+                    
+                    // Optional: Redirect to cart
+                    if (confirm('View cart now?')) {
+                        window.location.href = '/cart';
+                    }
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                button.disabled = false;
+                button.textContent = originalText;
+                console.error('Error:', error);
+                alert('Failed to add to cart. Please try again.');
+            });
         }
     </script>
 </x-layouts.frontend>

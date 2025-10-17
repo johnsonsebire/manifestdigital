@@ -35,4 +35,34 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Payment Gateway Services
+    |--------------------------------------------------------------------------
+    */
+
+    'paystack' => [
+        'public_key' => env('PAYSTACK_PUBLIC_KEY'),
+        'secret_key' => env('PAYSTACK_SECRET_KEY'),
+        'merchant_email' => env('PAYSTACK_MERCHANT_EMAIL'),
+    ],
+
+    'stripe' => [
+        'public_key' => env('STRIPE_PUBLIC_KEY'),
+        'secret_key' => env('STRIPE_SECRET_KEY'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'secret' => env('PAYPAL_SECRET'),
+        'mode' => env('PAYPAL_MODE', 'sandbox'), // sandbox or live
+    ],
+
+    'bank_transfer' => [
+        'bank_name' => env('BANK_TRANSFER_BANK_NAME', 'Your Bank'),
+        'account_name' => env('BANK_TRANSFER_ACCOUNT_NAME', 'Your Business Name'),
+        'account_number' => env('BANK_TRANSFER_ACCOUNT_NUMBER', '0000000000'),
+    ],
+
 ];

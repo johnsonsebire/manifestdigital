@@ -16,6 +16,20 @@
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                 </flux:navlist.group>
                 
+                @can('view-orders')
+                <flux:navlist.group :heading="__('Business')" class="grid">
+                    <flux:navlist.item icon="shopping-bag" :href="route('admin.orders.index')" :current="request()->routeIs('admin.orders.*')" wire:navigate>
+                        {{ __('Orders') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" wire:navigate>
+                        {{ __('Categories') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="cube" :href="route('admin.services.index')" :current="request()->routeIs('admin.services.*')" wire:navigate>
+                        {{ __('Services') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+                @endcan
+                
                 @can('view-forms')
                 <flux:navlist.group :heading="__('Content')" class="grid">
                     <flux:navlist.item icon="document-text" :href="route('admin.forms.index')" :current="request()->routeIs('admin.forms.*')" wire:navigate>

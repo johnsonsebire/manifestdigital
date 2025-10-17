@@ -170,7 +170,8 @@
                         <p>
                             Manifest Multimedia was founded with a vision to provide purpose-driven digital solutions 
                             to organizations in Ghana and beyond. Started with a small team of passionate developers 
-                            and designers.
+                            and designers. We started operations as a bunch of freelancers in 2012 and officially 
+                            registered the company on the 24th of April 2014 with a team of 5.
                         </p>
                     </div>
                 </div>
@@ -180,8 +181,9 @@
                     <div class="timeline-content">
                         <h4>Expansion & Growth</h4>
                         <p>
-                            Expanded our services to include mobile app development and AI solutions. Grew our team 
-                            and client base across multiple African countries and international markets.
+                            We expanded our team to meet the growing demand for our services, leveraging a remote 
+                            work model with teams across different regions. Our client base broadened significantly 
+                            across diverse industries.
                         </p>
                     </div>
                 </div>
@@ -191,8 +193,9 @@
                     <div class="timeline-content">
                         <h4>Digital Transformation</h4>
                         <p>
-                            Pivoted to focus on AI and machine learning solutions. Helped numerous businesses 
-                            navigate the digital transformation accelerated by the global pandemic.
+                            We refined our business offerings to focus mainly on web development, app development, 
+                            and branding services and helped numerous businesses navigate the digital transformation 
+                            accelerated by the global pandemic.
                         </p>
                     </div>
                 </div>
@@ -222,7 +225,8 @@
         </div>
     </section>
 
-    <!-- Circle Grid Team Section -->
+    {{--
+    <!-- Circle Grid Team Section (temporarily disabled; will be replaced with real-time data) -->
     <section class="circle-team-section">
         <div class="container">
             <div class="section-header">
@@ -408,8 +412,8 @@
             </div>
         </div>
     </section>
-
-    <!-- Team Member Modals -->
+    
+    <!-- Team Member Modals (temporarily disabled; will be replaced with real-time data) -->
     <div class="team-modal" id="teamModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeTeamModal()">
@@ -472,6 +476,7 @@
             </div>
         </div>
     </div>
+    --}}
 
     <!-- Testimonials -->
     <section style="background: #f8f9fa;">

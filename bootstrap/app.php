@@ -14,10 +14,16 @@ return Application::configure(basePath: dirname(__DIR__))
             if (file_exists($forms = __DIR__.'/../routes/forms.php')) {
                 require $forms;
             }
+            if (file_exists($frontend = __DIR__.'/../routes/frontend.php')) {
+                require $frontend;
+            }
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        // Exclude payment webhook routes from CSRF verification
+        $middleware->validateCsrfTokens(except: [
+            'payment/webhook/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
