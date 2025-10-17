@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CheckoutRequest;
+use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Service;
@@ -133,6 +134,9 @@ class CheckoutController extends Controller
                 'tax' => $tax,
                 'total' => $total,
             ]);
+
+            // Automatically create invoice for the order
+            $invoice = Invoice::createFromOrder($order, dueInDays: 30, taxRate: 0);
 
             DB::commit();
 

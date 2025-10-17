@@ -13,6 +13,11 @@ class Invoice extends Model
         'invoice_number',
         'order_id',
         'customer_id',
+        'client_name',
+        'client_email',
+        'client_phone',
+        'client_address',
+        'client_company',
         'invoice_date',
         'due_date',
         'subtotal',
@@ -239,5 +244,58 @@ class Invoice extends Model
     {
         if (!$this->isOverdue()) return 0;
         return now()->diffInDays($this->due_date);
+    }
+
+    /**
+     * Get the client name (from registered customer or manual entry)
+     */
+    public function getClientNameAttribute(): string
+    {
+        return $this->attributes['client_name'] ?? $this->customer?->name ?? 'Unknown Client';
+    }
+
+    /**
+     * Get the client email (from registered customer or manual entry)
+     */
+    public function getClientEmailAttribute(): string
+    {
+        return $this->attributes['client_email'] ?? $this->customer?->email ?? '';
+    }
+
+    /**
+     * Check if invoice is for a manual (non-registered) client
+     */
+    public function isManualClient(): bool
+    {
+        return !$this->customer_id && $this->attributes['client_name'];
+    }
+
+    /**
+     * Create invoice from order
+     */
+    public static function createFromOrder(Order $order, ?int $dueInDays = 30, ?float $taxRate = 0): self
+    {
+        $invoice = self::create([
+            'invoice_number' => self::generateInvoiceNumber(),
+            'order_id' => $order->id,
+            'customer_id' => $order->customer_id,
+            'client_name' => $order->customer_name,
+            'client_email' => $order->customer_email,
+            'client_phone' => $order->customer_phone,
+            'client_address' => $order->customer_address,
+            'invoice_date' => now(),
+            'due_date' => now()->addDays($dueInDays),
+            'subtotal' => $order->subtotal,
+            'tax_rate' => $taxRate,
+            'discount_amount' => $order->discount ?? 0,
+            'amount_paid' => 0,
+            'status' => 'draft',
+            'notes' => "Invoice for Order #{$order->order_number}",
+        ]);
+
+        $invoice->calculateTotals();
+        $invoice->save();
+
+        return $invoice;
     }
 }

@@ -238,10 +238,12 @@
                     @endif
                 </div>
             </div>
-            <div class="meta-row">
-                <div class="meta-label">Related Order:</div>
-                <div class="meta-value">Order #{{ $invoice->order->id }}</div>
-            </div>
+            @if($invoice->order_id)
+                <div class="meta-row">
+                    <div class="meta-label">Related Order:</div>
+                    <div class="meta-value">Order #{{ $invoice->order->id }}</div>
+                </div>
+            @endif
         </div>
 
         <!-- Line Items -->
@@ -255,19 +257,34 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($invoice->order->items as $item)
-                    <tr>
-                        <td>
-                            <div class="item-name">{{ $item->service->name }}</div>
-                            @if($item->service->description)
-                                <div class="item-desc">{{ $item->service->description }}</div>
-                            @endif
-                        </td>
-                        <td class="text-right">{{ $item->quantity }}</td>
-                        <td class="text-right">${{ number_format($item->unit_price, 2) }}</td>
-                        <td class="text-right">${{ number_format($item->total_price, 2) }}</td>
-                    </tr>
-                @endforeach
+                @if($invoice->order_id)
+                    {{-- Order-based invoice items --}}
+                    @foreach($invoice->order->items as $item)
+                        <tr>
+                            <td>
+                                <div class="item-name">{{ $item->service->name }}</div>
+                                @if($item->service->description)
+                                    <div class="item-desc">{{ $item->service->description }}</div>
+                                @endif
+                            </td>
+                            <td class="text-right">{{ $item->quantity }}</td>
+                            <td class="text-right">${{ number_format($item->unit_price, 2) }}</td>
+                            <td class="text-right">${{ number_format($item->total_price, 2) }}</td>
+                        </tr>
+                    @endforeach
+                @else
+                    {{-- Manual invoice items --}}
+                    @foreach($invoice->metadata['items'] ?? [] as $item)
+                        <tr>
+                            <td>
+                                <div class="item-name">{{ $item['description'] }}</div>
+                            </td>
+                            <td class="text-right">{{ $item['quantity'] }}</td>
+                            <td class="text-right">${{ number_format($item['unit_price'], 2) }}</td>
+                            <td class="text-right">${{ number_format($item['quantity'] * $item['unit_price'], 2) }}</td>
+                        </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
 

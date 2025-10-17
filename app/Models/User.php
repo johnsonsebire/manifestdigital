@@ -24,6 +24,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'company',
+        'address',
     ];
 
     /**
@@ -59,5 +62,39 @@ class User extends Authenticatable
             ->take(2)
             ->map(fn ($word) => Str::substr($word, 0, 1))
             ->implode('');
+    }
+
+    /**
+     * Get the orders for the user (customer).
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'customer_id');
+    }
+
+    /**
+     * Get the invoices for the user (customer).
+     */
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, 'customer_id');
+    }
+
+    /**
+     * Get the projects for the user (customer).
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'client_id');
+    }
+
+    /**
+     * Get the projects where the user is a team member.
+     */
+    public function projectsAsTeamMember()
+    {
+        return $this->belongsToMany(Project::class, 'project_team_members', 'user_id', 'project_id')
+            ->withPivot('role')
+            ->withTimestamps();
     }
 }

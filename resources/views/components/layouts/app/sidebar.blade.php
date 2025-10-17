@@ -38,6 +38,9 @@
                     <flux:navlist.item icon="document-text" :href="route('admin.invoices.index')" :current="request()->routeIs('admin.invoices.*')" wire:navigate>
                         {{ __('Invoices') }}
                     </flux:navlist.item>
+                    <flux:navlist.item icon="users" :href="route('admin.customers.index')" :current="request()->routeIs('admin.customers.*')" wire:navigate>
+                        {{ __('Customers') }}
+                    </flux:navlist.item>
                     <flux:navlist.item icon="arrows-right-left" :href="route('admin.change-requests.index')" :current="request()->routeIs('admin.change-requests.*')" wire:navigate>
                         {{ __('Change Requests') }}
                     </flux:navlist.item>

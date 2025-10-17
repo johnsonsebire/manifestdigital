@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\Order;
+use App\Models\User;
 use App\Notifications\InvoiceSent;
 use App\Notifications\InvoicePaymentReceived;
 use Illuminate\Http\Request;
@@ -71,54 +72,124 @@ class InvoiceController extends Controller
         return view('admin.invoices.show', compact('invoice'));
     }
 
-    public function create(Order $order)
+    public function create(Order $order = null)
     {
-        // Check if invoice already exists for this order
-        if ($order->invoice) {
-            return redirect()
-                ->route('admin.invoices.show', $order->invoice)
-                ->with('error', 'Invoice already exists for this order.');
+        // For order-based invoices
+        if ($order) {
+            // Check if invoice already exists for this order
+            if ($order->invoice) {
+                return redirect()
+                    ->route('admin.invoices.show', $order->invoice)
+                    ->with('error', 'Invoice already exists for this order.');
+            }
+            return view('admin.invoices.create', compact('order'));
         }
 
-        return view('admin.invoices.create', compact('order'));
+        // For manual invoices
+        $customers = User::role('Customer')->orderBy('name')->get();
+        return view('admin.invoices.create-manual', compact('customers'));
     }
 
-    public function store(Request $request, Order $order)
+    public function store(Request $request, Order $order = null)
     {
-        $request->validate([
+        // Validate based on invoice type (order-based or manual)
+        $rules = [
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
             'tax_rate' => 'required|numeric|min:0|max:100',
             'discount_amount' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
-        ]);
+        ];
 
-        // Check if invoice already exists
-        if ($order->invoice) {
-            return redirect()
-                ->route('admin.invoices.show', $order->invoice)
-                ->with('error', 'Invoice already exists for this order.');
+        // Manual invoice validation
+        if (!$order) {
+            $rules = array_merge($rules, [
+                'client_type' => 'required|in:registered,manual',
+                'customer_id' => 'required_if:client_type,registered|nullable|exists:users,id',
+                'client_name' => 'required_if:client_type,manual|string|max:255',
+                'client_email' => 'required_if:client_type,manual|email|max:255',
+                'client_phone' => 'nullable|string|max:20',
+                'client_address' => 'nullable|string',
+                'client_company' => 'nullable|string|max:255',
+                'subtotal' => 'required|numeric|min:0',
+                'items' => 'required|array|min:1',
+                'items.*.description' => 'required|string',
+                'items.*.quantity' => 'required|numeric|min:1',
+                'items.*.unit_price' => 'required|numeric|min:0',
+            ]);
         }
 
-        $invoice = new Invoice([
+        $request->validate($rules);
+
+        // Order-based invoice
+        if ($order) {
+            // Check if invoice already exists
+            if ($order->invoice) {
+                return redirect()
+                    ->route('admin.invoices.show', $order->invoice)
+                    ->with('error', 'Invoice already exists for this order.');
+            }
+
+            $invoice = new Invoice([
+                'invoice_number' => Invoice::generateInvoiceNumber(),
+                'order_id' => $order->id,
+                'customer_id' => $order->customer_id,
+                'client_name' => $order->customer_name,
+                'client_email' => $order->customer_email,
+                'client_phone' => $order->customer_phone,
+                'client_address' => $order->customer_address,
+                'invoice_date' => $request->invoice_date,
+                'due_date' => $request->due_date,
+                'subtotal' => $order->total,
+                'tax_rate' => $request->tax_rate,
+                'discount_amount' => $request->discount_amount ?? 0,
+                'status' => 'draft',
+                'notes' => $request->notes,
+            ]);
+
+            $invoice->calculateTotals();
+            $invoice->save();
+
+            return redirect()
+                ->route('admin.invoices.show', $invoice)
+                ->with('success', 'Invoice created successfully.');
+        }
+
+        // Manual invoice
+        $invoiceData = [
             'invoice_number' => Invoice::generateInvoiceNumber(),
-            'order_id' => $order->id,
-            'customer_id' => $order->customer_id,
             'invoice_date' => $request->invoice_date,
             'due_date' => $request->due_date,
-            'subtotal' => $order->total,
+            'subtotal' => $request->subtotal,
             'tax_rate' => $request->tax_rate,
             'discount_amount' => $request->discount_amount ?? 0,
             'status' => 'draft',
             'notes' => $request->notes,
-        ]);
+            'metadata' => [
+                'items' => $request->items,
+            ],
+        ];
 
+        if ($request->client_type === 'registered') {
+            $invoiceData['customer_id'] = $request->customer_id;
+            $customer = User::find($request->customer_id);
+            $invoiceData['client_name'] = $customer->name;
+            $invoiceData['client_email'] = $customer->email;
+        } else {
+            $invoiceData['client_name'] = $request->client_name;
+            $invoiceData['client_email'] = $request->client_email;
+            $invoiceData['client_phone'] = $request->client_phone;
+            $invoiceData['client_address'] = $request->client_address;
+            $invoiceData['client_company'] = $request->client_company;
+        }
+
+        $invoice = new Invoice($invoiceData);
         $invoice->calculateTotals();
         $invoice->save();
 
         return redirect()
             ->route('admin.invoices.show', $invoice)
-            ->with('success', 'Invoice created successfully.');
+            ->with('success', 'Manual invoice created successfully.');
     }
 
     public function edit(Invoice $invoice)

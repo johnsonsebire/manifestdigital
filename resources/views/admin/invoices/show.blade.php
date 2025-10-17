@@ -89,13 +89,22 @@
                         </div>
                     </div>
                     
-                    <div>
-                        <div class="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Related Order:</div>
-                        <a href="{{ route('admin.orders.show', $invoice->order) }}" 
-                           class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                            Order #{{ $invoice->order->id }}
-                        </a>
-                    </div>
+                    @if($invoice->order_id)
+                        <div>
+                            <div class="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Related Order:</div>
+                            <a href="{{ route('admin.orders.show', $invoice->order) }}" 
+                               class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                Order #{{ $invoice->order->id }}
+                            </a>
+                        </div>
+                    @else
+                        <div>
+                            <div class="text-sm text-zinc-600 dark:text-zinc-400 mb-1">Invoice Type:</div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+                                Manual Invoice
+                            </span>
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Line Items -->
@@ -118,25 +127,44 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                            @foreach($invoice->order->items as $item)
-                                <tr>
-                                    <td class="px-4 py-4 text-sm text-zinc-900 dark:text-white">
-                                        <div class="font-medium">{{ $item->service->name }}</div>
-                                        @if($item->service->description)
-                                            <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{{ $item->service->description }}</div>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
-                                        {{ $item->quantity }}
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
-                                        ${{ number_format($item->unit_price, 2) }}
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-right font-medium text-zinc-900 dark:text-white">
-                                        ${{ number_format($item->total_price, 2) }}
-                                    </td>
-                                </tr>
-                            @endforeach
+                            @if($invoice->order_id)
+                                @foreach($invoice->order->items as $item)
+                                    <tr>
+                                        <td class="px-4 py-4 text-sm text-zinc-900 dark:text-white">
+                                            <div class="font-medium">{{ $item->service->name }}</div>
+                                            @if($item->service->description)
+                                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">{{ $item->service->description }}</div>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
+                                            {{ $item->quantity }}
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
+                                            ${{ number_format($item->unit_price, 2) }}
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-right font-medium text-zinc-900 dark:text-white">
+                                            ${{ number_format($item->total_price, 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @else
+                                @foreach($invoice->metadata['items'] ?? [] as $item)
+                                    <tr>
+                                        <td class="px-4 py-4 text-sm text-zinc-900 dark:text-white">
+                                            <div class="font-medium">{{ $item['description'] }}</div>
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
+                                            {{ $item['quantity'] }}
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
+                                            ${{ number_format($item['unit_price'], 2) }}
+                                        </td>
+                                        <td class="px-4 py-4 text-sm text-right font-medium text-zinc-900 dark:text-white">
+                                            ${{ number_format($item['quantity'] * $item['unit_price'], 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            @endif
                         </tbody>
                     </table>
                 </div>
