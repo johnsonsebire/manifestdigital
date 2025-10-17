@@ -16,6 +16,9 @@ class RolesSeeder extends Seeder
     {
         $this->command->info('Setting up roles...');
         
+        // Reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        
         // Define the roles as per your requirements
         $roles = [
             'Customer',
@@ -41,88 +44,5 @@ class RolesSeeder extends Seeder
         }
 
         $this->command->info('Roles created successfully!');
-        
-        // Optional: Create some basic permissions (you can expand this later)
-        $this->createBasicPermissions();
-    }
-
-    /**
-     * Create some basic permissions
-     */
-    private function createBasicPermissions(): void
-    {
-        $this->command->info('Creating basic permissions...');
-        
-        $permissions = [
-            // User management
-            'view-users',
-            'create-users',
-            'edit-users',
-            'delete-users',
-            
-            // Role management
-            'view-roles',
-            'create-roles',
-            'edit-roles',
-            'delete-roles',
-            'assign-roles',
-            
-            // Dashboard access
-            'access-dashboard',
-            'access-admin-panel',
-            
-            // Basic operations
-            'view-reports',
-            'manage-settings',
-            
-            // Form Management
-            'view-forms',
-            'create-forms',
-            'edit-forms',
-            'delete-forms',
-            'view-form-submissions',
-            'export-form-submissions',
-        ];
-
-        foreach ($permissions as $permissionName) {
-            Permission::firstOrCreate([
-                'name' => $permissionName,
-                'guard_name' => 'web'
-            ]);
-            
-            $this->command->info("Created permission: {$permissionName}");
-        }
-
-        // Assign all permissions to Super Admin
-        $superAdmin = Role::where('name', 'Super Admin')->first();
-        if ($superAdmin) {
-            $superAdmin->givePermissionTo(Permission::all());
-            $this->command->info('Assigned all permissions to Super Admin role');
-        }
-
-        // Assign admin permissions to Administrator
-        $administrator = Role::where('name', 'Administrator')->first();
-        if ($administrator) {
-            $adminPermissions = [
-                'view-users', 'create-users', 'edit-users',
-                'view-roles', 'assign-roles',
-                'access-dashboard', 'access-admin-panel',
-                'view-reports', 'manage-settings',
-                'view-forms', 'create-forms', 'edit-forms', 'delete-forms',
-                'view-form-submissions', 'export-form-submissions'
-            ];
-            $administrator->givePermissionTo($adminPermissions);
-            $this->command->info('Assigned admin permissions to Administrator role');
-        }
-
-        // Basic permissions for Staff
-        $staff = Role::where('name', 'Staff')->first();
-        if ($staff) {
-            $staffPermissions = ['access-dashboard', 'view-reports'];
-            $staff->givePermissionTo($staffPermissions);
-            $this->command->info('Assigned basic permissions to Staff role');
-        }
-
-        $this->command->info('Basic permissions created and assigned successfully!');
     }
 }

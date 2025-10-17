@@ -55,15 +55,17 @@ class ProjectController extends Controller
         // Statistics
         $stats = [
             'total' => Project::count(),
-            'pending' => Project::where('status', 'pending')->count(),
             'planning' => Project::where('status', 'planning')->count(),
+            'active' => Project::where('status', 'in_progress')->count(), // Active = In Progress
             'in_progress' => Project::where('status', 'in_progress')->count(),
             'on_hold' => Project::where('status', 'on_hold')->count(),
-            'completed' => Project::where('status', 'completed')->count(),
+            'completed' => Project::where('status', 'complete')->count(),
+            'complete' => Project::where('status', 'complete')->count(),
+            'archived' => Project::where('status', 'archived')->count(),
         ];
 
         // Get all staff users for team filter
-        $teamMembers = User::role(['Admin', 'Staff'])->orderBy('name')->get();
+        $teamMembers = User::role(['Administrator', 'Staff'])->orderBy('name')->get();
 
         // Get all clients for client filter
         $clients = User::role('Customer')->orderBy('name')->get();

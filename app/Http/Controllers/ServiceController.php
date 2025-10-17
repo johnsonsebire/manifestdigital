@@ -23,15 +23,15 @@ class ServiceController extends Controller
     public function index(Request $request)
     {
         $query = Service::with(['categories', 'variants'])
-            ->where('is_visible', true) // Only show visible services in public listing
-            ->where('is_available', true);
+            ->where('visible', true) // Only show visible services in public listing
+            ->where('available', true);
 
         // Filter by category
         if ($request->has('category')) {
             $categorySlug = $request->get('category');
             $query->whereHas('categories', function ($q) use ($categorySlug) {
                 $q->where('slug', $categorySlug)
-                    ->where('is_visible', true);
+                    ->where('visible', true);
             });
         }
 
@@ -77,7 +77,7 @@ class ServiceController extends Controller
         $categories = Cache::remember('visible_categories', 3600, function () {
             return Category::visible()
                 ->withCount(['services' => function ($q) {
-                    $q->where('is_visible', true)->where('is_available', true);
+                    $q->where('visible', true)->where('available', true);
                 }])
                 ->orderBy('sort_order')
                 ->get();
@@ -100,24 +100,24 @@ class ServiceController extends Controller
         // Allow unlisted services to be accessed directly by URL
         $service = Service::with(['categories', 'variants'])
             ->where('slug', $slug)
-            ->where('is_available', true)
+            ->where('available', true)
             ->firstOrFail();
 
         // Authorization: Public can view visible services
         // For unlisted services, anyone with the link can view (useful for private offerings)
-        if (!$service->is_visible) {
+        if (!$service->visible) {
             // Check if user is authenticated staff/admin (they can always see)
             if (auth()->guest() || !auth()->user()->hasAnyRole(['Staff', 'Administrator', 'Super Admin'])) {
                 // For guests and customers, only allow if service is available (unlisted but accessible)
-                // The fact that we're here means is_available=true, so allow access
+                // The fact that we're here means available=true, so allow access
                 // This enables "unlisted" products that are shared via direct link
             }
         }
 
         // Get related services from same categories
         $relatedServices = Service::with(['categories', 'variants'])
-            ->where('is_visible', true)
-            ->where('is_available', true)
+            ->where('visible', true)
+            ->where('available', true)
             ->where('id', '!=', $service->id)
             ->whereHas('categories', function ($q) use ($service) {
                 $q->whereIn('categories.id', $service->categories->pluck('id'));
@@ -139,7 +139,7 @@ class ServiceController extends Controller
     public function getPrice(Request $request, string $slug)
     {
         $service = Service::where('slug', $slug)
-            ->where('is_available', true)
+            ->where('available', true)
             ->firstOrFail();
 
         $price = $service->sale_price ?? $service->base_price;

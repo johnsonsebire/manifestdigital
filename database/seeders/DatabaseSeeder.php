@@ -13,14 +13,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Run the roles seeder first to create necessary roles and permissions
+        // Run the roles seeder first to create necessary roles
         $this->call(RolesSeeder::class);
+        
+        // Run the permissions seeder to create and assign all permissions
+        $this->call(PermissionsSeeder::class);
         
         // Create the super admin user
         $this->call(SuperAdminSeeder::class);
         
         // Seed the contact form
         $this->call(ContactFormSeeder::class);
+
+        // Seed Book A Call form
+        $this->call(BookACallFormSeeder::class);
 
         // Create a test user for development
         if (app()->environment('local', 'development')) {

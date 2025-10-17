@@ -88,18 +88,30 @@ class ServiceManagementController extends Controller
         try {
             DB::beginTransaction();
 
-            $data = $request->validated();
-            $data['created_by'] = auth()->id();
+            $validated = $request->validated();
+            
+            // Map validation fields to database fields
+            $data = [
+                'title' => $validated['title'],
+                'slug' => $validated['slug'] ?? null,
+                'short_description' => $validated['short_description'] ?? null,
+                'long_description' => $validated['description'] ?? null,
+                'type' => $validated['type'],
+                'price' => $validated['base_price'], // Map base_price to price
+                'metadata' => $validated['metadata'] ?? null,
+                'available' => $validated['is_available'] ?? false, // Map is_available to available
+                'visible' => $validated['is_visible'] ?? false, // Map is_visible to visible
+                'created_by' => auth()->id(),
+            ];
 
-            // Handle category IDs separately
-            $categoryIds = $data['category_ids'] ?? [];
-            unset($data['category_ids']);
+            // Handle categories separately
+            $categories = $validated['categories'] ?? [];
 
             $service = Service::create($data);
 
             // Attach categories
-            if (!empty($categoryIds)) {
-                $service->categories()->attach($categoryIds);
+            if (!empty($categories)) {
+                $service->categories()->attach($categories);
             }
 
             DB::commit();
@@ -150,21 +162,33 @@ class ServiceManagementController extends Controller
         try {
             DB::beginTransaction();
 
-            $data = $request->validated();
+            $validated = $request->validated();
+            
+            // Map validation fields to database fields
+            $data = [
+                'title' => $validated['title'],
+                'slug' => $validated['slug'] ?? null,
+                'short_description' => $validated['short_description'] ?? null,
+                'long_description' => $validated['description'] ?? null,
+                'type' => $validated['type'],
+                'price' => $validated['base_price'], // Map base_price to price
+                'metadata' => $validated['metadata'] ?? null,
+                'available' => $validated['is_available'] ?? false, // Map is_available to available
+                'visible' => $validated['is_visible'] ?? false, // Map is_visible to visible
+            ];
 
-            // Handle category IDs separately
-            $categoryIds = $data['category_ids'] ?? [];
-            unset($data['category_ids']);
+            // Handle categories separately
+            $categories = $validated['categories'] ?? [];
 
             $service->update($data);
 
             // Sync categories
-            $service->categories()->sync($categoryIds);
+            $service->categories()->sync($categories);
 
             DB::commit();
 
             return redirect()
-                ->route('admin.services.index')
+                ->route('admin.services.show', $service)
                 ->with('success', 'Service updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
