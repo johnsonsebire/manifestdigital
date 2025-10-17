@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Project;
 use App\Models\ProjectMessage;
 use App\Notifications\NewProjectMessage;
@@ -45,9 +46,10 @@ class MessageController extends Controller
 
         // Log activity
         $messageType = $message->is_internal ? 'internal note' : 'message';
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'message_sent',
+            'type' => 'message_sent',
             'description' => auth()->user()->name . ' posted a ' . $messageType,
         ]);
 
@@ -92,9 +94,10 @@ class MessageController extends Controller
         $message->delete();
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'message_deleted',
+            'type' => 'message_deleted',
             'description' => 'A message was deleted by ' . auth()->user()->name,
         ]);
 

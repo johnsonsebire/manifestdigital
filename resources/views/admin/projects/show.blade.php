@@ -183,7 +183,7 @@
                 </div>
 
                 <!-- Tasks -->
-                <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden" x-data="{ showAddTask: false, editingTask: null }">
+                <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden" x-data="{ showAddTask: {{ $errors->any() ? 'true' : 'false' }}, editingTask: null }">
                     <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Tasks</h2>
                         <button 
@@ -196,6 +196,17 @@
 
                     <!-- Add Task Form -->
                     <div x-show="showAddTask" x-collapse class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900">
+                        @if($errors->any())
+                            <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                                <p class="text-sm font-medium text-red-800 dark:text-red-400">Please correct the following errors:</p>
+                                <ul class="mt-2 text-sm text-red-700 dark:text-red-300 list-disc list-inside">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        
                         <form method="POST" action="{{ route('admin.projects.tasks.store', $project) }}" class="space-y-4">
                             @csrf
                             <div>
@@ -203,9 +214,13 @@
                                 <input 
                                     type="text" 
                                     name="title" 
+                                    value="{{ old('title') }}"
                                     required
-                                    class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500"
+                                    class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 @error('title') border-red-500 @enderror"
                                     placeholder="Enter task title">
+                                @error('title')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
                             
                             <div>
@@ -213,8 +228,11 @@
                                 <textarea 
                                     name="description" 
                                     rows="2"
-                                    class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500"
-                                    placeholder="Task description (optional)"></textarea>
+                                    class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 @error('description') border-red-500 @enderror"
+                                    placeholder="Task description (optional)">{{ old('description') }}</textarea>
+                                @error('description')
+                                    <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
@@ -223,11 +241,15 @@
                                     <select 
                                         name="priority" 
                                         required
-                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500">
-                                        <option value="low">Low</option>
-                                        <option value="medium" selected>Medium</option>
-                                        <option value="high">High</option>
+                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 @error('priority') border-red-500 @enderror">
+                                        <option value="0" {{ old('priority', '1') == '0' ? 'selected' : '' }}>Low</option>
+                                        <option value="1" {{ old('priority', '1') == '1' ? 'selected' : '' }}>Medium</option>
+                                        <option value="2" {{ old('priority') == '2' ? 'selected' : '' }}>High</option>
+                                        <option value="3" {{ old('priority') == '3' ? 'selected' : '' }}>Urgent</option>
                                     </select>
+                                    @error('priority')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 
                                 <div>
@@ -235,11 +257,15 @@
                                     <select 
                                         name="status" 
                                         required
-                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500">
-                                        <option value="pending" selected>Pending</option>
-                                        <option value="in_progress">In Progress</option>
-                                        <option value="completed">Completed</option>
+                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 @error('status') border-red-500 @enderror">
+                                        <option value="todo" {{ old('status', 'todo') == 'todo' ? 'selected' : '' }}>To Do</option>
+                                        <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                                        <option value="review" {{ old('status') == 'review' ? 'selected' : '' }}>Review</option>
+                                        <option value="done" {{ old('status') == 'done' ? 'selected' : '' }}>Done</option>
                                     </select>
+                                    @error('status')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -247,13 +273,16 @@
                                 <div>
                                     <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Assign To</label>
                                     <select 
-                                        name="assigned_to"
-                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500">
+                                        name="assignee_id"
+                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 @error('assignee_id') border-red-500 @enderror">
                                         <option value="">Unassigned</option>
                                         @foreach($project->team as $member)
-                                            <option value="{{ $member->id }}">{{ $member->name }}</option>
+                                            <option value="{{ $member->id }}" {{ old('assignee_id') == $member->id ? 'selected' : '' }}>{{ $member->name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('assignee_id')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
                                 
                                 <div>
@@ -261,7 +290,11 @@
                                     <input 
                                         type="date" 
                                         name="due_date"
-                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500">
+                                        value="{{ old('due_date') }}"
+                                        class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:ring-2 focus:ring-primary-500 @error('due_date') border-red-500 @enderror">
+                                    @error('due_date')
+                                        <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -330,9 +363,9 @@
                                                                 {{ $task->status === 'pending' ? 'bg-zinc-100 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-300' : '' }}">
                                                                 {{ ucfirst(str_replace('_', ' ', $task->status)) }}
                                                             </span>
-                                                            @if($task->assignedTo)
+                                                            @if($task->assignee)
                                                                 <span class="text-xs text-zinc-500 dark:text-zinc-400">
-                                                                    Assigned to: {{ $task->assignedTo->name }}
+                                                                    Assigned to: {{ $task->assignee->name }}
                                                                 </span>
                                                             @endif
                                                             @if($task->due_date)
@@ -388,28 +421,30 @@
                                                             name="priority" 
                                                             required
                                                             class="px-3 py-1.5 text-sm border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
-                                                            <option value="low" {{ $task->priority === 'low' ? 'selected' : '' }}>Low</option>
-                                                            <option value="medium" {{ $task->priority === 'medium' ? 'selected' : '' }}>Medium</option>
-                                                            <option value="high" {{ $task->priority === 'high' ? 'selected' : '' }}>High</option>
+                                                            <option value="0" {{ $task->priority == 0 ? 'selected' : '' }}>Low</option>
+                                                            <option value="1" {{ $task->priority == 1 ? 'selected' : '' }}>Medium</option>
+                                                            <option value="2" {{ $task->priority == 2 ? 'selected' : '' }}>High</option>
+                                                            <option value="3" {{ $task->priority == 3 ? 'selected' : '' }}>Urgent</option>
                                                         </select>
                                                         
                                                         <select 
                                                             name="status" 
                                                             required
                                                             class="px-3 py-1.5 text-sm border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
-                                                            <option value="pending" {{ $task->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                                            <option value="todo" {{ $task->status === 'todo' ? 'selected' : '' }}>To Do</option>
                                                             <option value="in_progress" {{ $task->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                                            <option value="completed" {{ $task->status === 'completed' ? 'selected' : '' }}>Completed</option>
+                                                            <option value="review" {{ $task->status === 'review' ? 'selected' : '' }}>Review</option>
+                                                            <option value="done" {{ $task->status === 'done' ? 'selected' : '' }}>Done</option>
                                                         </select>
                                                     </div>
 
                                                     <div class="grid grid-cols-2 gap-2">
                                                         <select 
-                                                            name="assigned_to"
+                                                            name="assignee_id"
                                                             class="px-3 py-1.5 text-sm border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
                                                             <option value="">Unassigned</option>
                                                             @foreach($project->team as $member)
-                                                                <option value="{{ $member->id }}" {{ $task->assigned_to === $member->id ? 'selected' : '' }}>
+                                                                <option value="{{ $member->id }}" {{ $task->assignee_id === $member->id ? 'selected' : '' }}>
                                                                     {{ $member->name }}
                                                                 </option>
                                                             @endforeach

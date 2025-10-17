@@ -58,12 +58,15 @@ class OrderChangeRequestController extends Controller
 
         $changeRequest->approve(auth()->user(), $request->review_notes);
 
-        // Log activity
-        $changeRequest->order->activities()->create([
-            'user_id' => auth()->id(),
-            'action' => 'change_approved',
-            'description' => 'Change request #' . $changeRequest->id . ' approved by ' . auth()->user()->name,
-        ]);
+        // Log activity to project if exists
+        if ($changeRequest->order->project) {
+            \App\Models\ActivityLog::create([
+                'project_id' => $changeRequest->order->project->id,
+                'user_id' => auth()->id(),
+                'type' => 'change_approved',
+                'description' => 'Change request #' . $changeRequest->id . ' approved by ' . auth()->user()->name,
+            ]);
+        }
 
         return redirect()
             ->route('admin.change-requests.show', $changeRequest)
@@ -85,12 +88,15 @@ class OrderChangeRequestController extends Controller
 
         $changeRequest->reject(auth()->user(), $request->review_notes);
 
-        // Log activity
-        $changeRequest->order->activities()->create([
-            'user_id' => auth()->id(),
-            'action' => 'change_rejected',
-            'description' => 'Change request #' . $changeRequest->id . ' rejected by ' . auth()->user()->name,
-        ]);
+        // Log activity to project if exists
+        if ($changeRequest->order->project) {
+            \App\Models\ActivityLog::create([
+                'project_id' => $changeRequest->order->project->id,
+                'user_id' => auth()->id(),
+                'type' => 'change_rejected',
+                'description' => 'Change request #' . $changeRequest->id . ' rejected by ' . auth()->user()->name,
+            ]);
+        }
 
         return redirect()
             ->route('admin.change-requests.show', $changeRequest)
@@ -147,12 +153,15 @@ class OrderChangeRequestController extends Controller
         // Mark change request as applied
         $changeRequest->update(['status' => 'applied']);
 
-        // Log activity
-        $order->activities()->create([
-            'user_id' => auth()->id(),
-            'action' => 'change_applied',
-            'description' => 'Change request #' . $changeRequest->id . ' applied to order by ' . auth()->user()->name,
-        ]);
+        // Log activity to project if exists
+        if ($order->project) {
+            \App\Models\ActivityLog::create([
+                'project_id' => $order->project->id,
+                'user_id' => auth()->id(),
+                'type' => 'change_applied',
+                'description' => 'Change request #' . $changeRequest->id . ' applied to order by ' . auth()->user()->name,
+            ]);
+        }
 
         return redirect()
             ->route('admin.orders.show', $order)

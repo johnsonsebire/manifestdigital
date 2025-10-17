@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
@@ -18,22 +19,23 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => 'nullable|exists:users,id',
-            'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:pending,in_progress,completed',
+            'assignee_id' => 'nullable|exists:users,id',
+            'priority' => 'required|in:0,1,2,3', // 0=low, 1=medium, 2=high, 3=urgent
+            'status' => 'required|in:todo,in_progress,review,done',
             'due_date' => 'nullable|date',
         ]);
 
         $task = $project->tasks()->create($validated);
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'task_created',
+            'type' => 'task_created',
             'description' => 'Task "' . $task->title . '" created by ' . auth()->user()->name,
         ]);
 
-        return back()->with('success', 'Task created successfully.');
+        return redirect()->route('admin.projects.show', $project)->with('success', 'Task created successfully.');
     }
 
     /**
@@ -44,9 +46,9 @@ class TaskController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'assigned_to' => 'nullable|exists:users,id',
-            'priority' => 'required|in:low,medium,high',
-            'status' => 'required|in:pending,in_progress,completed',
+            'assignee_id' => 'nullable|exists:users,id',
+            'priority' => 'required|in:0,1,2,3', // 0=low, 1=medium, 2=high, 3=urgent
+            'status' => 'required|in:todo,in_progress,review,done',
             'due_date' => 'nullable|date',
         ]);
 
@@ -55,14 +57,15 @@ class TaskController extends Controller
 
         // Log status change
         if ($oldStatus !== $task->status) {
-            $project->activities()->create([
+            ActivityLog::create([
+                'project_id' => $project->id,
                 'user_id' => auth()->id(),
-                'action' => 'task_status_updated',
+                'type' => 'task_status_updated',
                 'description' => 'Task "' . $task->title . '" status changed from ' . $oldStatus . ' to ' . $task->status,
             ]);
         }
 
-        return back()->with('success', 'Task updated successfully.');
+        return redirect()->route('admin.projects.show', $project)->with('success', 'Task updated successfully.');
     }
 
     /**
@@ -74,13 +77,14 @@ class TaskController extends Controller
         $task->delete();
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'task_deleted',
+            'type' => 'task_deleted',
             'description' => 'Task "' . $taskTitle . '" deleted by ' . auth()->user()->name,
         ]);
 
-        return back()->with('success', 'Task deleted successfully.');
+        return redirect()->route('admin.projects.show', $project)->with('success', 'Task deleted successfully.');
     }
 
     /**
@@ -88,21 +92,22 @@ class TaskController extends Controller
      */
     public function toggleStatus(Project $project, Task $task)
     {
-        $newStatus = $task->status === 'completed' ? 'pending' : 'completed';
+        $newStatus = $task->status === 'done' ? 'todo' : 'done';
         $task->update(['status' => $newStatus]);
 
         // Log activity
-        $action = $newStatus === 'completed' ? 'marked as complete' : 'marked as incomplete';
-        $project->activities()->create([
+        $action = $newStatus === 'done' ? 'marked as complete' : 'marked as incomplete';
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'task_toggled',
+            'type' => 'task_toggled',
             'description' => 'Task "' . $task->title . '" ' . $action . ' by ' . auth()->user()->name,
         ]);
 
         // Update project completion percentage based on tasks
         $this->updateProjectProgress($project);
 
-        return back()->with('success', 'Task status updated successfully.');
+        return redirect()->route('admin.projects.show', $project)->with('success', 'Task status updated successfully.');
     }
 
     /**
@@ -113,18 +118,19 @@ class TaskController extends Controller
         $totalTasks = $project->tasks()->count();
         
         if ($totalTasks > 0) {
-            $completedTasks = $project->tasks()->where('status', 'completed')->count();
+            $completedTasks = $project->tasks()->where('status', 'done')->count();
             $percentage = round(($completedTasks / $totalTasks) * 100);
             
             $project->update(['completion_percentage' => $percentage]);
             
             // Auto-complete project if all tasks done
-            if ($percentage === 100 && $project->status !== 'completed') {
-                $project->update(['status' => 'completed']);
+            if ($percentage === 100 && $project->status !== 'complete') {
+                $project->update(['status' => 'complete']);
                 
-                $project->activities()->create([
+                ActivityLog::create([
+                    'project_id' => $project->id,
                     'user_id' => auth()->id(),
-                    'action' => 'project_auto_completed',
+                    'type' => 'project_auto_completed',
                     'description' => 'Project automatically marked as completed (all tasks finished)',
                 ]);
             }

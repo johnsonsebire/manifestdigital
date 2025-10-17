@@ -46,7 +46,7 @@ class CategoryPolicy
     public function update(User $user, Category $category): bool
     {
         // Only staff and admins can update categories
-        return $user->hasAnyRole(['Staff', 'Administrator', 'Super Admin']);
+        return $user->hasAnyRole(['Staff', 'Administrator', 'Super Admininistrator']);
     }
 
     /**
@@ -56,7 +56,7 @@ class CategoryPolicy
     {
         // Only admins can delete categories
         // Also check if category has no children or services
-        if (!$user->hasAnyRole(['Administrator', 'Super Admin'])) {
+        if (!$user->hasAnyRole(['Super Admin','Administrator'])) {
             return false;
         }
 
@@ -88,7 +88,7 @@ class CategoryPolicy
     public function forceDelete(User $user, Category $category): bool
     {
         // Only admins can permanently delete categories
-        return $user->hasAnyRole(['Administrator', 'Super Admin']);
+        return $user->hasAnyRole(['Super Admin','Administrator']);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Order;
 use App\Models\Project;
 use App\Models\User;
@@ -65,7 +66,7 @@ class ProjectController extends Controller
         ];
 
         // Get all staff users for team filter
-        $teamMembers = User::role(['Administrator', 'Staff'])->orderBy('name')->get();
+        $teamMembers = User::role(['Super Admin','Administrator', 'Staff'])->orderBy('name')->get();
 
         // Get all clients for client filter
         $clients = User::role('Customer')->orderBy('name')->get();
@@ -81,7 +82,7 @@ class ProjectController extends Controller
         // Get orders that don't have projects yet
         $orders = Order::whereDoesntHave('project')
             ->where('status', '!=', 'cancelled')
-            ->with('customer')
+            ->with(['customer', 'items'])
             ->latest()
             ->get();
 
@@ -100,15 +101,22 @@ class ProjectController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'budget' => 'nullable|numeric|min:0',
-            'status' => 'required|in:pending,active,on_hold,completed,cancelled',
+            'status' => 'required|in:planning,in_progress,on_hold,complete,archived',
         ]);
+
+        // Get the order to retrieve client_id
+        $order = Order::findOrFail($validated['order_id']);
+        
+        // Add client_id from order's customer
+        $validated['client_id'] = $order->customer_id;
 
         $project = Project::create($validated);
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'created',
+            'type' => 'project_created',
             'description' => 'Project created by ' . auth()->user()->name,
         ]);
 
@@ -126,19 +134,19 @@ class ProjectController extends Controller
             'order.customer',
             'order.items.service',
             'tasks' => function($q) {
-                $q->with('assignedTo')->latest();
+                $q->with('assignee')->latest();
             },
             'milestones' => function($q) {
                 $q->latest();
             },
             'team.user',
             'files',
-            'messages.user',
+            'messages.sender',
             'activities.user'
         ]);
 
         // Get available staff for team assignment
-        $availableStaff = User::role(['Admin', 'Staff'])
+        $availableStaff = User::role(['Administrator', 'Staff'])
             ->whereNotIn('id', $project->team->pluck('user_id'))
             ->orderBy('name')
             ->get();
@@ -167,7 +175,7 @@ class ProjectController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
             'budget' => 'nullable|numeric|min:0',
-            'status' => 'required|in:pending,active,on_hold,completed,cancelled',
+            'status' => 'required|in:planning,in_progress,on_hold,complete,archived',
             'completion_percentage' => 'nullable|integer|min:0|max:100',
         ]);
 
@@ -176,9 +184,10 @@ class ProjectController extends Controller
 
         // Log status change
         if ($oldStatus !== $project->status) {
-            $project->activities()->create([
+            ActivityLog::create([
+                'project_id' => $project->id,
                 'user_id' => auth()->id(),
-                'action' => 'status_updated',
+                'type' => 'project_status_changed',
                 'description' => 'Project status changed from ' . $oldStatus . ' to ' . $project->status . ' by ' . auth()->user()->name,
             ]);
         }
@@ -224,9 +233,10 @@ class ProjectController extends Controller
 
         // Log activity
         $user = User::find($validated['user_id']);
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'team_member_added',
+            'type' => 'team_member_added',
             'description' => $user->name . ' added to project team as ' . $validated['role'],
         ]);
 
@@ -244,9 +254,10 @@ class ProjectController extends Controller
         $teamMember->delete();
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'team_member_removed',
+            'type' => 'team_member_removed',
             'description' => $userName . ' removed from project team',
         ]);
 
@@ -271,9 +282,10 @@ class ProjectController extends Controller
         }
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'progress_updated',
+            'type' => 'progress_updated',
             'description' => 'Project progress updated from ' . $oldPercentage . '% to ' . $project->completion_percentage . '%',
         ]);
 

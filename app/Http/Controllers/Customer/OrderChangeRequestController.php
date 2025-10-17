@@ -129,12 +129,15 @@ class OrderChangeRequestController extends Controller
             'status' => 'pending',
         ]);
 
-        // Log activity
-        $order->activities()->create([
-            'user_id' => auth()->id(),
-            'action' => 'change_requested',
-            'description' => 'Customer requested a change to order (Type: ' . ucfirst($request->type) . ')',
-        ]);
+        // Log activity to project if exists
+        if ($order->project) {
+            \App\Models\ActivityLog::create([
+                'project_id' => $order->project->id,
+                'user_id' => auth()->id(),
+                'type' => 'change_requested',
+                'description' => 'Customer requested a change to order (Type: ' . ucfirst($request->type) . ')',
+            ]);
+        }
 
         return redirect()
             ->route('customer.orders.show', $order)

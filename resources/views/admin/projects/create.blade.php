@@ -31,7 +31,7 @@
                             <option value="">Choose an order...</option>
                             @forelse($orders as $order)
                                 <option value="{{ $order->id }}" {{ old('order_id') == $order->id ? 'selected' : '' }}>
-                                    #{{ $order->order_number }} - {{ $order->customer->name }} ({{ $order->items->count() }} items, ₦{{ number_format($order->total_amount, 2) }})
+                                    #{{ $order->order_number }} - {{ $order->customer->name }} ({{ $order->items->count() }} items, ₦{{ number_format($order->total, 2) }})
                                 </option>
                             @empty
                                 <option value="" disabled>No orders available (all orders have projects or are cancelled)</option>
@@ -151,9 +151,11 @@
                                 required
                                 class="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:ring-primary-500 focus:border-primary-500 @error('status') border-red-500 @enderror"
                             >
-                                <option value="pending" {{ old('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="active" {{ old('status') === 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="planning" {{ old('status', 'planning') === 'planning' ? 'selected' : '' }}>Planning</option>
+                                <option value="in_progress" {{ old('status') === 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                 <option value="on_hold" {{ old('status') === 'on_hold' ? 'selected' : '' }}>On Hold</option>
+                                <option value="complete" {{ old('status') === 'complete' ? 'selected' : '' }}>Complete</option>
+                                <option value="archived" {{ old('status') === 'archived' ? 'selected' : '' }}>Archived</option>
                             </select>
                             @error('status')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

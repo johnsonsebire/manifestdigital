@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\Project;
 use App\Models\ProjectFile;
 use Illuminate\Http\Request;
@@ -36,9 +37,10 @@ class FileController extends Controller
         ]);
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'file_uploaded',
+            'type' => 'file_uploaded',
             'description' => 'File "' . $projectFile->original_name . '" uploaded by ' . auth()->user()->name,
         ]);
 
@@ -74,9 +76,10 @@ class FileController extends Controller
         $file->delete();
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'file_deleted',
+            'type' => 'file_deleted',
             'description' => 'File "' . $fileName . '" deleted by ' . auth()->user()->name,
         ]);
 
@@ -97,9 +100,10 @@ class FileController extends Controller
         ]);
 
         // Log activity
-        $project->activities()->create([
+        ActivityLog::create([
+            'project_id' => $project->id,
             'user_id' => auth()->id(),
-            'action' => 'file_updated',
+            'type' => 'file_updated',
             'description' => 'File "' . $file->original_name . '" description updated by ' . auth()->user()->name,
         ]);
 

@@ -127,11 +127,11 @@
                                 required
                                 class="w-full px-4 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:ring-primary-500 focus:border-primary-500 @error('status') border-red-500 @enderror"
                             >
-                                <option value="pending" {{ old('status', $project->status) === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="active" {{ old('status', $project->status) === 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="planning" {{ old('status', $project->status) === 'planning' ? 'selected' : '' }}>Planning</option>
+                                <option value="in_progress" {{ old('status', $project->status) === 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                 <option value="on_hold" {{ old('status', $project->status) === 'on_hold' ? 'selected' : '' }}>On Hold</option>
-                                <option value="completed" {{ old('status', $project->status) === 'completed' ? 'selected' : '' }}>Completed</option>
-                                <option value="cancelled" {{ old('status', $project->status) === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                <option value="complete" {{ old('status', $project->status) === 'complete' ? 'selected' : '' }}>Complete</option>
+                                <option value="archived" {{ old('status', $project->status) === 'archived' ? 'selected' : '' }}>Archived</option>
                             </select>
                             @error('status')
                                 <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>

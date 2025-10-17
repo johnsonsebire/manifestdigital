@@ -12,8 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('customer_phone')->nullable()->after('customer_email');
-            $table->text('customer_address')->nullable()->after('customer_phone');
+            // Check if Column Exists before adding
+            if (!Schema::hasColumn('orders', 'customer_phone')) {
+                $table->string('customer_phone')->nullable()->after('customer_email');
+            }
+            if (!Schema::hasColumn('orders', 'customer_address')) {
+                $table->text('customer_address')->nullable()->after('customer_phone');
+            }
         });
     }
 
