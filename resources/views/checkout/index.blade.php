@@ -10,6 +10,30 @@
     {{-- Main Checkout Section --}}
     <section class="py-12 bg-gray-50">
         <div class="container mx-auto px-4">
+            {{-- Alert Messages --}}
+            @if(session('success'))
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                    <p>{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                    <p>{{ session('error') }}</p>
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                    <h3 class="font-bold mb-2">Please fix the following errors:</h3>
+                    <ul class="list-disc list-inside">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm">
                 @csrf
                 

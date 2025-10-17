@@ -25,6 +25,8 @@ return new class extends Migration
             $table->foreignId('customer_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('customer_name')->nullable();
             $table->string('customer_email')->nullable();
+            $table->string('customer_phone')->nullable();
+            $table->text('customer_address')->nullable();
             $table->decimal('subtotal', 12, 2);
             $table->decimal('discount', 12, 2)->default(0);
             $table->decimal('tax', 12, 2)->default(0);

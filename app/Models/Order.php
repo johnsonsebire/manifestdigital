@@ -23,6 +23,8 @@ class Order extends Model
         'customer_id',
         'customer_name',
         'customer_email',
+        'customer_phone',
+        'customer_address',
         'subtotal',
         'discount',
         'tax',

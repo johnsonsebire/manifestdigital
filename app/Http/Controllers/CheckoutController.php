@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
@@ -75,17 +76,18 @@ class CheckoutController extends Controller
                 'customer_phone' => $request->customer_phone,
                 'customer_address' => $request->customer_address,
                 'status' => 'pending',
-                'payment_status' => 'pending',
+                'payment_status' => 'unpaid',
                 'payment_method' => $request->payment_method,
                 'subtotal' => 0, // Will be calculated
                 'tax' => 0,
                 'discount' => 0,
-                'total_amount' => 0, // Will be calculated
+                'total' => 0, // Will be calculated
                 'notes' => $request->notes,
                 'metadata' => [
                     'ip_address' => $request->ip(),
                     'user_agent' => $request->userAgent(),
                 ],
+                'placed_at' => now(),
             ]);
 
             // Create order items with server-validated prices
@@ -116,7 +118,7 @@ class CheckoutController extends Controller
             $order->update([
                 'subtotal' => $subtotal,
                 'tax' => $tax,
-                'total_amount' => $total,
+                'total' => $total,
             ]);
 
             DB::commit();
@@ -134,9 +136,16 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
+            // Log the full error for debugging
+            Log::error('Checkout failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_id' => auth()->id(),
+            ]);
+            
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Failed to process order. Please try again.');
+                ->with('error', 'Failed to process order. Please try again. Error: ' . $e->getMessage());
         }
     }
 

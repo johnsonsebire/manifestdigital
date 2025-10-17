@@ -26,10 +26,11 @@ class CheckoutRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Customer Information (required for guests)
-            'customer_name' => ['required_without:user_id', 'string', 'max:255'],
-            'customer_email' => ['required_without:user_id', 'email', 'max:255'],
+            // Customer Information (required for guests, optional for authenticated)
+            'customer_name' => [auth()->check() ? 'sometimes' : 'required', 'string', 'max:255'],
+            'customer_email' => [auth()->check() ? 'sometimes' : 'required', 'email', 'max:255'],
             'customer_phone' => ['nullable', 'string', 'max:20'],
+            'customer_address' => ['nullable', 'string', 'max:500'],
             
             // Order Items - CRITICAL: Never trust client prices
             'items' => ['required', 'array', 'min:1'],
@@ -66,8 +67,8 @@ class CheckoutRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'customer_name.required_without' => 'Your name is required.',
-            'customer_email.required_without' => 'Your email is required.',
+            'customer_name.required' => 'Your name is required.',
+            'customer_email.required' => 'Your email is required.',
             'customer_email.email' => 'Please provide a valid email address.',
             'items.required' => 'Your cart is empty.',
             'items.min' => 'Your cart must contain at least one item.',
@@ -112,7 +113,7 @@ class CheckoutRequest extends FormRequest
             }
 
             // Get actual price from database
-            $actualPrice = $service->sale_price ?? $service->base_price;
+            $actualPrice = $service->price;
 
             // If variant specified, use variant price
             if (!empty($item['variant_id'])) {
@@ -144,7 +145,7 @@ class CheckoutRequest extends FormRequest
         foreach ($this->items ?? [] as $index => $item) {
             $service = Service::find($item['service_id']);
             
-            if ($service && !$service->is_available) {
+            if ($service && !$service->available) {
                 $validator->errors()->add(
                     "items.{$index}.service_id",
                     "The service '{$service->title}' is currently unavailable."
@@ -154,7 +155,7 @@ class CheckoutRequest extends FormRequest
             // Validate variant availability if specified
             if (!empty($item['variant_id'])) {
                 $variant = ServiceVariant::find($item['variant_id']);
-                if ($variant && !$variant->is_available) {
+                if ($variant && !$variant->available) {
                     $validator->errors()->add(
                         "items.{$index}.variant_id",
                         "The selected variant is currently unavailable."
