@@ -16,23 +16,21 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Project::with(['order.customer'])
-            ->latest();
+        $query = Project::with(['order.customer', 'client']);
 
-        // Search by title or order number
+        // Search functionality
         if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhereHas('order', function($q) use ($search) {
-                      $q->where('order_number', 'like', "%{$search}%");
-                  });
-            });
+            $query->search($request->search);
         }
 
         // Filter by status
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->status($request->status);
+        }
+
+        // Filter by client
+        if ($request->filled('client_id')) {
+            $query->forClient($request->client_id);
         }
 
         // Filter by assigned team member
@@ -42,21 +40,24 @@ class ProjectController extends Controller
             });
         }
 
-        // Filter by date range
-        if ($request->filled('date_from')) {
-            $query->whereDate('start_date', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('end_date', '<=', $request->date_to);
+        // Date range filter
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->dateRange($request->date_from, $request->date_to);
         }
 
-        $projects = $query->paginate(15);
+        // Sort
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $projects = $query->paginate(15)->withQueryString();
 
         // Statistics
         $stats = [
             'total' => Project::count(),
-            'active' => Project::where('status', 'active')->count(),
             'pending' => Project::where('status', 'pending')->count(),
+            'planning' => Project::where('status', 'planning')->count(),
+            'in_progress' => Project::where('status', 'in_progress')->count(),
             'on_hold' => Project::where('status', 'on_hold')->count(),
             'completed' => Project::where('status', 'completed')->count(),
         ];
@@ -64,7 +65,10 @@ class ProjectController extends Controller
         // Get all staff users for team filter
         $teamMembers = User::role(['Admin', 'Staff'])->orderBy('name')->get();
 
-        return view('admin.projects.index', compact('projects', 'stats', 'teamMembers'));
+        // Get all clients for client filter
+        $clients = User::role('Customer')->orderBy('name')->get();
+
+        return view('admin.projects.index', compact('projects', 'stats', 'teamMembers', 'clients'));
     }
 
     /**

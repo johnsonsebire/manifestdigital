@@ -20,23 +20,45 @@ class FormSubmissionController extends Controller
     {
         $this->authorize('view-form-submissions');
         
-        $formId = $request->query('form_id');
+        $query = FormSubmission::with(['form', 'user']);
         
-        if ($formId) {
-            $form = Form::findOrFail($formId);
-            $submissions = FormSubmission::where('form_id', $formId)
-                ->with('user')
-                ->latest()
-                ->paginate(20);
-                
-            return view('admin.form-submissions.index', compact('submissions', 'form'));
-        } else {
-            $submissions = FormSubmission::with(['form', 'user'])
-                ->latest()
-                ->paginate(20);
-                
-            return view('admin.form-submissions.all', compact('submissions'));
+        // Filter by form
+        if ($request->filled('form_id')) {
+            $query->forForm($request->form_id);
         }
+        
+        // Search functionality
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
+        
+        // Date range filter
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->dateRange($request->date_from, $request->date_to);
+        }
+        
+        // Sort
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+        
+        $submissions = $query->paginate(20)->withQueryString();
+        
+        // Get all forms for filter dropdown
+        $forms = Form::orderBy('title')->get();
+        
+        // If specific form selected, get its details
+        $form = $request->filled('form_id') ? Form::find($request->form_id) : null;
+        
+        // Statistics
+        $stats = [
+            'total' => FormSubmission::count(),
+            'today' => FormSubmission::whereDate('created_at', today())->count(),
+            'this_week' => FormSubmission::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count(),
+            'this_month' => FormSubmission::whereMonth('created_at', now()->month)->count(),
+        ];
+        
+        return view('admin.form-submissions.index', compact('submissions', 'forms', 'form', 'stats'));
     }
 
     /**

@@ -33,6 +33,98 @@
                 {{ session('success') }}
             </div>
         @endif
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Submissions</div>
+                <div class="mt-1 text-2xl font-semibold text-zinc-900 dark:text-white">{{ $stats['total'] }}</div>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Today</div>
+                <div class="mt-1 text-2xl font-semibold text-blue-600">{{ $stats['today'] }}</div>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">This Week</div>
+                <div class="mt-1 text-2xl font-semibold text-green-600">{{ $stats['this_week'] }}</div>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">This Month</div>
+                <div class="mt-1 text-2xl font-semibold text-purple-600">{{ $stats['this_month'] }}</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-4 mb-6">
+            <form method="GET" action="{{ route('admin.form-submissions.index') }}" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <!-- Search -->
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Search
+                        </label>
+                        <input type="text" 
+                            name="search" 
+                            id="search" 
+                            value="{{ request('search') }}"
+                            placeholder="Search submissions..."
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+
+                    <!-- Form Filter -->
+                    <div>
+                        <label for="form_id" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Form
+                        </label>
+                        <select name="form_id" 
+                            id="form_id"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                            <option value="">All Forms</option>
+                            @foreach($forms as $formOption)
+                                <option value="{{ $formOption->id }}" {{ request('form_id') == $formOption->id ? 'selected' : '' }}>
+                                    {{ $formOption->title }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Date From -->
+                    <div>
+                        <label for="date_from" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            From Date
+                        </label>
+                        <input type="date" 
+                            name="date_from" 
+                            id="date_from" 
+                            value="{{ request('date_from') }}"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+
+                    <!-- Date To -->
+                    <div>
+                        <label for="date_to" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            To Date
+                        </label>
+                        <input type="date" 
+                            name="date_to" 
+                            id="date_to" 
+                            value="{{ request('date_to') }}"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button type="submit" 
+                        class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Apply Filters
+                    </button>
+                    <a href="{{ route('admin.form-submissions.index') }}" 
+                        class="px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-300 dark:hover:bg-zinc-600">
+                        Clear Filters
+                    </a>
+                </div>
+            </form>
+        </div>
         
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow-sm overflow-hidden">
             <div class="overflow-x-auto">

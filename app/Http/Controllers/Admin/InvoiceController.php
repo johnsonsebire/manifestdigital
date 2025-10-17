@@ -14,8 +14,7 @@ class InvoiceController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Invoice::with(['customer', 'order'])
-            ->latest('invoice_date');
+        $query = Invoice::with(['customer', 'order']);
 
         // Filter by status
         if ($request->filled('status')) {
@@ -24,25 +23,45 @@ class InvoiceController extends Controller
 
         // Filter by customer
         if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
+            $query->forCustomer($request->customer_id);
         }
 
-        // Filter by date range
-        if ($request->filled('from_date')) {
-            $query->whereDate('invoice_date', '>=', $request->from_date);
-        }
-        if ($request->filled('to_date')) {
-            $query->whereDate('invoice_date', '<=', $request->to_date);
-        }
-
-        // Search by invoice number
+        // Search functionality
         if ($request->filled('search')) {
-            $query->where('invoice_number', 'like', '%' . $request->search . '%');
+            $query->search($request->search);
         }
 
-        $invoices = $query->paginate(15);
+        // Date range filter
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->dateRange($request->date_from, $request->date_to);
+        }
 
-        return view('admin.invoices.index', compact('invoices'));
+        // Amount range filter
+        if ($request->filled('amount_min') || $request->filled('amount_max')) {
+            $query->amountRange($request->amount_min, $request->amount_max);
+        }
+
+        // Sort
+        $sortBy = $request->get('sort_by', 'invoice_date');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
+
+        $invoices = $query->paginate(15)->withQueryString();
+
+        // Get customers for filter dropdown
+        $customers = \App\Models\User::role('Customer')->orderBy('name')->get();
+
+        // Statistics
+        $stats = [
+            'total' => Invoice::count(),
+            'draft' => Invoice::where('status', 'draft')->count(),
+            'sent' => Invoice::where('status', 'sent')->count(),
+            'paid' => Invoice::where('status', 'paid')->count(),
+            'overdue' => Invoice::where('status', 'overdue')->count(),
+            'total_outstanding' => Invoice::whereIn('status', ['sent', 'partial', 'overdue'])->sum('balance_due'),
+        ];
+
+        return view('admin.invoices.index', compact('invoices', 'customers', 'stats'));
     }
 
     public function show(Invoice $invoice)

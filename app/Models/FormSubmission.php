@@ -54,6 +54,46 @@ class FormSubmission extends Model
     }
 
     /**
+     * Scope a query to filter by form.
+     */
+    public function scopeForForm($query, $formId)
+    {
+        return $query->where('form_id', $formId);
+    }
+
+    /**
+     * Scope a query to search submissions by data content.
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            // Search in JSON data (works in MySQL, PostgreSQL, SQLite)
+            $q->where('data', 'like', "%{$search}%")
+                ->orWhereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->orWhereHas('form', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
+                });
+        });
+    }
+
+    /**
+     * Scope a query to filter by date range.
+     */
+    public function scopeDateRange($query, $from = null, $to = null)
+    {
+        if ($from) {
+            $query->whereDate('created_at', '>=', $from);
+        }
+        if ($to) {
+            $query->whereDate('created_at', '<=', $to);
+        }
+        return $query;
+    }
+
+    /**
      * Format field name to human-readable format.
      * Converts: ProjectTitle => Project Title, first_name => First Name
      */

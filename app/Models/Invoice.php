@@ -159,6 +159,51 @@ class Invoice extends Model
         return $query->where('customer_id', $customerId);
     }
 
+    /**
+     * Scope a query to search invoices by keyword.
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('invoice_number', 'like', "%{$search}%")
+                ->orWhereHas('customer', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                })
+                ->orWhereHas('order', function ($q) use ($search) {
+                    $q->where('uuid', 'like', "%{$search}%");
+                });
+        });
+    }
+
+    /**
+     * Scope a query to filter by date range.
+     */
+    public function scopeDateRange($query, $from = null, $to = null)
+    {
+        if ($from) {
+            $query->whereDate('invoice_date', '>=', $from);
+        }
+        if ($to) {
+            $query->whereDate('invoice_date', '<=', $to);
+        }
+        return $query;
+    }
+
+    /**
+     * Scope a query to filter by amount range.
+     */
+    public function scopeAmountRange($query, $min = null, $max = null)
+    {
+        if ($min !== null) {
+            $query->where('total_amount', '>=', $min);
+        }
+        if ($max !== null) {
+            $query->where('total_amount', '<=', $max);
+        }
+        return $query;
+    }
+
     // Accessors
     public function isPaid(): bool
     {

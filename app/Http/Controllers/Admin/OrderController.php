@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Project;
+use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,32 +28,32 @@ class OrderController extends Controller
     {
         $this->authorize('view-orders');
 
-        $query = Order::with(['user', 'items.service', 'project'])
+        $query = Order::with(['customer', 'items.service', 'project'])
             ->withCount('items');
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $query->search($request->search);
+        }
 
         // Status filter
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->status($request->status);
         }
 
-        // Search by order number or customer name
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('order_number', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    });
-            });
+        // Payment status filter
+        if ($request->filled('payment_status')) {
+            $query->paymentStatus($request->payment_status);
+        }
+
+        // Customer filter
+        if ($request->filled('customer_id')) {
+            $query->forCustomer($request->customer_id);
         }
 
         // Date range filter
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
+        if ($request->filled('date_from') || $request->filled('date_to')) {
+            $query->dateRange($request->date_from, $request->date_to);
         }
 
         // Sort
@@ -62,16 +63,21 @@ class OrderController extends Controller
 
         $orders = $query->paginate(15)->withQueryString();
 
+        // Get customers for filter dropdown
+        $customers = User::role('Customer')->orderBy('name')->get();
+
         // Statistics for dashboard
         $stats = [
             'total' => Order::count(),
             'pending' => Order::where('status', 'pending')->count(),
+            'approved' => Order::where('status', 'approved')->count(),
             'paid' => Order::where('status', 'paid')->count(),
-            'processing' => Order::where('status', 'processing')->count(),
+            'in_progress' => Order::where('status', 'in_progress')->count(),
             'completed' => Order::where('status', 'completed')->count(),
+            'total_revenue' => Order::where('status', 'completed')->sum('total'),
         ];
 
-        return view('admin.orders.index', compact('orders', 'stats'));
+        return view('admin.orders.index', compact('orders', 'stats', 'customers'));
     }
 
     /**

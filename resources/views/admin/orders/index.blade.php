@@ -8,7 +8,7 @@
         </header>
 
         <!-- Statistics Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mb-6">
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
                 <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Orders</div>
                 <div class="mt-1 text-2xl font-semibold text-zinc-900 dark:text-white">{{ $stats['total'] }}</div>
@@ -18,23 +18,27 @@
                 <div class="mt-1 text-2xl font-semibold text-yellow-600">{{ $stats['pending'] }}</div>
             </div>
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
-                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Paid</div>
-                <div class="mt-1 text-2xl font-semibold text-blue-600">{{ $stats['paid'] }}</div>
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Approved</div>
+                <div class="mt-1 text-2xl font-semibold text-blue-600">{{ $stats['approved'] }}</div>
             </div>
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
-                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Processing</div>
-                <div class="mt-1 text-2xl font-semibold text-purple-600">{{ $stats['processing'] }}</div>
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">In Progress</div>
+                <div class="mt-1 text-2xl font-semibold text-purple-600">{{ $stats['in_progress'] }}</div>
             </div>
             <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
                 <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Completed</div>
                 <div class="mt-1 text-2xl font-semibold text-green-600">{{ $stats['completed'] }}</div>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
+                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Revenue</div>
+                <div class="mt-1 text-2xl font-semibold text-emerald-600">GHS {{ number_format($stats['total_revenue'], 2) }}</div>
             </div>
         </div>
 
         <!-- Filters -->
         <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-4 mb-6">
             <form method="GET" action="{{ route('admin.orders.index') }}" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <!-- Search -->
                     <div>
                         <label for="search" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
@@ -44,7 +48,7 @@
                             name="search" 
                             id="search" 
                             value="{{ request('search') }}"
-                            placeholder="Order # or customer name"
+                            placeholder="Order ID, customer..."
                             class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
                     </div>
 
@@ -58,15 +62,62 @@
                             class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
                             <option value="">All Statuses</option>
                             <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="initiated" {{ request('status') === 'initiated' ? 'selected' : '' }}>Initiated</option>
+                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                             <option value="paid" {{ request('status') === 'paid' ? 'selected' : '' }}>Paid</option>
-                            <option value="processing" {{ request('status') === 'processing' ? 'selected' : '' }}>Processing</option>
+                            <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>In Progress</option>
                             <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                             <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            <option value="refunded" {{ request('status') === 'refunded' ? 'selected' : '' }}>Refunded</option>
                         </select>
                     </div>
 
+                    <!-- Payment Status Filter -->
+                    <div>
+                        <label for="payment_status" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Payment Status
+                        </label>
+                        <select name="payment_status" 
+                            id="payment_status"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                            <option value="">All Payment Statuses</option>
+                            <option value="unpaid" {{ request('payment_status') === 'unpaid' ? 'selected' : '' }}>Unpaid</option>
+                            <option value="partial" {{ request('payment_status') === 'partial' ? 'selected' : '' }}>Partial</option>
+                            <option value="paid" {{ request('payment_status') === 'paid' ? 'selected' : '' }}>Paid</option>
+                        </select>
+                    </div>
+
+                    <!-- Customer Filter -->
+                    <div>
+                        <label for="customer_id" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Customer
+                        </label>
+                        <select name="customer_id" 
+                            id="customer_id"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                            <option value="">All Customers</option>
+                            @foreach($customers as $customer)
+                                <option value="{{ $customer->id }}" {{ request('customer_id') == $customer->id ? 'selected' : '' }}>
+                                    {{ $customer->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Sort By -->
+                    <div>
+                        <label for="sort_by" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Sort By
+                        </label>
+                        <select name="sort_by" 
+                            id="sort_by"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                            <option value="created_at" {{ request('sort_by') === 'created_at' ? 'selected' : '' }}>Date Created</option>
+                            <option value="total" {{ request('sort_by') === 'total' ? 'selected' : '' }}>Total Amount</option>
+                            <option value="customer_name" {{ request('sort_by') === 'customer_name' ? 'selected' : '' }}>Customer Name</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <!-- Date From -->
                     <div>
                         <label for="date_from" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
@@ -89,6 +140,19 @@
                             id="date_to" 
                             value="{{ request('date_to') }}"
                             class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                    </div>
+
+                    <!-- Sort Order -->
+                    <div>
+                        <label for="sort_order" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                            Sort Order
+                        </label>
+                        <select name="sort_order" 
+                            id="sort_order"
+                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
+                            <option value="desc" {{ request('sort_order') === 'desc' ? 'selected' : '' }}>Newest First</option>
+                            <option value="asc" {{ request('sort_order') === 'asc' ? 'selected' : '' }}>Oldest First</option>
+                        </select>
                     </div>
                 </div>
 

@@ -154,6 +154,39 @@ class Project extends Model
     }
 
     /**
+     * Scope a query to search projects by keyword.
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('uuid', 'like', "%{$search}%")
+                ->orWhereHas('order', function ($q) use ($search) {
+                    $q->where('uuid', 'like', "%{$search}%");
+                })
+                ->orWhereHas('client', function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                });
+        });
+    }
+
+    /**
+     * Scope a query to filter by date range.
+     */
+    public function scopeDateRange($query, $from = null, $to = null)
+    {
+        if ($from) {
+            $query->whereDate('start_date', '>=', $from);
+        }
+        if ($to) {
+            $query->whereDate('end_date', '<=', $to);
+        }
+        return $query;
+    }
+
+    /**
      * Check if user is assigned to this project.
      */
     public function hasTeamMember(User $user): bool
