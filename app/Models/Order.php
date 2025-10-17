@@ -102,6 +102,14 @@ class Order extends Model
     }
 
     /**
+     * Get the invoice for this order.
+     */
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
+    /**
      * Get the project assigned to this order.
      */
     public function project(): BelongsTo

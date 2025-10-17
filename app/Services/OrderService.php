@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\OrderApproved;
 use App\Models\ActivityLog;
 use App\Models\Order;
+use App\Notifications\OrderStatusChanged;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -62,6 +63,11 @@ class OrderService
 
             // Fire events based on new status
             $this->fireStatusEvent($order, $newStatus);
+
+            // Send notification to customer about status change
+            if ($order->customer) {
+                $order->customer->notify(new OrderStatusChanged($order, $oldStatus, $newStatus));
+            }
 
             DB::commit();
 

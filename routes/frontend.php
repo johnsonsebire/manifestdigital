@@ -9,6 +9,8 @@ use App\Http\Controllers\FormSubmissionController;
 
 // Routes for Frontend Website Pages
 
+Route::middleware('web')->group(function () {
+
 Route::get('/', function () {
     return view('pages.home');
 })->name('home');
@@ -61,3 +63,5 @@ Route::post('/team-profile/store', [App\Http\Controllers\TeamProfileController::
 
 // Form Builder Routes - Public form submission
 Route::post('/forms/{slug}/submit', [FormSubmissionController::class, 'submitForm'])->name('forms.submit');
+
+});

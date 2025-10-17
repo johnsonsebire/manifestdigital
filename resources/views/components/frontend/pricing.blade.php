@@ -448,7 +448,7 @@ $categoriesList = empty($pricingCategories) ? $defaultPricingCategories : $prici
     
     <h2{{ $animateOnScroll ? ' class=animate-on-scroll' : '' }}>{{ $title }}</h2>
     <p class="pricing-subheading{{ $animateOnScroll ? ' animate-on-scroll' : '' }}">{{ $subtitle }}</p>
-    
+
     <!-- Desktop Pricing Tabs with Navigation -->
     <div class="pricing-tabs-wrapper{{ $animateOnScroll ? ' animate-on-scroll' : '' }}">
         <button class="pricing-tabs-nav pricing-tabs-nav-left" aria-label="Scroll tabs left" disabled>
@@ -512,4 +512,64 @@ $categoriesList = empty($pricingCategories) ? $defaultPricingCategories : $prici
             </div>
         </div>
     @endforeach
+
+    <!-- Regional Discounts Notice -->
+    <div class="regional-discount-notice{{ $animateOnScroll ? ' animate-on-scroll' : '' }}">
+        <div class="notice-content">
+            <i class="fas fa-info-circle notice-icon"></i>
+            <span class="notice-text">
+                {{-- <strong>Regional Pricing:</strong> Base rates displayed. Automatic regional discounts applied based on your location to ensure fair pricing across different markets. Current regional discounts active for Ghana only! --}}
+                <strong> Regional Pricing Notice</strong> We are rolling out regional discounts, but the prices displayed are currently for Ghana only. For pricing applicable to your region, please email: <a href="mailto:sales@manifestghana.com">sales@manifestghana.com </a>
+            </span>
+        </div>
+    </div>
 </section>
+
+<style>
+/* Regional Discount Notice Styles */
+.regional-discount-notice {
+    background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+    border: 1px solid #d1e7ff;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem auto 2.5rem;
+    max-width: 800px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.notice-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.notice-icon {
+    color: #0066cc;
+    font-size: 1.1rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.notice-text {
+    color: #333;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.notice-text strong {
+    color: #0066cc;
+    font-weight: 600;
+}
+
+/* Mobile responsiveness for the notice */
+@media (max-width: 768px) {
+    .regional-discount-notice {
+        margin: 1rem 1rem 2rem;
+        padding: 0.875rem 1rem;
+    }
+
+    .notice-text {
+        font-size: 0.9rem;
+    }
+}
+</style>

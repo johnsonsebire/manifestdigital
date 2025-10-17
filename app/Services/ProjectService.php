@@ -7,6 +7,7 @@ use App\Models\ActivityLog;
 use App\Models\Order;
 use App\Models\Project;
 use App\Models\User;
+use App\Notifications\ProjectCreated as ProjectCreatedNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -93,6 +94,11 @@ class ProjectService
 
             // Fire ProjectCreated event
             event(new ProjectCreated($project, $order));
+
+            // Send notification to customer about project creation
+            if ($order->customer) {
+                $order->customer->notify(new ProjectCreatedNotification($project));
+            }
 
             DB::commit();
 

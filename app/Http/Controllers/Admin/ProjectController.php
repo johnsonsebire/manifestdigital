@@ -1,0 +1,276 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Order;
+use App\Models\Project;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class ProjectController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $query = Project::with(['order.customer'])
+            ->latest();
+
+        // Search by title or order number
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhereHas('order', function($q) use ($search) {
+                      $q->where('order_number', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by assigned team member
+        if ($request->filled('team_member')) {
+            $query->whereHas('team', function($q) use ($request) {
+                $q->where('user_id', $request->team_member);
+            });
+        }
+
+        // Filter by date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('start_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('end_date', '<=', $request->date_to);
+        }
+
+        $projects = $query->paginate(15);
+
+        // Statistics
+        $stats = [
+            'total' => Project::count(),
+            'active' => Project::where('status', 'active')->count(),
+            'pending' => Project::where('status', 'pending')->count(),
+            'on_hold' => Project::where('status', 'on_hold')->count(),
+            'completed' => Project::where('status', 'completed')->count(),
+        ];
+
+        // Get all staff users for team filter
+        $teamMembers = User::role(['Admin', 'Staff'])->orderBy('name')->get();
+
+        return view('admin.projects.index', compact('projects', 'stats', 'teamMembers'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        // Get orders that don't have projects yet
+        $orders = Order::whereDoesntHave('project')
+            ->where('status', '!=', 'cancelled')
+            ->with('customer')
+            ->latest()
+            ->get();
+
+        return view('admin.projects.create', compact('orders'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'budget' => 'nullable|numeric|min:0',
+            'status' => 'required|in:pending,active,on_hold,completed,cancelled',
+        ]);
+
+        $project = Project::create($validated);
+
+        // Log activity
+        $project->activities()->create([
+            'user_id' => auth()->id(),
+            'action' => 'created',
+            'description' => 'Project created by ' . auth()->user()->name,
+        ]);
+
+        return redirect()
+            ->route('admin.projects.show', $project)
+            ->with('success', 'Project created successfully.');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Project $project)
+    {
+        $project->load([
+            'order.customer',
+            'order.items.service',
+            'tasks' => function($q) {
+                $q->with('assignedTo')->latest();
+            },
+            'milestones' => function($q) {
+                $q->latest();
+            },
+            'team.user',
+            'files',
+            'messages.user',
+            'activities.user'
+        ]);
+
+        // Get available staff for team assignment
+        $availableStaff = User::role(['Admin', 'Staff'])
+            ->whereNotIn('id', $project->team->pluck('user_id'))
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.projects.show', compact('project', 'availableStaff'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Project $project)
+    {
+        $project->load('order.customer');
+        
+        return view('admin.projects.edit', compact('project'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'budget' => 'nullable|numeric|min:0',
+            'status' => 'required|in:pending,active,on_hold,completed,cancelled',
+            'completion_percentage' => 'nullable|integer|min:0|max:100',
+        ]);
+
+        $oldStatus = $project->status;
+        $project->update($validated);
+
+        // Log status change
+        if ($oldStatus !== $project->status) {
+            $project->activities()->create([
+                'user_id' => auth()->id(),
+                'action' => 'status_updated',
+                'description' => 'Project status changed from ' . $oldStatus . ' to ' . $project->status . ' by ' . auth()->user()->name,
+            ]);
+        }
+
+        return redirect()
+            ->route('admin.projects.show', $project)
+            ->with('success', 'Project updated successfully.');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Project $project)
+    {
+        // Check if project can be deleted
+        if ($project->status === 'active') {
+            return back()->with('error', 'Cannot delete active projects. Change status first.');
+        }
+
+        $project->delete();
+
+        return redirect()
+            ->route('admin.projects.index')
+            ->with('success', 'Project deleted successfully.');
+    }
+
+    /**
+     * Add team member to project
+     */
+    public function addTeamMember(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'role' => 'required|in:manager,developer,designer,tester',
+        ]);
+
+        // Check if already a team member
+        if ($project->team()->where('user_id', $validated['user_id'])->exists()) {
+            return back()->with('error', 'User is already a team member.');
+        }
+
+        $project->team()->create($validated);
+
+        // Log activity
+        $user = User::find($validated['user_id']);
+        $project->activities()->create([
+            'user_id' => auth()->id(),
+            'action' => 'team_member_added',
+            'description' => $user->name . ' added to project team as ' . $validated['role'],
+        ]);
+
+        return back()->with('success', 'Team member added successfully.');
+    }
+
+    /**
+     * Remove team member from project
+     */
+    public function removeTeamMember(Project $project, $teamMemberId)
+    {
+        $teamMember = $project->team()->findOrFail($teamMemberId);
+        $userName = $teamMember->user->name;
+        
+        $teamMember->delete();
+
+        // Log activity
+        $project->activities()->create([
+            'user_id' => auth()->id(),
+            'action' => 'team_member_removed',
+            'description' => $userName . ' removed from project team',
+        ]);
+
+        return back()->with('success', 'Team member removed successfully.');
+    }
+
+    /**
+     * Update project completion percentage
+     */
+    public function updateProgress(Request $request, Project $project)
+    {
+        $validated = $request->validate([
+            'completion_percentage' => 'required|integer|min:0|max:100',
+        ]);
+
+        $oldPercentage = $project->completion_percentage;
+        $project->update($validated);
+
+        // Auto-complete if 100%
+        if ($project->completion_percentage === 100 && $project->status !== 'completed') {
+            $project->update(['status' => 'completed']);
+        }
+
+        // Log activity
+        $project->activities()->create([
+            'user_id' => auth()->id(),
+            'action' => 'progress_updated',
+            'description' => 'Project progress updated from ' . $oldPercentage . '% to ' . $project->completion_percentage . '%',
+        ]);
+
+        return back()->with('success', 'Project progress updated successfully.');
+    }
+}

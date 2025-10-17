@@ -1,48 +1,37 @@
 <x-layouts.app :title="'Order #' . $order->order_number">
     <div class="p-6 max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <a href="{{ route('admin.orders.index') }}" 
-                    class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 mb-2 inline-block"
-                    wire:navigate>
-                    ← Back to Orders
-                </a>
-                <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Order #{{ $order->order_number }}</h1>
-                <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                    Placed on {{ $order->created_at->format('F d, Y \a\t h:i A') }}
-                </p>
-            </div>
-            
-            <div class="flex items-center gap-3">
-                @php
-                    $statusColors = [
-                        'pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
-                        'initiated' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-                        'paid' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-                        'processing' => 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-                        'completed' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-                        'cancelled' => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-                        'refunded' => 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300',
-                    ];
-                @endphp
-                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-zinc-100 text-zinc-800' }}">
-                    {{ ucfirst($order->status) }}
-                </span>
+        <div class="mb-6">
+            <a href="{{ route('customer.orders.index') }}" 
+                class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 mb-2 inline-block"
+                wire:navigate>
+                ← Back to My Orders
+            </a>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Order #{{ $order->order_number }}</h1>
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                        Placed on {{ $order->created_at->format('F d, Y \a\t h:i A') }}
+                    </p>
+                </div>
+                
+                <div>
+                    @php
+                        $statusColors = [
+                            'pending' => 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+                            'initiated' => 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
+                            'paid' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+                            'processing' => 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
+                            'completed' => 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
+                            'cancelled' => 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
+                        ];
+                    @endphp
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-zinc-100 text-zinc-800' }}">
+                        {{ ucfirst($order->status) }}
+                    </span>
+                </div>
             </div>
         </div>
-
-        @if(session('success'))
-            <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 p-4 mb-6">
-                <p class="text-green-700 dark:text-green-400">{{ session('success') }}</p>
-            </div>
-        @endif
-
-        @if(session('error'))
-            <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-400 p-4 mb-6">
-                <p class="text-red-700 dark:text-red-400">{{ session('error') }}</p>
-            </div>
-        @endif
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Main Content -->
@@ -58,10 +47,10 @@
                                 <div class="flex justify-between items-start pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-0 last:pb-0">
                                     <div class="flex-1">
                                         <h3 class="font-medium text-zinc-900 dark:text-white">
-                                            {{ $item->service->name }}
+                                            {{ $item->service->title }}
                                         </h3>
                                         <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                            {{ $item->service->category->name }}
+                                            {{ $item->service->category->title ?? 'Uncategorized' }}
                                         </p>
                                         @if($item->variant)
                                             <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
@@ -135,7 +124,7 @@
                                         <div class="flex justify-between items-start">
                                             <div>
                                                 <div class="font-medium text-zinc-900 dark:text-white">
-                                                    {{ ucfirst($payment->gateway) }}
+                                                    {{ ucfirst(str_replace('_', ' ', $payment->gateway)) }}
                                                 </div>
                                                 <div class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                                                     Reference: {{ $payment->reference }}
@@ -166,7 +155,7 @@
                 <!-- Activity Timeline -->
                 <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
                     <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
-                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Activity Timeline</h2>
+                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Order Timeline</h2>
                     </div>
                     <div class="p-6">
                         <div class="flow-root">
@@ -190,11 +179,6 @@
                                                         <p class="text-sm text-zinc-900 dark:text-white">
                                                             {{ $activity->description }}
                                                         </p>
-                                                        @if($activity->user)
-                                                            <p class="text-xs text-zinc-500 dark:text-zinc-400">
-                                                                by {{ $activity->user->name }}
-                                                            </p>
-                                                        @endif
                                                     </div>
                                                     <div class="whitespace-nowrap text-right text-sm text-zinc-500 dark:text-zinc-400">
                                                         <time datetime="{{ $activity->created_at->toIso8601String() }}">
@@ -214,32 +198,7 @@
 
             <!-- Sidebar -->
             <div class="space-y-6">
-                <!-- Customer Information -->
-                <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
-                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Customer</h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-3">
-                            <div>
-                                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Name</div>
-                                <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->user->name }}</div>
-                            </div>
-                            <div>
-                                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Email</div>
-                                <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->user->email }}</div>
-                            </div>
-                            @if($order->user->phone)
-                                <div>
-                                    <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Phone</div>
-                                    <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->user->phone }}</div>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Information -->
+                <!-- Related Project -->
                 @if($order->project)
                     <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
                         <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
@@ -270,150 +229,116 @@
                                         </div>
                                     </div>
                                 </div>
-                                <a href="#" 
-                                    class="block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm">
-                                    View Project
+                                <div>
+                                    <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Tasks</div>
+                                    <div class="mt-1 text-sm text-zinc-900 dark:text-white">
+                                        {{ $order->project->tasks->where('status', 'completed')->count() }} / {{ $order->project->tasks->count() }} completed
+                                    </div>
+                                </div>
+                                <a href="{{ route('customer.projects.show', $order->project) }}" 
+                                    class="block w-full text-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 text-sm mt-4"
+                                    wire:navigate>
+                                    View Project Details
                                 </a>
                             </div>
                         </div>
                     </div>
                 @endif
 
+                <!-- Order Summary -->
+                <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-6">
+                    <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">Order Summary</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-zinc-600 dark:text-zinc-400">Order Number</span>
+                            <span class="text-zinc-900 dark:text-white font-mono">{{ $order->order_number }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-600 dark:text-zinc-400">Items</span>
+                            <span class="text-zinc-900 dark:text-white">{{ $order->items->count() }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-zinc-600 dark:text-zinc-400">Order Date</span>
+                            <span class="text-zinc-900 dark:text-white">{{ $order->created_at->format('M d, Y') }}</span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Order Actions -->
-                @can('manage-orders')
+                @if($order->status === 'approved')
+                    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-6">
+                        <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">Order Actions</h3>
+                        <a href="{{ route('customer.orders.change-request.create', $order) }}" 
+                            class="block w-full text-center px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 text-sm"
+                            wire:navigate>
+                            <svg class="inline-block w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                            Request Change/Upgrade
+                        </a>
+                        <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-2">
+                            Need to add or modify items in your order? Submit a change request for review.
+                        </p>
+                    </div>
+                @endif
+
+                <!-- Change Requests -->
+                @if($order->changeRequests->count() > 0)
                     <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
                         <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
-                            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Actions</h2>
+                            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Change Requests</h2>
                         </div>
-                        <div class="p-6 space-y-3">
-                            @if($order->invoice)
-                                <a href="{{ route('admin.invoices.show', $order->invoice) }}" 
-                                    class="block w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium text-center">
-                                    View Invoice
-                                </a>
-                            @elseif(in_array($order->status, ['paid', 'approved']))
-                                <a href="{{ route('admin.orders.invoices.create', $order) }}" 
-                                    class="block w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium text-center">
-                                    Generate Invoice
-                                </a>
-                            @endif
-
-                            @if($order->status === 'paid')
-                                <form action="{{ route('admin.orders.approve', $order) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" 
-                                        onclick="return confirm('Approve this order and create a project?')"
-                                        class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
-                                        Approve Order
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if($order->status === 'initiated')
-                                <button type="button"
-                                    onclick="document.getElementById('mark-paid-modal').classList.remove('hidden')"
-                                    class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-medium">
-                                    Mark as Paid
-                                </button>
-                            @endif
-
-                            @if($order->status === 'processing')
-                                <form action="{{ route('admin.orders.complete', $order) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" 
-                                        onclick="return confirm('Mark this order as completed?')"
-                                        class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm font-medium">
-                                        Mark Completed
-                                    </button>
-                                </form>
-                            @endif
-
-                            @if(in_array($order->status, ['pending', 'initiated', 'paid', 'processing']))
-                                <button type="button"
-                                    onclick="document.getElementById('reject-modal').classList.remove('hidden')"
-                                    class="w-full px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm font-medium">
-                                    Cancel Order
-                                </button>
-                            @endif
+                        <div class="p-6">
+                            <div class="space-y-3">
+                                @foreach($order->changeRequests->sortByDesc('created_at') as $changeRequest)
+                                    <div class="border border-zinc-200 dark:border-zinc-700 rounded-lg p-4">
+                                        <div class="flex items-start justify-between mb-2">
+                                            <div>
+                                                <div class="text-sm font-medium text-zinc-900 dark:text-white">
+                                                    Request #{{ $changeRequest->id }}
+                                                </div>
+                                                <div class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+                                                    {{ $changeRequest->created_at->format('M d, Y') }}
+                                                </div>
+                                            </div>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium 
+                                                {{ $changeRequest->status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' : '' }}
+                                                {{ $changeRequest->status === 'approved' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : '' }}
+                                                {{ $changeRequest->status === 'rejected' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' : '' }}
+                                                {{ $changeRequest->status === 'applied' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' : '' }}">
+                                                {{ ucfirst($changeRequest->status) }}
+                                            </span>
+                                        </div>
+                                        <div class="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+                                            Type: {{ ucfirst(str_replace('_', ' ', $changeRequest->type)) }}
+                                        </div>
+                                        <a href="{{ route('customer.orders.change-request.show', [$order, $changeRequest]) }}" 
+                                            class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                                            wire:navigate>
+                                            View Details →
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-                @endcan
+                @endif
+
+                <!-- Need Help? -->
+                <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+                    <h3 class="text-sm font-medium text-blue-900 dark:text-blue-300 mb-2">Need Help?</h3>
+                    <p class="text-sm text-blue-800 dark:text-blue-400 mb-4">
+                        Have questions about your order? Our support team is here to help.
+                    </p>
+                    <a href="mailto:support@manifestghana.com" 
+                        class="inline-flex items-center text-sm font-medium text-blue-900 dark:text-blue-300 hover:text-blue-700 dark:hover:text-blue-200">
+                        Contact Support
+                        <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Mark as Paid Modal -->
-    <div id="mark-paid-modal" class="hidden fixed inset-0 bg-zinc-500 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Mark Order as Paid</h3>
-            <form action="{{ route('admin.orders.mark-paid', $order) }}" method="POST">
-                @csrf
-                <div class="space-y-4">
-                    <div>
-                        <label for="reference" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                            Payment Reference <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" 
-                            name="reference" 
-                            id="reference" 
-                            required
-                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500">
-                    </div>
-                    <div>
-                        <label for="notes" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                            Notes
-                        </label>
-                        <textarea name="notes" 
-                            id="notes" 
-                            rows="3"
-                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
-                    </div>
-                    <div class="flex gap-3">
-                        <button type="submit" 
-                            class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                            Confirm Payment
-                        </button>
-                        <button type="button" 
-                            onclick="document.getElementById('mark-paid-modal').classList.add('hidden')"
-                            class="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-300 dark:hover:bg-zinc-600">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Reject/Cancel Modal -->
-    <div id="reject-modal" class="hidden fixed inset-0 bg-zinc-500 bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-white dark:bg-zinc-800 rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Cancel Order</h3>
-            <form action="{{ route('admin.orders.reject', $order) }}" method="POST">
-                @csrf
-                <div class="space-y-4">
-                    <div>
-                        <label for="reason" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                            Cancellation Reason <span class="text-red-500">*</span>
-                        </label>
-                        <textarea name="reason" 
-                            id="reason" 
-                            rows="4"
-                            required
-                            class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500"></textarea>
-                    </div>
-                    <div class="flex gap-3">
-                        <button type="submit" 
-                            class="flex-1 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
-                            Cancel Order
-                        </button>
-                        <button type="button" 
-                            onclick="document.getElementById('reject-modal').classList.add('hidden')"
-                            class="flex-1 px-4 py-2 bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-md hover:bg-zinc-300 dark:hover:bg-zinc-600">
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 </x-layouts.app>

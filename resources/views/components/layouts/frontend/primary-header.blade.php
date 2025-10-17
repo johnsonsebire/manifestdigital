@@ -20,8 +20,14 @@
             @endforeach
         </nav>
         <div class="header-right">
-            <a href="{{ route('login') }}" class="login">Login</a>
-            <a href="{{ route('request-quote') }}" class="btn-primary">Get a Quote</a>
+            @auth
+                <a href="{{ route('dashboard') }}" class="user-icon-link" title="Go to Dashboard">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="login">Login</a>
+            @endauth
+            <a href="{{ url('requsest-quote') }}" class="btn-primary">Get a Quote</a>
         </div>
         
         <!-- Mobile menu toggle -->
@@ -53,7 +59,14 @@
             @endforeach
         </nav>
         <div class="mobile-nav-buttons">
-            <a href="{{ route('login') }}" class="login">Login</a>
+            @auth
+                <a href="{{ route('dashboard') }}" class="user-icon-link" title="Go to Dashboard">
+                    <i class="fas fa-user-circle"></i>
+                    Dashboard
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="login">Login</a>
+            @endauth
             <a href="{{ route('request-quote') }}" class="btn-primary">Get a Quote</a>
         </div>
     </div>

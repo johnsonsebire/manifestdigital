@@ -16,10 +16,33 @@
                     <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                 </flux:navlist.group>
                 
+                @if(auth()->user()->hasRole('Customer'))
+                <flux:navlist.group :heading="__('My Account')" class="grid">
+                    <flux:navlist.item icon="shopping-bag" :href="route('customer.orders.index')" :current="request()->routeIs('customer.orders.*')" wire:navigate>
+                        {{ __('My Orders') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="document-text" :href="route('customer.invoices.index')" :current="request()->routeIs('customer.invoices.*')" wire:navigate>
+                        {{ __('My Invoices') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="briefcase" :href="route('customer.projects.index')" :current="request()->routeIs('customer.projects.*')" wire:navigate>
+                        {{ __('My Projects') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
+                @endif
+                
                 @can('view-orders')
                 <flux:navlist.group :heading="__('Business')" class="grid">
                     <flux:navlist.item icon="shopping-bag" :href="route('admin.orders.index')" :current="request()->routeIs('admin.orders.*')" wire:navigate>
                         {{ __('Orders') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="document-text" :href="route('admin.invoices.index')" :current="request()->routeIs('admin.invoices.*')" wire:navigate>
+                        {{ __('Invoices') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="arrows-right-left" :href="route('admin.change-requests.index')" :current="request()->routeIs('admin.change-requests.*')" wire:navigate>
+                        {{ __('Change Requests') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="briefcase" :href="route('admin.projects.index')" :current="request()->routeIs('admin.projects.*')" wire:navigate>
+                        {{ __('Projects') }}
                     </flux:navlist.item>
                     <flux:navlist.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" wire:navigate>
                         {{ __('Categories') }}
@@ -56,6 +79,11 @@
                 </flux:navlist.item>
             </flux:navlist>
             @endunless
+
+            <!-- Notification Bell (Desktop) -->
+            <div class="hidden lg:block px-2 mb-2">
+                <x-notification-bell />
+            </div>
 
             <!-- Desktop User Menu -->
             <flux:dropdown class="hidden lg:block" position="bottom" align="start">
@@ -109,6 +137,11 @@
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <flux:spacer />
+
+            <!-- Notification Bell (Mobile) -->
+            <div class="mr-2">
+                <x-notification-bell />
+            </div>
 
             <flux:dropdown position="top" align="end">
                 <flux:profile
