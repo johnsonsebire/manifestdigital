@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CheckoutRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Service;
+use App\Models\ServiceVariant;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,6 +95,16 @@ class CheckoutController extends Controller
             // Create order items with server-validated prices
             $subtotal = 0;
             foreach ($request->items as $item) {
+                // Fetch service to get title
+                $service = Service::find($item['service_id']);
+                
+                // Fetch variant name if variant_id exists
+                $variantName = null;
+                if (!empty($item['variant_id'])) {
+                    $variant = ServiceVariant::find($item['variant_id']);
+                    $variantName = $variant?->name;
+                }
+
                 // Prices already validated in CheckoutRequest
                 $lineTotal = $item['price'] * $item['quantity'];
                 $subtotal += $lineTotal;
@@ -101,12 +113,13 @@ class CheckoutController extends Controller
                     'order_id' => $order->id,
                     'service_id' => $item['service_id'],
                     'variant_id' => $item['variant_id'] ?? null,
+                    'title' => $service->title,
                     'quantity' => $item['quantity'],
                     'unit_price' => $item['price'],
                     'line_total' => $lineTotal,
-                    'snapshot' => [
-                        'service_title' => $item['service_title'] ?? null,
-                        'variant_name' => $item['variant_name'] ?? null,
+                    'metadata' => [
+                        'variant_name' => $variantName,
+                        'type' => $service->type,
                     ],
                 ]);
             }
@@ -129,8 +142,11 @@ class CheckoutController extends Controller
             // Fire OrderPlaced event
             event(new \App\Events\OrderPlaced($order));
 
-            // Redirect to payment initialization
-            return redirect()->route('payment.initiate', $order->uuid)
+            // Store order UUID in session for payment form
+            session(['pending_payment_order' => $order->uuid]);
+
+            // Redirect to payment page (will auto-submit POST form)
+            return redirect()->route('checkout.payment', $order->uuid)
                 ->with('success', 'Order placed successfully! Proceeding to payment...');
 
         } catch (\Exception $e) {
@@ -147,6 +163,24 @@ class CheckoutController extends Controller
                 ->withInput()
                 ->with('error', 'Failed to process order. Please try again. Error: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Payment redirect page
+     * Shows auto-submitting form to POST to payment.initiate
+     * 
+     * GET /checkout/payment/{uuid}
+     */
+    public function payment(string $uuid)
+    {
+        $order = Order::where('uuid', $uuid)->firstOrFail();
+
+        // Verify this is the order that was just created
+        if (session('pending_payment_order') !== $uuid) {
+            abort(403, 'Invalid payment request');
+        }
+
+        return view('checkout.payment', compact('order'));
     }
 
     /**

@@ -56,12 +56,12 @@ class ProjectService
                 'metadata' => [
                     'created_from_order' => true,
                     'order_uuid' => $order->uuid,
-                    'order_total' => $order->total_amount,
+                    'order_total' => $order->total,
                     'services' => $order->items->map(function ($item) {
                         return [
                             'service_id' => $item->service_id,
-                            'service_title' => $item->snapshot['service_title'] ?? $item->service->title ?? 'Service',
-                            'variant_name' => $item->snapshot['variant_name'] ?? null,
+                            'service_title' => $item->title,
+                            'variant_name' => $item->metadata['variant_name'] ?? null,
                             'quantity' => $item->quantity,
                         ];
                     })->toArray(),
@@ -81,12 +81,11 @@ class ProjectService
 
             // Create activity log
             ActivityLog::create([
+                'project_id' => $project->id,
                 'user_id' => $managerId ?? auth()->id(),
                 'type' => 'project_created',
-                'loggable_type' => Project::class,
-                'loggable_id' => $project->id,
                 'description' => "Project #{$project->uuid} created from order #{$order->uuid}",
-                'metadata' => [
+                'meta' => [
                     'order_id' => $order->id,
                     'order_uuid' => $order->uuid,
                 ],
@@ -185,12 +184,11 @@ class ProjectService
             ]);
 
             ActivityLog::create([
+                'project_id' => $project->id,
                 'user_id' => auth()->id(),
                 'type' => 'team_member_assigned',
-                'loggable_type' => Project::class,
-                'loggable_id' => $project->id,
                 'description' => "Team member assigned to project",
-                'metadata' => [
+                'meta' => [
                     'assigned_user_id' => $userId,
                     'role' => $role,
                 ],
@@ -224,12 +222,11 @@ class ProjectService
             $project->update(['status' => $newStatus]);
 
             ActivityLog::create([
+                'project_id' => $project->id,
                 'user_id' => $userId ?? auth()->id(),
                 'type' => 'project_status_changed',
-                'loggable_type' => Project::class,
-                'loggable_id' => $project->id,
                 'description' => "Project status changed from {$oldStatus} to {$newStatus}",
-                'metadata' => [
+                'meta' => [
                     'old_status' => $oldStatus,
                     'new_status' => $newStatus,
                 ],

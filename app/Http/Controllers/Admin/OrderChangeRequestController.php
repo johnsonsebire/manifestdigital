@@ -141,7 +141,7 @@ class OrderChangeRequestController extends Controller
 
         // Update order total
         $order->update([
-            'total_amount' => $changeRequest->proposed_amount,
+            'total' => $changeRequest->proposed_amount,
         ]);
 
         // Mark change request as applied

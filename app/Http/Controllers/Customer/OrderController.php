@@ -51,18 +51,20 @@ class OrderController extends Controller
         $this->authorize('view', $order);
 
         $order->load([
-            'items.service.category',
+            'items.service.categories',
             'items.variant',
             'payments',
             'project.tasks',
         ]);
 
-        // Get activity logs for this order
-        $activities = ActivityLog::where('loggable_type', Order::class)
-            ->where('loggable_id', $order->id)
-            ->with('user')
-            ->latest()
-            ->get();
+        // Get activity logs from related project if it exists
+        $activities = collect();
+        if ($order->project) {
+            $activities = ActivityLog::where('project_id', $order->project->id)
+                ->with('user')
+                ->latest()
+                ->get();
+        }
 
         return view('customer.orders.show', compact('order', 'activities'));
     }

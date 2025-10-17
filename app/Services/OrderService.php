@@ -47,19 +47,21 @@ class OrderService
             $oldStatus = $order->status;
             $order->update(['status' => $newStatus]);
 
-            // Log the transition
-            ActivityLog::create([
-                'user_id' => $userId ?? auth()->id(),
-                'type' => 'order_status_changed',
-                'loggable_type' => Order::class,
-                'loggable_id' => $order->id,
-                'description' => "Order status changed from {$oldStatus} to {$newStatus}",
-                'metadata' => [
-                    'old_status' => $oldStatus,
-                    'new_status' => $newStatus,
-                    'reason' => $reason,
-                ],
-            ]);
+            // Log the transition to project activity logs if project exists
+            if ($order->project_id) {
+                ActivityLog::create([
+                    'project_id' => $order->project_id,
+                    'user_id' => $userId ?? auth()->id(),
+                    'type' => 'order_status_changed',
+                    'description' => "Order status changed from {$oldStatus} to {$newStatus}",
+                    'meta' => [
+                        'order_id' => $order->id,
+                        'old_status' => $oldStatus,
+                        'new_status' => $newStatus,
+                        'reason' => $reason,
+                    ],
+                ]);
+            }
 
             // Fire events based on new status
             $this->fireStatusEvent($order, $newStatus);
@@ -122,17 +124,20 @@ class OrderService
                 'status' => $order->status === 'pending' ? 'initiated' : $order->status,
             ]);
 
-            ActivityLog::create([
-                'user_id' => $order->customer_id,
-                'type' => 'order_paid',
-                'loggable_type' => Order::class,
-                'loggable_id' => $order->id,
-                'description' => "Order #{$order->uuid} marked as paid",
-                'metadata' => [
-                    'payment_amount' => $order->total_amount,
-                    'payment_method' => $order->payment_method,
-                ],
-            ]);
+            // Log payment to project activity logs if project exists
+            if ($order->project_id) {
+                ActivityLog::create([
+                    'project_id' => $order->project_id,
+                    'user_id' => $order->customer_id,
+                    'type' => 'order_paid',
+                    'description' => "Order #{$order->uuid} marked as paid",
+                    'meta' => [
+                        'order_id' => $order->id,
+                        'payment_amount' => $order->total,
+                        'payment_method' => $order->payment_method,
+                    ],
+                ]);
+            }
 
             DB::commit();
             return true;
@@ -173,17 +178,20 @@ class OrderService
                 ]),
             ]);
 
-            ActivityLog::create([
-                'user_id' => $userId ?? auth()->id(),
-                'type' => 'order_approved',
-                'loggable_type' => Order::class,
-                'loggable_id' => $order->id,
-                'description' => "Order #{$order->uuid} approved and moved to processing",
-                'metadata' => [
-                    'previous_status' => 'paid',
-                    'new_status' => 'processing',
-                ],
-            ]);
+            // Log approval to project activity logs if project exists
+            if ($order->project_id) {
+                ActivityLog::create([
+                    'project_id' => $order->project_id,
+                    'user_id' => $userId ?? auth()->id(),
+                    'type' => 'order_approved',
+                    'description' => "Order #{$order->uuid} approved and moved to processing",
+                    'meta' => [
+                        'order_id' => $order->id,
+                        'previous_status' => 'paid',
+                        'new_status' => 'processing',
+                    ],
+                ]);
+            }
 
             // Fire OrderApproved event
             event(new OrderApproved($order));
@@ -232,16 +240,19 @@ class OrderService
                 ]),
             ]);
 
-            ActivityLog::create([
-                'user_id' => $userId ?? auth()->id(),
-                'type' => 'order_cancelled',
-                'loggable_type' => Order::class,
-                'loggable_id' => $order->id,
-                'description' => "Order #{$order->uuid} cancelled: {$reason}",
-                'metadata' => [
-                    'reason' => $reason,
-                ],
-            ]);
+            // Log cancellation to project activity logs if project exists
+            if ($order->project_id) {
+                ActivityLog::create([
+                    'project_id' => $order->project_id,
+                    'user_id' => $userId ?? auth()->id(),
+                    'type' => 'order_cancelled',
+                    'description' => "Order #{$order->uuid} cancelled: {$reason}",
+                    'meta' => [
+                        'order_id' => $order->id,
+                        'reason' => $reason,
+                    ],
+                ]);
+            }
 
             DB::commit();
             return true;
@@ -311,7 +322,7 @@ class OrderService
             'processing' => (clone $query)->where('status', 'processing')->count(),
             'completed' => (clone $query)->where('status', 'completed')->count(),
             'cancelled' => (clone $query)->where('status', 'cancelled')->count(),
-            'total_revenue' => (clone $query)->where('payment_status', 'paid')->sum('total_amount'),
+            'total_revenue' => (clone $query)->where('payment_status', 'paid')->sum('total'),
         ];
     }
 }

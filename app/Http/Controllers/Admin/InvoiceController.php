@@ -103,7 +103,7 @@ class InvoiceController extends Controller
         $invoice = new Invoice([
             'invoice_number' => Invoice::generateInvoiceNumber(),
             'order_id' => $order->id,
-            'customer_id' => $order->user_id,
+            'customer_id' => $order->customer_id,
             'invoice_date' => $request->invoice_date,
             'due_date' => $request->due_date,
             'subtotal' => $order->total,

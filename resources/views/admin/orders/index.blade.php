@@ -205,14 +205,19 @@
                                 {{ $order->order_number }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
-                                <div>{{ $order->user->name }}</div>
-                                <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->user->email }}</div>
+                                @if($order->customer)
+                                    <div>{{ $order->customer->name }}</div>
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->customer->email }}</div>
+                                @else
+                                    <div>{{ $order->customer_name ?? 'Guest' }}</div>
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->customer_email ?? 'N/A' }}</div>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 {{ $order->items_count }} {{ Str::plural('item', $order->items_count) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white font-medium">
-                                ₦{{ number_format($order->total_amount, 2) }}
+                                ₦{{ number_format($order->total, 2) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 @php

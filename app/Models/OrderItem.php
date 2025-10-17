@@ -19,6 +19,7 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'service_id',
+        'variant_id',
         'title',
         'unit_price',
         'quantity',
@@ -64,6 +65,14 @@ class OrderItem extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    /**
+     * Get the service variant this item is based on.
+     */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ServiceVariant::class, 'variant_id');
     }
 
     /**

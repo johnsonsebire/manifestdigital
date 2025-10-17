@@ -49,6 +49,7 @@ Route::get('/cart/summary', [App\Http\Controllers\CartController::class, 'summar
 // Checkout Routes
 Route::get('/checkout', [App\Http\Controllers\CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout', [App\Http\Controllers\CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/payment/{uuid}', [App\Http\Controllers\CheckoutController::class, 'payment'])->name('checkout.payment');
 Route::get('/checkout/success/{uuid}', [App\Http\Controllers\CheckoutController::class, 'success'])->name('checkout.success');
 
 // Payment Routes

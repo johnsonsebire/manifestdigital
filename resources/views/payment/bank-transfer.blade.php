@@ -65,7 +65,7 @@
 
                         <div>
                             <label class="text-sm font-medium text-gray-600">Amount to Transfer</label>
-                            <p class="text-2xl font-bold text-green-600">{{ $order->currency ?? 'NGN' }} {{ number_format($order->total_amount, 2) }}</p>
+                            <p class="text-2xl font-bold text-green-600">{{ $order->currency ?? 'NGN' }} {{ number_format($order->total, 2) }}</p>
                         </div>
 
                         <div>
@@ -106,7 +106,7 @@
                         <div class="border-t pt-2 mt-2">
                             <div class="flex justify-between font-semibold text-gray-900">
                                 <span>Total</span>
-                                <span>{{ $order->currency ?? 'NGN' }} {{ number_format($order->total_amount, 2) }}</span>
+                                <span>{{ $order->currency ?? 'NGN' }} {{ number_format($order->total, 2) }}</span>
                             </div>
                         </div>
                     </div>

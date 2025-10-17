@@ -31,7 +31,7 @@ class PaystackGateway implements PaymentGateway
             $response = Http::withToken($this->secretKey)
                 ->post("{$this->baseUrl}/transaction/initialize", [
                     'email' => $order->customer_email,
-                    'amount' => $order->total_amount * 100, // Paystack uses kobo (smallest currency unit)
+                    'amount' => $order->total * 100, // Paystack uses kobo (smallest currency unit)
                     'currency' => $order->currency ?? 'NGN',
                     'reference' => $this->generateReference($order),
                     'callback_url' => route('payment.callback', ['gateway' => 'paystack']),
@@ -50,7 +50,7 @@ class PaystackGateway implements PaymentGateway
                 // Create pending payment record
                 Payment::create([
                     'order_id' => $order->id,
-                    'amount' => $order->total_amount,
+                    'amount' => $order->total,
                     'currency' => $order->currency ?? 'NGN',
                     'method' => 'paystack',
                     'reference' => $data['reference'],

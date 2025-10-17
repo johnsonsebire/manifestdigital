@@ -97,7 +97,7 @@ class PaymentService
         // Create a pending payment record for bank transfer
         $payment = Payment::create([
             'order_id' => $order->id,
-            'amount' => $order->total_amount,
+            'amount' => $order->total,
             'currency' => $order->currency ?? 'NGN',
             'method' => 'bank_transfer',
             'reference' => 'BT-' . $order->uuid . '-' . time(),

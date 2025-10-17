@@ -62,8 +62,7 @@ class ProjectController extends Controller
         ]);
 
         // Get activity logs for this project
-        $activities = ActivityLog::where('loggable_type', Project::class)
-            ->where('loggable_id', $project->id)
+        $activities = ActivityLog::where('project_id', $project->id)
             ->with('user')
             ->latest()
             ->take(20)

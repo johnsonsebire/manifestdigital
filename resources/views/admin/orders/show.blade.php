@@ -58,11 +58,13 @@
                                 <div class="flex justify-between items-start pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-0 last:pb-0">
                                     <div class="flex-1">
                                         <h3 class="font-medium text-zinc-900 dark:text-white">
-                                            {{ $item->service->name }}
+                                            {{ $item->service->title }}
                                         </h3>
-                                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                            {{ $item->service->category->name }}
-                                        </p>
+                                        @if($item->service->categories->isNotEmpty())
+                                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                                                {{ $item->service->categories->pluck('name')->join(', ') }}
+                                            </p>
+                                        @endif
                                         @if($item->variant)
                                             <p class="text-sm text-zinc-600 dark:text-zinc-300 mt-1">
                                                 Variant: {{ $item->variant->name }}
@@ -115,7 +117,7 @@
                                 @endif
                                 <div class="flex justify-between text-lg font-semibold pt-2 border-t border-zinc-200 dark:border-zinc-700">
                                     <span class="text-zinc-900 dark:text-white">Total</span>
-                                    <span class="text-zinc-900 dark:text-white">₦{{ number_format($order->total_amount, 2) }}</span>
+                                    <span class="text-zinc-900 dark:text-white">₦{{ number_format($order->total, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -223,16 +225,28 @@
                         <div class="space-y-3">
                             <div>
                                 <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Name</div>
-                                <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->user->name }}</div>
+                                <div class="mt-1 text-sm text-zinc-900 dark:text-white">
+                                    {{ $order->customer ? $order->customer->name : ($order->customer_name ?? 'Guest') }}
+                                </div>
                             </div>
                             <div>
                                 <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Email</div>
-                                <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->user->email }}</div>
+                                <div class="mt-1 text-sm text-zinc-900 dark:text-white">
+                                    {{ $order->customer ? $order->customer->email : ($order->customer_email ?? 'N/A') }}
+                                </div>
                             </div>
-                            @if($order->user->phone)
+                            @if($order->customer?->phone || $order->customer_phone)
                                 <div>
                                     <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Phone</div>
-                                    <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->user->phone }}</div>
+                                    <div class="mt-1 text-sm text-zinc-900 dark:text-white">
+                                        {{ $order->customer?->phone ?? $order->customer_phone }}
+                                    </div>
+                                </div>
+                            @endif
+                            @if($order->customer_address)
+                                <div>
+                                    <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Address</div>
+                                    <div class="mt-1 text-sm text-zinc-900 dark:text-white">{{ $order->customer_address }}</div>
                                 </div>
                             @endif
                         </div>

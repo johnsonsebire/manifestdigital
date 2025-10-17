@@ -88,30 +88,21 @@ class OrderController extends Controller
         $this->authorize('view-orders');
 
         $order->load([
-            'user',
-            'items.service.category',
+            'customer',
+            'items.service.categories',
             'items.variant',
             'payments',
             'project.team',
             'project.tasks',
         ]);
 
-        // Get activity logs for this order
-        $activities = ActivityLog::where('loggable_type', Order::class)
-            ->where('loggable_id', $order->id)
-            ->with('user')
-            ->latest()
-            ->get();
-
-        // Get related project activities if project exists
+        // Get activity logs from related project if it exists
+        $activities = collect();
         if ($order->project) {
-            $projectActivities = ActivityLog::where('loggable_type', Project::class)
-                ->where('loggable_id', $order->project->id)
+            $activities = ActivityLog::where('project_id', $order->project->id)
                 ->with('user')
                 ->latest()
                 ->get();
-            
-            $activities = $activities->merge($projectActivities)->sortByDesc('created_at');
         }
 
         return view('admin.orders.show', compact('order', 'activities'));
@@ -200,7 +191,7 @@ class OrderController extends Controller
             Payment::create([
                 'order_id' => $order->id,
                 'gateway' => 'bank_transfer',
-                'amount' => $order->total_amount,
+                'amount' => $order->total,
                 'currency' => 'NGN',
                 'status' => 'successful',
                 'reference' => $request->reference,

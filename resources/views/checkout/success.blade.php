@@ -155,7 +155,7 @@
                         @endif
                         <div class="flex justify-between text-2xl font-bold pt-2 border-t border-gray-200">
                             <span class="text-gray-900">Total</span>
-                            <span class="text-purple-600">${{ number_format($order->total_amount, 2) }}</span>
+                            <span class="text-purple-600">${{ number_format($order->total, 2) }}</span>
                         </div>
                     </div>
                 </div>
