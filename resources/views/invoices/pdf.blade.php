@@ -200,20 +200,42 @@
             <div class="col-6">
                 <div class="section-title">From:</div>
                 <div class="info-block">
-                    <div class="name">Your Company Name</div>
-                    <div>123 Business Street</div>
-                    <div>City, State 12345</div>
-                    <div>contact@company.com</div>
-                    <div>Phone: (123) 456-7890</div>
+                    <div class="name">{{ setting('company_name', 'Your Company Name') }}</div>
+                    @if(setting('company_address'))
+                        <div>{{ setting('company_address') }}</div>
+                    @endif
+                    @if(setting('company_city_state_zip'))
+                        <div>{{ setting('company_city_state_zip') }}</div>
+                    @endif
+                    <div>{{ setting('company_email', 'contact@company.com') }}</div>
+                    @if(setting('company_phone'))
+                        <div>Phone: {{ setting('company_phone') }}</div>
+                    @endif
                 </div>
             </div>
             <div class="col-6">
                 <div class="section-title">Bill To:</div>
                 <div class="info-block">
-                    <div class="name">{{ $invoice->customer->name }}</div>
-                    <div>{{ $invoice->customer->email }}</div>
-                    @if($invoice->customer->phone)
-                        <div>{{ $invoice->customer->phone }}</div>
+                    @if($invoice->customer_id)
+                        <!-- Registered Customer -->
+                        <div class="name">{{ $invoice->customer->name }}</div>
+                        <div>{{ $invoice->customer->email }}</div>
+                        @if($invoice->customer->phone)
+                            <div>{{ $invoice->customer->phone }}</div>
+                        @endif
+                    @else
+                        <!-- Manual Client -->
+                        <div class="name">{{ $invoice->client_name }}</div>
+                        @if($invoice->client_company)
+                            <div style="font-size: 12px; color: #6b7280;">{{ $invoice->client_company }}</div>
+                        @endif
+                        <div>{{ $invoice->client_email }}</div>
+                        @if($invoice->client_phone)
+                            <div>{{ $invoice->client_phone }}</div>
+                        @endif
+                        @if($invoice->client_address)
+                            <div style="margin-top: 8px;">{{ $invoice->client_address }}</div>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -335,8 +357,16 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p>Thank you for your business!</p>
-            <p>If you have any questions about this invoice, please contact us at contact@company.com</p>
+            @if(setting('invoice_terms'))
+                <p>{{ setting('invoice_terms') }}</p>
+            @else
+                <p>Thank you for your business!</p>
+            @endif
+            @if(setting('invoice_footer_note'))
+                <p>{{ setting('invoice_footer_note') }}</p>
+            @else
+                <p>If you have any questions about this invoice, please contact us at {{ setting('company_email', 'contact@company.com') }}</p>
+            @endif
         </div>
     </div>
 </body>

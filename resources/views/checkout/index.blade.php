@@ -1,9 +1,13 @@
 <x-layouts.frontend title="Checkout | Manifest Digital">
+    @push('styles')
+        @vite('resources/css/checkout.css')
+    @endpush
+
     {{-- Hero Section --}}
-    <section class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white py-16">
+    <section class="checkout-hero">
         <div class="container mx-auto px-4">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Checkout</h1>
-            <p class="text-xl text-purple-100">Complete your order</p>
+            <p class="text-xl text-orange-100">Complete your order</p>
         </div>
     </section>
 
@@ -69,7 +73,7 @@
                                             name="customer_name" 
                                             value="{{ old('customer_name') }}"
                                             required
-                                            class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                            class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                                         >
                                         @error('customer_name')
                                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -84,7 +88,7 @@
                                             name="customer_email" 
                                             value="{{ old('customer_email') }}"
                                             required
-                                            class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                            class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                                         >
                                         @error('customer_email')
                                             <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -110,7 +114,7 @@
                                         id="customer_phone" 
                                         name="customer_phone" 
                                         value="{{ old('customer_phone') }}"
-                                        class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                        class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                                     >
                                     @error('customer_phone')
                                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -124,7 +128,7 @@
                                         id="customer_address" 
                                         name="customer_address" 
                                         value="{{ old('customer_address') }}"
-                                        class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                        class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                                     >
                                     @error('customer_address')
                                         <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -148,14 +152,14 @@
                                 @endphp
 
                                 @foreach($paymentMethods as $method => $details)
-                                    <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-purple-500 transition-colors">
+                                    <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-orange-500 transition-colors">
                                         <input 
                                             type="radio" 
                                             name="payment_method" 
                                             value="{{ $method }}" 
                                             {{ old('payment_method', 'paystack') === $method ? 'checked' : '' }}
                                             required
-                                            class="mt-1 text-purple-600 focus:ring-purple-500"
+                                            class="mt-1 text-orange-600 focus:ring-orange-500"
                                         >
                                         <div class="ml-3 flex-1">
                                             <div class="flex items-center gap-2">
@@ -180,7 +184,7 @@
                                 name="notes" 
                                 rows="4" 
                                 placeholder="Any special requirements or notes about your order..."
-                                class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+                                class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                             >{{ old('notes') }}</textarea>
                         </div>
 
@@ -202,7 +206,7 @@
                             <div class="space-y-4 mb-6 max-h-96 overflow-y-auto">
                                 @foreach($cart['items'] as $item)
                                     <div class="flex gap-3 pb-4 border-b border-gray-200">
-                                        <div class="w-16 h-16 rounded bg-gradient-to-br from-purple-500 to-indigo-600 flex-shrink-0 flex items-center justify-center">
+                                        <div class="w-16 h-16 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex-shrink-0 flex items-center justify-center">
                                             @if($item['image_url'])
                                                 <img src="{{ $item['image_url'] }}" alt="{{ $item['service_title'] }}" class="w-full h-full object-cover rounded">
                                             @else
@@ -218,7 +222,7 @@
                                             @endif
                                             <div class="flex justify-between items-center mt-1">
                                                 <span class="text-sm text-gray-600">Qty: {{ $item['quantity'] }}</span>
-                                                <span class="font-bold text-purple-600">${{ number_format($item['price'] * $item['quantity'], 2) }}</span>
+                                                <span class="font-bold text-orange-600">${{ number_format($item['price'] * $item['quantity'], 2) }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -238,7 +242,7 @@
                                 <div class="border-t border-gray-200 pt-3">
                                     <div class="flex justify-between text-2xl font-bold">
                                         <span class="text-gray-900">Total</span>
-                                        <span class="text-purple-600">{{ $cart['formatted_subtotal'] }}</span>
+                                        <span class="text-orange-600">{{ $cart['formatted_subtotal'] }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -246,11 +250,11 @@
                             {{-- Place Order Button --}}
                             <button 
                                 type="submit" 
-                                class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-6 rounded-lg mb-3 transition-colors duration-200">
+                                class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-lg mb-3 transition-colors duration-200">
                                 Place Order
                             </button>
 
-                            <a href="{{ route('cart.index') }}" class="block text-center text-purple-600 hover:text-purple-700 font-semibold">
+                            <a href="{{ route('cart.index') }}" class="block text-center text-orange-600 hover:text-orange-700 font-semibold">
                                 ← Back to Cart
                             </a>
 

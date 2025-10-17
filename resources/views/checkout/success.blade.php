@@ -1,4 +1,8 @@
 <x-layouts.frontend :title="'Order Confirmation | Manifest Digital'">
+    @push('styles')
+        @vite('resources/css/checkout.css')
+    @endpush
+
     {{-- Success Hero Section --}}
     <section class="bg-gradient-to-br from-green-600 via-green-500 to-emerald-500 text-white py-20">
         <div class="container mx-auto px-4 text-center">
@@ -108,7 +112,7 @@
                 <div class="space-y-4">
                     @foreach($order->items as $item)
                         <div class="flex gap-4 pb-4 border-b border-gray-200 last:border-0">
-                            <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex-shrink-0 flex items-center justify-center">
+                            <div class="w-20 h-20 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex-shrink-0 flex items-center justify-center">
                                 @if($item->service && $item->service->image_url)
                                     <img src="{{ $item->service->image_url }}" alt="{{ $item->snapshot['service_title'] ?? $item->service->title }}" class="w-full h-full object-cover rounded-lg">
                                 @else
@@ -127,7 +131,7 @@
                                 @endif
                                 <div class="flex items-center justify-between mt-2">
                                     <span class="text-sm text-gray-600">Quantity: {{ $item->quantity }} × ${{ number_format($item->unit_price, 2) }}</span>
-                                    <span class="font-bold text-purple-600">${{ number_format($item->line_total, 2) }}</span>
+                                    <span class="font-bold text-orange-600">${{ number_format($item->line_total, 2) }}</span>
                                 </div>
                             </div>
                         </div>
@@ -155,7 +159,7 @@
                         @endif
                         <div class="flex justify-between text-2xl font-bold pt-2 border-t border-gray-200">
                             <span class="text-gray-900">Total</span>
-                            <span class="text-purple-600">${{ number_format($order->total, 2) }}</span>
+                            <span class="text-orange-600">${{ number_format($order->total, 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -172,16 +176,16 @@
             {{-- Action Buttons --}}
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 @auth
-                    <a href="{{ route('dashboard') }}" class="text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-200">
+                    <a href="{{ route('dashboard') }}" class="text-center bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-200">
                         Go to Dashboard
                     </a>
                 @else
-                    <a href="{{ route('register') }}" class="text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-200">
+                    <a href="{{ route('register') }}" class="text-center bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-200">
                         Create Account to Track Order
                     </a>
                 @endauth
                 
-                <a href="{{ route('services.index') }}" class="text-center border-2 border-purple-600 text-purple-600 hover:bg-purple-50 font-bold py-4 px-8 rounded-lg transition-colors duration-200">
+                <a href="{{ route('services.index') }}" class="text-center border-2 border-orange-600 text-orange-600 hover:bg-orange-50 font-bold py-4 px-8 rounded-lg transition-colors duration-200">
                     Browse More Services
                 </a>
             </div>
@@ -193,13 +197,13 @@
                     If you have any questions about your order, feel free to contact us.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('contact') }}" class="inline-flex items-center justify-center text-purple-600 hover:text-purple-700 font-semibold">
+                    <a href="{{ route('contact') }}" class="inline-flex items-center justify-center text-orange-600 hover:text-orange-700 font-semibold">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                         Contact Us
                     </a>
-                    <a href="mailto:{{ $order->customer_email }}" class="inline-flex items-center justify-center text-purple-600 hover:text-purple-700 font-semibold">
+                    <a href="mailto:{{ $order->customer_email }}" class="inline-flex items-center justify-center text-orange-600 hover:text-orange-700 font-semibold">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                         </svg>

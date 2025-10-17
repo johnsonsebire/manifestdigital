@@ -147,14 +147,25 @@
                                     </a>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-zinc-900 dark:text-white">{{ $invoice->customer->name }}</div>
-                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $invoice->customer->email }}</div>
+                                    @if($invoice->customer_id)
+                                        <!-- Registered Customer -->
+                                        <div class="text-sm text-zinc-900 dark:text-white">{{ $invoice->customer->name }}</div>
+                                        <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $invoice->customer->email }}</div>
+                                    @else
+                                        <!-- Manual Client -->
+                                        <div class="text-sm text-zinc-900 dark:text-white">{{ $invoice->client_name }}</div>
+                                        <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $invoice->client_email }}</div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ route('admin.orders.show', $invoice->order) }}" 
-                                       class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                                        #{{ $invoice->order->id }}
-                                    </a>
+                                    @if($invoice->order_id)
+                                        <a href="{{ route('admin.orders.show', $invoice->order) }}" 
+                                           class="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                            #{{ $invoice->order->id }}
+                                        </a>
+                                    @else
+                                        <span class="text-sm text-zinc-500 dark:text-zinc-400 italic">Manual Invoice</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
                                     {{ $invoice->invoice_date->format('M d, Y') }}

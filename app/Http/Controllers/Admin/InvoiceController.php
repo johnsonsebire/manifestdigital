@@ -176,6 +176,8 @@ class InvoiceController extends Controller
             $invoiceData['client_name'] = $customer->name;
             $invoiceData['client_email'] = $customer->email;
         } else {
+            // Manual invoice - no registered customer
+            $invoiceData['customer_id'] = null;
             $invoiceData['client_name'] = $request->client_name;
             $invoiceData['client_email'] = $request->client_email;
             $invoiceData['client_phone'] = $request->client_phone;

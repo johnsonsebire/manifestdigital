@@ -1,9 +1,13 @@
 <x-layouts.frontend title="Shopping Cart | Manifest Digital">
+    @push('styles')
+        @vite('resources/css/cart.css')
+    @endpush
+
     {{-- Hero Section --}}
-    <section class="bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white py-16">
+    <section class="cart-hero">
         <div class="container mx-auto px-4">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Shopping Cart</h1>
-            <p class="text-xl text-purple-100">Review your items before checkout</p>
+            <p class="text-xl text-orange-100">Review your items before checkout</p>
         </div>
     </section>
 
@@ -56,7 +60,7 @@
                     </svg>
                     <h2 class="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
                     <p class="text-gray-600 mb-8">Looks like you haven't added anything to your cart yet.</p>
-                    <a href="{{ route('services.index') }}" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200">
+                    <a href="{{ route('services.index') }}" class="inline-block bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg transition-colors duration-200">
                         Browse Services
                     </a>
                 </div>
@@ -72,7 +76,7 @@
                             <div class="bg-white rounded-lg shadow-md p-6 cart-item" data-cart-key="{{ $cartKey }}">
                                 <div class="flex items-start gap-6">
                                     {{-- Item Image --}}
-                                    <div class="w-24 h-24 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex-shrink-0 flex items-center justify-center">
+                                    <div class="w-24 h-24 rounded-lg bg-gradient-to-br from-orange-500 to-orange-600 flex-shrink-0 flex items-center justify-center">
                                         @if($item['image_url'])
                                             <img src="{{ $item['image_url'] }}" alt="{{ $item['service_title'] }}" class="w-full h-full object-cover rounded-lg">
                                         @else
@@ -87,7 +91,7 @@
                                         <div class="flex items-start justify-between mb-2">
                                             <div>
                                                 <h3 class="text-lg font-bold text-gray-900">
-                                                    <a href="{{ route('services.show', $item['service_slug']) }}" class="hover:text-purple-600">
+                                                    <a href="{{ route('services.show', $item['service_slug']) }}" class="hover:text-orange-600">
                                                         {{ $item['service_title'] }}
                                                     </a>
                                                 </h3>
@@ -118,7 +122,7 @@
                                             {{-- Price --}}
                                             <div class="text-right">
                                                 <p class="text-sm text-gray-600">${{ number_format($item['price'], 2) }} each</p>
-                                                <p class="text-xl font-bold text-purple-600">${{ number_format($item['price'] * $item['quantity'], 2) }}</p>
+                                                <p class="text-xl font-bold text-orange-600">${{ number_format($item['price'] * $item['quantity'], 2) }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -154,17 +158,17 @@
                                 <div class="border-t border-gray-200 pt-4">
                                     <div class="flex justify-between text-xl font-bold text-gray-900">
                                         <span>Total</span>
-                                        <span id="totalAmount" class="text-purple-600">{{ $cart['formatted_subtotal'] }}</span>
+                                        <span id="totalAmount" class="text-orange-600">{{ $cart['formatted_subtotal'] }}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {{-- Checkout Button --}}
-                            <a href="{{ route('checkout.index') }}" class="block w-full bg-purple-600 hover:bg-purple-700 text-white text-center font-bold py-4 px-6 rounded-lg mb-3 transition-colors duration-200">
+                            <a href="{{ route('checkout.index') }}" class="block w-full bg-orange-600 hover:bg-orange-700 text-white text-center font-bold py-4 px-6 rounded-lg mb-3 transition-colors duration-200">
                                 Proceed to Checkout
                             </a>
 
-                            <a href="{{ route('services.index') }}" class="block w-full text-center border-2 border-purple-600 text-purple-600 hover:bg-purple-50 font-bold py-4 px-6 rounded-lg transition-colors duration-200">
+                            <a href="{{ route('services.index') }}" class="block w-full text-center border-2 border-orange-600 text-orange-600 hover:bg-orange-50 font-bold py-4 px-6 rounded-lg transition-colors duration-200">
                                 Continue Shopping
                             </a>
                         </div>

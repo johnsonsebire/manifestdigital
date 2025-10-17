@@ -1,9 +1,13 @@
 <x-layouts.frontend>
+    @push('styles')
+        @vite('resources/css/checkout.css')
+    @endpush
+
     <div class="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8 text-center">
             <!-- Loading Spinner -->
             <div class="flex justify-center">
-                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600"></div>
+                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-600"></div>
             </div>
             
             <div>

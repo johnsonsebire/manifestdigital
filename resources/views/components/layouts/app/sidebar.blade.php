@@ -76,13 +76,19 @@
 
             @unless(auth()->user()->hasRole('Customer'))
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="envelope" href="https://mail.zoho.com" target="_blank">
-                {{ __('Staff Email') }}
-                </flux:navlist.item>
+                <flux:navlist.group :heading="__('Admin Tools')" class="grid">
+                    <flux:navlist.item icon="cog-6-tooth" :href="route('admin.settings.index')" :current="request()->routeIs('admin.settings.*')" wire:navigate>
+                        {{ __('Settings') }}
+                    </flux:navlist.item>
 
-                <flux:navlist.item icon="question-mark-circle" href="https://support.manifestghana.com" target="_blank">
-                {{ __('Support Desk') }}
-                </flux:navlist.item>
+                    <flux:navlist.item icon="envelope" href="https://mail.zoho.com" target="_blank">
+                        {{ __('Staff Email') }}
+                    </flux:navlist.item>
+
+                    <flux:navlist.item icon="question-mark-circle" href="https://support.manifestghana.com" target="_blank">
+                        {{ __('Support Desk') }}
+                    </flux:navlist.item>
+                </flux:navlist.group>
             </flux:navlist>
             @endunless
 

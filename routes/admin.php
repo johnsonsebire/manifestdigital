@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\ServiceManagementController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TaskController;
 use Illuminate\Support\Facades\Route;
 
@@ -93,5 +94,12 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
             Route::get('/data', 'getData')->name('data');
             Route::get('/export/revenue', 'exportRevenue')->name('export.revenue');
             Route::get('/export/orders', 'exportOrders')->name('export.orders');
+        });
+
+        // Settings
+        Route::controller(SettingsController::class)->prefix('settings')->name('settings.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/company', 'updateCompany')->name('company.update');
+            Route::post('/invoice', 'updateInvoice')->name('invoice.update');
         });
     });

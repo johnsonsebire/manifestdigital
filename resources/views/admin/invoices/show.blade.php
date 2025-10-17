@@ -43,20 +43,43 @@
                     <div>
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">From:</h2>
                         <div class="text-sm text-zinc-600 dark:text-zinc-400">
-                            <div class="font-medium text-zinc-900 dark:text-white">Your Company Name</div>
-                            <div>123 Business Street</div>
-                            <div>City, State 12345</div>
-                            <div>contact@company.com</div>
+                            <div class="font-medium text-zinc-900 dark:text-white">{{ setting('company_name', 'Your Company Name') }}</div>
+                            @if(setting('company_address'))
+                                <div>{{ setting('company_address') }}</div>
+                            @endif
+                            @if(setting('company_city_state_zip'))
+                                <div>{{ setting('company_city_state_zip') }}</div>
+                            @endif
+                            <div>{{ setting('company_email', 'contact@company.com') }}</div>
+                            @if(setting('company_phone'))
+                                <div>Phone: {{ setting('company_phone') }}</div>
+                            @endif
                         </div>
                     </div>
                     
                     <div>
                         <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Bill To:</h2>
                         <div class="text-sm text-zinc-600 dark:text-zinc-400">
-                            <div class="font-medium text-zinc-900 dark:text-white">{{ $invoice->customer->name }}</div>
-                            <div>{{ $invoice->customer->email }}</div>
-                            @if($invoice->customer->phone)
-                                <div>{{ $invoice->customer->phone }}</div>
+                            @if($invoice->customer_id)
+                                <!-- Registered Customer -->
+                                <div class="font-medium text-zinc-900 dark:text-white">{{ $invoice->customer->name }}</div>
+                                <div>{{ $invoice->customer->email }}</div>
+                                @if($invoice->customer->phone)
+                                    <div>{{ $invoice->customer->phone }}</div>
+                                @endif
+                            @else
+                                <!-- Manual Client -->
+                                <div class="font-medium text-zinc-900 dark:text-white">{{ $invoice->client_name }}</div>
+                                @if($invoice->client_company)
+                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $invoice->client_company }}</div>
+                                @endif
+                                <div>{{ $invoice->client_email }}</div>
+                                @if($invoice->client_phone)
+                                    <div>{{ $invoice->client_phone }}</div>
+                                @endif
+                                @if($invoice->client_address)
+                                    <div class="mt-2">{{ $invoice->client_address }}</div>
+                                @endif
                             @endif
                         </div>
                     </div>
