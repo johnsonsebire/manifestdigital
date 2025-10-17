@@ -7,14 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
 
-        /** 
-     * Determine if this migration should run.
-     */
-    public function shouldRun(): bool
-    {
-        return !Schema::hasTable('orders');
-    }
-
+   
 
     /**
      * Run the migrations.

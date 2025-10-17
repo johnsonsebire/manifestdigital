@@ -44,6 +44,9 @@
                     <flux:navlist.item icon="briefcase" :href="route('admin.projects.index')" :current="request()->routeIs('admin.projects.*')" wire:navigate>
                         {{ __('Projects') }}
                     </flux:navlist.item>
+                    <flux:navlist.item icon="chart-bar" :href="route('admin.reports.index')" :current="request()->routeIs('admin.reports.*')" wire:navigate>
+                        {{ __('Reports & Analytics') }}
+                    </flux:navlist.item>
                     <flux:navlist.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" wire:navigate>
                         {{ __('Categories') }}
                     </flux:navlist.item>

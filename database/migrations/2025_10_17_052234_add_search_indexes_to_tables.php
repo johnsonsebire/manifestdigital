@@ -50,8 +50,8 @@ return new class extends Migration
         // Add indexes to services table
         if (Schema::hasTable('services')) {
             Schema::table('services', function (Blueprint $table) {
-                if (!$this->indexExists('services', 'services_is_visible_is_available_index')) {
-                    $table->index(['is_visible', 'is_available']);
+                if (!$this->indexExists('services', 'services_visible_available_index')) {
+                    $table->index(['visible', 'available']);
                 }
             });
         }
@@ -118,8 +118,8 @@ return new class extends Migration
         // Drop indexes from services table
         if (Schema::hasTable('services')) {
             Schema::table('services', function (Blueprint $table) {
-                if ($this->indexExists('services', 'services_is_visible_is_available_index')) {
-                    $table->dropIndex(['is_visible', 'is_available']);
+                if ($this->indexExists('services', 'services_visible_available_index')) {
+                    $table->dropIndex(['visible', 'available']);
                 }
             });
         }

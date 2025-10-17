@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\OrderChangeRequestController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\ServiceManagementController;
 use App\Http\Controllers\Admin\TaskController;
 use Illuminate\Support\Facades\Route;
@@ -79,4 +80,12 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
 
         // Service Management
         Route::resource('services', ServiceManagementController::class);
+
+        // Reports & Analytics
+        Route::controller(ReportsController::class)->prefix('reports')->name('reports.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/data', 'getData')->name('data');
+            Route::get('/export/revenue', 'exportRevenue')->name('export.revenue');
+            Route::get('/export/orders', 'exportOrders')->name('export.orders');
+        });
     });
