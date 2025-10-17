@@ -79,7 +79,7 @@ class ServiceController extends Controller
                 ->withCount(['services' => function ($q) {
                     $q->where('visible', true)->where('available', true);
                 }])
-                ->orderBy('sort_order')
+                ->orderBy('order')
                 ->get();
         });
 
