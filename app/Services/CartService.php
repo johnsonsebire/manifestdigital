@@ -62,7 +62,7 @@ class CartService
     {
         // Validate service exists and is available
         $service = Service::where('id', $serviceId)
-            ->where('is_available', true)
+            ->where('available', true)
             ->first();
 
         if (!$service) {
@@ -74,7 +74,7 @@ class CartService
         }
 
         // Get server-side price (NEVER trust client)
-        $price = $service->sale_price ?? $service->base_price;
+        $price = $service->price;
         $variantName = null;
         $variant = null;
 
@@ -82,7 +82,7 @@ class CartService
         if ($variantId) {
             $variant = ServiceVariant::where('id', $variantId)
                 ->where('service_id', $serviceId)
-                ->where('is_available', true)
+                ->where('available', true)
                 ->first();
 
             if (!$variant) {
@@ -93,7 +93,7 @@ class CartService
                 ];
             }
 
-            $price = $variant->sale_price ?? $variant->price;
+            $price = $variant->price;
             $variantName = $variant->name;
         }
 
@@ -240,7 +240,7 @@ class CartService
             // Fetch current service
             $service = Service::find($item['service_id']);
             
-            if (!$service || !$service->is_available) {
+            if (!$service || !$service->available) {
                 $errors[] = "{$item['service_title']} is no longer available.";
                 unset($cart[$cartKey]);
                 $hasChanges = true;
@@ -248,12 +248,12 @@ class CartService
             }
 
             // Get current price
-            $currentPrice = $service->sale_price ?? $service->base_price;
+            $currentPrice = $service->price;
 
             // Check variant if applicable
             if ($item['variant_id']) {
                 $variant = ServiceVariant::where('id', $item['variant_id'])
-                    ->where('is_available', true)
+                    ->where('available', true)
                     ->first();
 
                 if (!$variant) {
@@ -263,7 +263,7 @@ class CartService
                     continue;
                 }
 
-                $currentPrice = $variant->sale_price ?? $variant->price;
+                $currentPrice = $variant->price;
             }
 
             // Compare prices (allow small floating point tolerance)

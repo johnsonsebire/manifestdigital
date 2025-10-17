@@ -28,15 +28,7 @@
 
                 {{-- Price Display --}}
                 <div class="flex items-center gap-4 mb-6">
-                    @if($service->sale_price)
-                        <span class="text-4xl font-bold text-white">${{ number_format($service->sale_price, 2) }}</span>
-                        <span class="text-2xl text-purple-300 line-through">${{ number_format($service->base_price, 2) }}</span>
-                        <span class="px-3 py-1 bg-red-500 text-white text-sm font-bold rounded-full">
-                            SAVE {{ round((($service->base_price - $service->sale_price) / $service->base_price) * 100) }}%
-                        </span>
-                    @else
-                        <span class="text-4xl font-bold text-white">${{ number_format($service->base_price, 2) }}</span>
-                    @endif
+                    <span class="text-4xl font-bold text-white">${{ number_format($service->price, 2) }}</span>
                 </div>
 
                 {{-- Quick CTA --}}
@@ -91,18 +83,12 @@
                             <h2 class="text-2xl font-bold text-gray-900 mb-6">Available Options</h2>
                             <div class="space-y-4">
                                 @foreach($service->variants as $variant)
-                                    @if($variant->is_available)
-                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-purple-500 transition-colors cursor-pointer variant-option" data-variant-id="{{ $variant->id }}" data-variant-price="{{ $variant->sale_price ?? $variant->price }}">
+                                    @if($variant->available)
+                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-purple-500 transition-colors cursor-pointer variant-option" data-variant-id="{{ $variant->id }}" data-variant-price="{{ $variant->price }}">
                                             <div class="flex justify-between items-start mb-3">
                                                 <h3 class="text-lg font-bold text-gray-900">{{ $variant->name }}</h3>
                                                 <div class="text-right">
-                                                    @if($variant->sale_price)
-                                                        <span class="text-xl font-bold text-purple-600">${{ number_format($variant->sale_price, 2) }}</span>
-                                                        <br>
-                                                        <span class="text-sm text-gray-500 line-through">${{ number_format($variant->price, 2) }}</span>
-                                                    @else
-                                                        <span class="text-xl font-bold text-gray-900">${{ number_format($variant->price, 2) }}</span>
-                                                    @endif
+                                                    <span class="text-xl font-bold text-gray-900">${{ number_format($variant->price, 2) }}</span>
                                                 </div>
                                             </div>
                                             @if($variant->description)
@@ -138,7 +124,7 @@
                                         <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ $related->description }}</p>
                                         <div class="flex items-center justify-between">
                                             <span class="text-lg font-bold text-purple-600">
-                                                ${{ number_format($related->sale_price ?? $related->base_price, 2) }}
+                                                ${{ number_format($related->price, 2) }}
                                             </span>
                                             <span class="text-sm text-purple-600 font-semibold">View Details →</span>
                                         </div>
@@ -158,7 +144,7 @@
                         <div class="bg-purple-50 rounded-lg p-4 mb-6">
                             <div class="text-sm text-gray-600 mb-1">Total Price</div>
                             <div class="text-3xl font-bold text-purple-600" id="displayPrice">
-                                ${{ number_format($service->sale_price ?? $service->base_price, 2) }}
+                                ${{ number_format($service->price, 2) }}
                             </div>
                         </div>
 
@@ -167,11 +153,11 @@
                             <div class="mb-6">
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">Select Option</label>
                                 <select id="variantSelect" class="w-full rounded-lg border-gray-300 focus:border-purple-500 focus:ring-purple-500">
-                                    <option value="">Base Service - ${{ number_format($service->sale_price ?? $service->base_price, 2) }}</option>
+                                    <option value="">Base Service - ${{ number_format($service->price, 2) }}</option>
                                     @foreach($service->variants as $variant)
-                                        @if($variant->is_available)
-                                            <option value="{{ $variant->id }}" data-price="{{ $variant->sale_price ?? $variant->price }}">
-                                                {{ $variant->name }} - ${{ number_format($variant->sale_price ?? $variant->price, 2) }}
+                                        @if($variant->available)
+                                            <option value="{{ $variant->id }}" data-price="{{ $variant->price }}">
+                                                {{ $variant->name }} - ${{ number_format($variant->price, 2) }}
                                             </option>
                                         @endif
                                     @endforeach
@@ -243,7 +229,7 @@
         const variantSelect = document.getElementById('variantSelect');
         const quantityInput = document.getElementById('quantity');
         const displayPrice = document.getElementById('displayPrice');
-        const basePrice = {{ $service->sale_price ?? $service->base_price }};
+        const basePrice = {{ $service->price }};
 
         if (variantSelect) {
             variantSelect.addEventListener('change', updatePrice);

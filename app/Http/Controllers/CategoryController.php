@@ -21,18 +21,18 @@ class CategoryController extends Controller
         // Get root categories (no parent) with their children
         $categories = Cache::remember('category_tree', 3600, function () {
             return Category::with(['children' => function ($query) {
-                $query->where('is_visible', true)
+                $query->where('visible', true)
                     ->withCount(['services' => function ($q) {
-                        $q->where('is_visible', true)->where('is_available', true);
+                        $q->where('visible', true)->where('available', true);
                     }])
-                    ->orderBy('sort_order');
+                    ->orderBy('order');
             }])
             ->visible()
             ->whereNull('parent_id') // Root categories only
             ->withCount(['services' => function ($q) {
-                $q->where('is_visible', true)->where('is_available', true);
+                $q->where('visible', true)->where('available', true);
             }])
-            ->orderBy('sort_order')
+            ->orderBy('order')
             ->get();
         });
 
@@ -50,7 +50,7 @@ class CategoryController extends Controller
     {
         $category = Category::with(['children'])
             ->where('slug', $slug)
-            ->where('is_visible', true)
+            ->where('visible', true)
             ->firstOrFail();
 
         // Get all descendant category IDs (including current category)
@@ -61,8 +61,8 @@ class CategoryController extends Controller
 
         // Get services in this category and all sub-categories
         $services = Service::with(['categories', 'variants'])
-            ->where('is_visible', true)
-            ->where('is_available', true)
+            ->where('visible', true)
+            ->where('available', true)
             ->whereHas('categories', function ($q) use ($categoryIds) {
                 $q->whereIn('categories.id', $categoryIds);
             })
@@ -71,11 +71,11 @@ class CategoryController extends Controller
 
         // Get sub-categories for navigation
         $subCategories = $category->children()
-            ->where('is_visible', true)
+            ->where('visible', true)
             ->withCount(['services' => function ($q) {
-                $q->where('is_visible', true)->where('is_available', true);
+                $q->where('visible', true)->where('available', true);
             }])
-            ->orderBy('sort_order')
+            ->orderBy('order')
             ->get();
 
         // Get breadcrumb trail (ancestors)

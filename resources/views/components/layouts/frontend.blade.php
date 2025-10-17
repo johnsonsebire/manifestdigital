@@ -11,6 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="description"
         content="Transform your digital presence with Manifest Digital. Expert web development, mobile apps, and IT solutions for purpose-driven organizations in Ghana & worldwide. 10+ years experience since 2014.">
     <meta name="keywords"
