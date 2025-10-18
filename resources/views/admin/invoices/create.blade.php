@@ -456,6 +456,13 @@
             if (!isOrderBased) {
                 console.log('Setting up manual invoice functionality...');
                 setupManualInvoice();
+                
+                // Initialize client type state based on default selection
+                const selectedClientType = document.querySelector('input[name="client_type"]:checked');
+                if (selectedClientType) {
+                    console.log('Initializing client type to:', selectedClientType.value);
+                    handleClientTypeChange(selectedClientType.value);
+                }
             }
             
             if (currencySelect && currencySelect.value) {
@@ -553,13 +560,29 @@
         function handleClientTypeChange(value) {
             console.log('Handling client type change to:', value);
             
+            // Get manual client form fields
+            const manualFields = document.querySelectorAll('#manual-client-section input, #manual-client-section textarea');
+            
             if (value === 'registered') {
                 if (registeredSection) registeredSection.classList.remove('hidden');
                 if (manualSection) manualSection.classList.add('hidden');
+                
+                // Disable and clear manual client fields when registered is selected
+                manualFields.forEach(field => {
+                    field.disabled = true;
+                    field.value = '';
+                });
+                
                 console.log('Switched to registered customer');
             } else if (value === 'manual') {
                 if (registeredSection) registeredSection.classList.add('hidden');
                 if (manualSection) manualSection.classList.remove('hidden');
+                
+                // Enable manual client fields when manual is selected
+                manualFields.forEach(field => {
+                    field.disabled = false;
+                });
+                
                 console.log('Switched to manual client');
             }
         }

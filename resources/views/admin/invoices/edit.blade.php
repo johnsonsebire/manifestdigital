@@ -208,15 +208,7 @@
         let currentExchangeRate = {{ $invoice->currency->exchange_rate }};
         let applicableTaxes = [];
         let selectedTaxes = [];
-        let existingTaxes = @json($invoice->taxes->map(function($invoiceTax) {
-            return [
-                'id' => $invoiceTax->tax_id,
-                'name' => $invoiceTax->tax->name,
-                'code' => $invoiceTax->tax->code,
-                'rate' => $invoiceTax->tax->rate,
-                'type' => $invoiceTax->tax->type
-            ];
-        }));
+        let existingTaxes = @json($existingTaxes);
         
         // DOM elements
         const currencySelect = document.getElementById('currency_id');
@@ -255,18 +247,21 @@
                 discountCurrencySymbol.textContent = symbol;
                 feesCurrencySymbol.textContent = symbol;
                 
+                // Update preview immediately to reflect new currency
+                updatePreview();
+                
                 // Load applicable taxes
                 loadApplicableTaxes(selectedOption.value);
-                
-                // Update preview
-                updatePreview();
             } else {
                 currentCurrency = 'USD';
                 currentExchangeRate = 1;
                 discountCurrencySymbol.textContent = '$';
                 feesCurrencySymbol.textContent = '$';
-                showTaxLoading();
+                
+                // Update preview with default currency
                 updatePreview();
+                
+                showTaxLoading();
             }
         });
         

@@ -120,8 +120,8 @@ class InvoiceController extends Controller
             $rules = array_merge($rules, [
                 'client_type' => 'required|in:registered,manual',
                 'customer_id' => 'required_if:client_type,registered|nullable|exists:users,id',
-                'client_name' => 'required_if:client_type,manual|string|max:255',
-                'client_email' => 'required_if:client_type,manual|email|max:255',
+                'client_name' => 'required_if:client_type,manual|nullable|string|max:255',
+                'client_email' => 'required_if:client_type,manual|nullable|email|max:255',
                 'client_phone' => 'nullable|string|max:20',
                 'client_address' => 'nullable|string',
                 'client_company' => 'nullable|string|max:255',
@@ -253,8 +253,19 @@ class InvoiceController extends Controller
         
         // Get currently selected taxes
         $selectedTaxIds = $invoice->taxes->pluck('id')->toArray();
+        
+        // Prepare existing taxes for JavaScript
+        $existingTaxes = $invoice->taxes->map(function ($invoiceTax) {
+            return [
+                'id' => $invoiceTax->tax_id,
+                'name' => $invoiceTax->tax->name,
+                'code' => $invoiceTax->tax->code,
+                'rate' => $invoiceTax->tax->rate,
+                'type' => $invoiceTax->tax->type,
+            ];
+        })->toArray();
 
-        return view('admin.invoices.edit', compact('invoice', 'currencies', 'taxes', 'selectedTaxIds'));
+        return view('admin.invoices.edit', compact('invoice', 'currencies', 'taxes', 'selectedTaxIds', 'existingTaxes'));
     }
 
     public function update(Request $request, Invoice $invoice)
