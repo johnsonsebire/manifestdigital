@@ -49,6 +49,9 @@
     <script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/css/styles.css', 'resources/js/scripts.js'])
+    
+    <!-- Modal System -->
+    @vite(['resources/css/modals.css', 'resources/js/modals.js'])
 
     <!-- Additional CSS -->
     @stack('styles')

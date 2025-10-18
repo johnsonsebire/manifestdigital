@@ -281,25 +281,34 @@
                 button.textContent = originalText;
 
                 if (data.success) {
-                    // Show success message
-                    alert('✓ Added to cart successfully!\n\nGo to cart to checkout.');
+                    // Show success message with cart options
+                    showConfirm(
+                        'Added to cart successfully!', 
+                        'What would you like to do next?', 
+                        {
+                            confirmText: 'View Cart',
+                            cancelText: 'Continue Shopping',
+                            onConfirm: () => {
+                                window.location.href = '/cart';
+                            },
+                            onCancel: () => {
+                                // Just close modal and continue shopping
+                                return true;
+                            }
+                        }
+                    );
                     
                     // Optional: Update cart count in navbar if you have one
                     // updateCartCount(data.cart.count);
-                    
-                    // Optional: Redirect to cart
-                    if (confirm('View cart now?')) {
-                        window.location.href = '/cart';
-                    }
                 } else {
-                    alert('Error: ' + data.message);
+                    showError('Error', data.message);
                 }
             })
             .catch(error => {
                 button.disabled = false;
                 button.textContent = originalText;
                 console.error('Error:', error);
-                alert('Failed to add to cart. Please try again.');
+                showError('Failed to add to cart', 'Please try again.');
             });
         }
     </script>

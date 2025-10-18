@@ -173,7 +173,7 @@
                 }, 2000);
             }).catch(function(err) {
                 console.error('Failed to copy:', err);
-                alert('Failed to copy to clipboard');
+                showError('Copy Failed', 'Failed to copy to clipboard');
             });
         }
     </script>

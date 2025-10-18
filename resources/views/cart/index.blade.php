@@ -207,8 +207,19 @@
                 if (currentQuantity > 1) {
                     updateQuantity(cartKey, currentQuantity - 1);
                 } else {
-                    // Show confirmation only when removing the last item
-                    removeFromCart(cartKey);
+                    // Show confirmation modal when removing the last item
+                    showConfirm(
+                        'Remove Item', 
+                        'Are you sure you want to remove this item from your cart?',
+                        {
+                            confirmText: 'Yes, Remove',
+                            cancelText: 'Keep Item',
+                            onConfirm: () => {
+                                removeFromCart(cartKey);
+                                return true; // Allow modal to close
+                            }
+                        }
+                    );
                 }
             }
         }
@@ -248,14 +259,14 @@
                     // Update pricing
                     updateCartTotals(data.cart);
                     // Show success message
-                    showCartMessage('Quantity updated successfully', 'success');
+                    showToast('Quantity updated successfully', 'success');
                 } else {
                     // Reset UI and show error
                     if (cartItem) {
                         cartItem.style.opacity = '1';
                         cartItem.style.pointerEvents = 'auto';
                     }
-                    showCartMessage(data.message || 'Failed to update quantity', 'error');
+                    showToast(data.message || 'Failed to update quantity', 'error');
                 }
             })
             .catch(error => {
@@ -264,14 +275,12 @@
                     cartItem.style.opacity = '1';
                     cartItem.style.pointerEvents = 'auto';
                 }
-                showCartMessage('Failed to update cart', 'error');
+                showToast('Failed to update cart', 'error');
             });
         }
 
         // Remove item from cart
         function removeFromCart(cartKey) {
-            if (!confirm('Remove this item from cart?')) return;
-
             const cartItem = document.querySelector(`[data-cart-key="${cartKey}"]`)?.closest('.cart-item');
             if (cartItem) {
                 cartItem.style.opacity = '0.6';
@@ -297,7 +306,7 @@
                     // Update totals
                     updateCartTotals(data.cart);
                     // Show success message
-                    showCartMessage('Item removed from cart', 'success');
+                    showToast('Item removed from cart', 'success');
                     
                     // Check if cart is empty
                     if (data.cart.items.length === 0) {
@@ -308,7 +317,7 @@
                         cartItem.style.opacity = '1';
                         cartItem.style.pointerEvents = 'auto';
                     }
-                    showCartMessage(data.message || 'Failed to remove item', 'error');
+                    showToast(data.message || 'Failed to remove item', 'error');
                 }
             })
             .catch(error => {
@@ -317,48 +326,67 @@
                     cartItem.style.opacity = '1';
                     cartItem.style.pointerEvents = 'auto';
                 }
-                showCartMessage('Failed to remove item', 'error');
+                showToast('Failed to remove item', 'error');
             });
         }
 
         // Clear entire cart
         function clearCart() {
-            if (!confirm('Remove all items from cart?')) return;
+            showConfirm(
+                'Clear Cart', 
+                'Are you sure you want to remove all items from your cart? This action cannot be undone.',
+                {
+                    confirmText: 'Yes, Clear Cart',
+                    cancelText: 'Keep Items',
+                    onConfirm: () => {
+                        const loadingModal = showLoading('Clearing cart...');
+                        
+                        const cartContainer = document.querySelector('.cart-items-section');
+                        if (cartContainer) {
+                            cartContainer.style.opacity = '0.6';
+                            cartContainer.style.pointerEvents = 'none';
+                        }
 
-            const cartContainer = document.querySelector('.cart-items-section');
-            if (cartContainer) {
-                cartContainer.style.opacity = '0.6';
-                cartContainer.style.pointerEvents = 'none';
-            }
-
-            fetch('/cart/clear', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showCartMessage('Cart cleared successfully', 'success');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    if (cartContainer) {
-                        cartContainer.style.opacity = '1';
-                        cartContainer.style.pointerEvents = 'auto';
+                        fetch('/cart/clear', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            loadingModal.close();
+                            if (data.success) {
+                                showSuccess('Cart Cleared', 'All items have been removed from your cart.', {
+                                    autoDismiss: false,
+                                    onConfirm: () => {
+                                        location.reload();
+                                        return false; // Prevent modal from closing before reload
+                                    }
+                                });
+                            } else {
+                                if (cartContainer) {
+                                    cartContainer.style.opacity = '1';
+                                    cartContainer.style.pointerEvents = 'auto';
+                                }
+                                showError('Failed to Clear Cart', data.message || 'Please try again.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            loadingModal.close();
+                            if (cartContainer) {
+                                cartContainer.style.opacity = '1';
+                                cartContainer.style.pointerEvents = 'auto';
+                            }
+                            showError('Error', 'Failed to clear cart. Please try again.');
+                        });
+                        
+                        return true; // Allow confirmation modal to close
                     }
-                    showCartMessage(data.message || 'Failed to clear cart', 'error');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                if (cartContainer) {
-                    cartContainer.style.opacity = '1';
-                    cartContainer.style.pointerEvents = 'auto';
-                }
-                showCartMessage('Failed to clear cart', 'error');
-            });
+            );
         }
 
         // Helper function to update cart item quantity in DOM
@@ -415,48 +443,6 @@
                     subtotalLabelElement.textContent = `Subtotal (${totalItems} item${totalItems !== 1 ? 's' : ''})`;
                 }
             }
-        }
-
-        // Helper function to show cart messages
-        function showCartMessage(message, type = 'success') {
-            // Remove existing messages
-            const existingMessage = document.querySelector('.cart-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-
-            // Create new message
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `cart-message alert alert-${type}`;
-            messageDiv.textContent = message;
-            messageDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                z-index: 1000;
-                padding: 12px 20px;
-                border-radius: 8px;
-                font-family: 'Anybody', sans-serif;
-                font-weight: 600;
-                color: white;
-                background: ${type === 'success' ? '#10B981' : '#EF4444'};
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                transform: translateX(100%);
-                transition: transform 0.3s ease;
-            `;
-
-            document.body.appendChild(messageDiv);
-
-            // Animate in
-            setTimeout(() => {
-                messageDiv.style.transform = 'translateX(0)';
-            }, 100);
-
-            // Auto remove after 3 seconds
-            setTimeout(() => {
-                messageDiv.style.transform = 'translateX(100%)';
-                setTimeout(() => messageDiv.remove(), 300);
-            }, 3000);
         }
     </script>
 </x-layouts.frontend>
