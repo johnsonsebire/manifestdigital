@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\User;
+use App\Models\Currency;
+use App\Models\Tax;
+use App\Services\TaxService;
 use App\Notifications\InvoiceSent;
 use App\Notifications\InvoicePaymentReceived;
 use Illuminate\Http\Request;
@@ -74,6 +77,9 @@ class InvoiceController extends Controller
 
     public function create(Order $order = null)
     {
+        $currencies = Currency::active()->ordered()->get();
+        $taxes = Tax::active()->ordered()->get();
+        
         // For order-based invoices
         if ($order) {
             // Check if invoice already exists for this order
@@ -82,12 +88,12 @@ class InvoiceController extends Controller
                     ->route('admin.invoices.show', $order->invoice)
                     ->with('error', 'Invoice already exists for this order.');
             }
-            return view('admin.invoices.create', compact('order'));
+            return view('admin.invoices.create', compact('order', 'currencies', 'taxes'));
         }
 
         // For manual invoices
         $customers = User::role('Customer')->orderBy('name')->get();
-        return view('admin.invoices.create-manual', compact('customers'));
+        return view('admin.invoices.create-manual', compact('customers', 'currencies', 'taxes'));
     }
 
     public function store(Request $request, Order $order = null)
@@ -96,9 +102,15 @@ class InvoiceController extends Controller
         $rules = [
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
-            'tax_rate' => 'required|numeric|min:0|max:100',
+            'currency_id' => 'required|exists:currencies,id',
+            'billing_country_code' => 'nullable|string|max:2',
+            'taxes' => 'nullable|array',
+            'taxes.*' => 'exists:taxes,id',
+            'additional_fees' => 'nullable|numeric|min:0',
             'discount_amount' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
+            // Legacy support
+            'tax_rate' => 'nullable|numeric|min:0|max:100',
         ];
 
         // Manual invoice validation
@@ -130,6 +142,8 @@ class InvoiceController extends Controller
                     ->with('error', 'Invoice already exists for this order.');
             }
 
+            $currency = Currency::findOrFail($request->currency_id);
+            
             $invoice = new Invoice([
                 'invoice_number' => Invoice::generateInvoiceNumber(),
                 'order_id' => $order->id,
@@ -138,17 +152,31 @@ class InvoiceController extends Controller
                 'client_email' => $order->customer_email,
                 'client_phone' => $order->customer_phone,
                 'client_address' => $order->customer_address,
+                'billing_country_code' => $request->billing_country_code,
+                'currency_id' => $currency->id,
+                'exchange_rate' => $currency->exchange_rate,
                 'invoice_date' => $request->invoice_date,
                 'due_date' => $request->due_date,
                 'subtotal' => $order->total,
-                'tax_rate' => $request->tax_rate,
                 'discount_amount' => $request->discount_amount ?? 0,
+                'additional_fees' => $request->additional_fees ?? 0,
                 'status' => 'draft',
                 'notes' => $request->notes,
+                // Legacy support
+                'tax_rate' => $request->tax_rate ?? 0,
             ]);
 
-            $invoice->calculateTotals();
             $invoice->save();
+
+            // Apply taxes using the new system
+            if ($request->filled('taxes')) {
+                $taxService = app(TaxService::class);
+                $invoice = $taxService->applyTaxesToInvoice($invoice, $request->taxes);
+            } else {
+                // Fallback to legacy calculation
+                $invoice->calculateTotals();
+                $invoice->save();
+            }
 
             return redirect()
                 ->route('admin.invoices.show', $invoice)
@@ -156,18 +184,25 @@ class InvoiceController extends Controller
         }
 
         // Manual invoice
+        $currency = Currency::findOrFail($request->currency_id);
+        
         $invoiceData = [
             'invoice_number' => Invoice::generateInvoiceNumber(),
+            'currency_id' => $currency->id,
+            'exchange_rate' => $currency->exchange_rate,
+            'billing_country_code' => $request->billing_country_code,
             'invoice_date' => $request->invoice_date,
             'due_date' => $request->due_date,
             'subtotal' => $request->subtotal,
-            'tax_rate' => $request->tax_rate,
             'discount_amount' => $request->discount_amount ?? 0,
+            'additional_fees' => $request->additional_fees ?? 0,
             'status' => 'draft',
             'notes' => $request->notes,
             'metadata' => [
                 'items' => $request->items,
             ],
+            // Legacy support
+            'tax_rate' => $request->tax_rate ?? 0,
         ];
 
         if ($request->client_type === 'registered') {
@@ -186,8 +221,17 @@ class InvoiceController extends Controller
         }
 
         $invoice = new Invoice($invoiceData);
-        $invoice->calculateTotals();
         $invoice->save();
+
+        // Apply taxes using the new system
+        if ($request->filled('taxes')) {
+            $taxService = app(TaxService::class);
+            $invoice = $taxService->applyTaxesToInvoice($invoice, $request->taxes);
+        } else {
+            // Fallback to legacy calculation
+            $invoice->calculateTotals();
+            $invoice->save();
+        }
 
         return redirect()
             ->route('admin.invoices.show', $invoice)
@@ -202,7 +246,13 @@ class InvoiceController extends Controller
                 ->with('error', 'Cannot edit a paid invoice.');
         }
 
-        return view('admin.invoices.edit', compact('invoice'));
+        $currencies = Currency::active()->ordered()->get();
+        $taxes = Tax::active()->ordered()->get();
+        
+        // Get currently selected taxes
+        $selectedTaxIds = $invoice->taxes->pluck('id')->toArray();
+
+        return view('admin.invoices.edit', compact('invoice', 'currencies', 'taxes', 'selectedTaxIds'));
     }
 
     public function update(Request $request, Invoice $invoice)
@@ -216,21 +266,44 @@ class InvoiceController extends Controller
         $request->validate([
             'invoice_date' => 'required|date',
             'due_date' => 'required|date|after_or_equal:invoice_date',
-            'tax_rate' => 'required|numeric|min:0|max:100',
+            'currency_id' => 'required|exists:currencies,id',
+            'billing_country_code' => 'nullable|string|max:2',
+            'taxes' => 'nullable|array',
+            'taxes.*' => 'exists:taxes,id',
+            'additional_fees' => 'nullable|numeric|min:0',
             'discount_amount' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
+            // Legacy support
+            'tax_rate' => 'nullable|numeric|min:0|max:100',
         ]);
+
+        $currency = Currency::findOrFail($request->currency_id);
 
         $invoice->update([
+            'currency_id' => $currency->id,
+            'exchange_rate' => $currency->exchange_rate,
+            'billing_country_code' => $request->billing_country_code,
             'invoice_date' => $request->invoice_date,
             'due_date' => $request->due_date,
-            'tax_rate' => $request->tax_rate,
             'discount_amount' => $request->discount_amount ?? 0,
+            'additional_fees' => $request->additional_fees ?? 0,
             'notes' => $request->notes,
+            // Legacy support
+            'tax_rate' => $request->tax_rate ?? 0,
         ]);
 
-        $invoice->calculateTotals();
-        $invoice->save();
+        // Apply taxes using the new system
+        if ($request->filled('taxes')) {
+            $taxService = app(TaxService::class);
+            $invoice = $taxService->applyTaxesToInvoice($invoice, $request->taxes);
+        } else {
+            // Clear existing taxes and recalculate
+            $invoice->taxes()->detach();
+            $invoice->total_tax_amount = null;
+            $invoice->tax_breakdown = null;
+            $invoice->calculateTotals();
+            $invoice->save();
+        }
 
         return redirect()
             ->route('admin.invoices.show', $invoice)
@@ -311,5 +384,72 @@ class InvoiceController extends Controller
         $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
         
         return $pdf->download($invoice->invoice_number . '.pdf');
+    }
+
+    /**
+     * Get applicable taxes for a given country and currency (AJAX endpoint)
+     */
+    public function getApplicableTaxes(Request $request)
+    {
+        $request->validate([
+            'country_code' => 'nullable|string|max:2',
+            'currency_id' => 'required|exists:currencies,id',
+        ]);
+
+        $taxService = app(TaxService::class);
+        $applicableTaxes = $taxService->getApplicableTaxes(
+            $request->country_code,
+            $request->currency_id
+        );
+
+        return response()->json([
+            'taxes' => $applicableTaxes->map(function ($tax) {
+                return [
+                    'id' => $tax->id,
+                    'name' => $tax->name,
+                    'code' => $tax->code,
+                    'rate' => $tax->rate,
+                    'type' => $tax->type,
+                    'is_default' => $tax->is_default,
+                    'description' => $tax->description,
+                ];
+            })
+        ]);
+    }
+
+    /**
+     * Calculate tax preview for given parameters (AJAX endpoint)
+     */
+    public function calculateTaxPreview(Request $request)
+    {
+        $request->validate([
+            'subtotal' => 'required|numeric|min:0',
+            'selected_taxes' => 'nullable|array',
+            'selected_taxes.*' => 'exists:taxes,id',
+            'country_code' => 'nullable|string|max:2',
+            'currency_id' => 'required|exists:currencies,id',
+        ]);
+
+        $taxService = app(TaxService::class);
+        
+        if ($request->filled('selected_taxes')) {
+            $taxes = Tax::whereIn('id', $request->selected_taxes)->get();
+        } else {
+            $taxes = $taxService->getApplicableTaxes(
+                $request->country_code,
+                $request->currency_id
+            );
+        }
+
+        $calculation = $taxService->calculateTotalTax($request->subtotal, $taxes);
+        $currency = Currency::find($request->currency_id);
+
+        return response()->json([
+            'calculation' => $calculation,
+            'currency' => [
+                'code' => $currency->code,
+                'symbol' => $currency->symbol,
+            ]
+        ]);
     }
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\ServiceManagementController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TaskController;
+use App\Http\Controllers\Admin\TaxController;
 use Illuminate\Support\Facades\Route;
 
 // Admin routes - protected by auth and admin access
@@ -79,6 +80,10 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
         Route::post('invoices/{invoice}/mark-paid', [InvoiceController::class, 'markAsPaid'])->name('invoices.mark-paid');
         Route::post('invoices/{invoice}/cancel', [InvoiceController::class, 'cancel'])->name('invoices.cancel');
         Route::get('invoices/{invoice}/pdf', [InvoiceController::class, 'exportPdf'])->name('invoices.pdf');
+        
+        // Invoice AJAX endpoints
+        Route::post('invoices/get-applicable-taxes', [InvoiceController::class, 'getApplicableTaxes'])->name('invoices.get-applicable-taxes');
+        Route::post('invoices/calculate-tax-preview', [InvoiceController::class, 'calculateTaxPreview'])->name('invoices.calculate-tax-preview');
 
         // Category Management
         Route::resource('categories', CategoryController::class);
@@ -92,6 +97,13 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
         // Currency Management
         Route::resource('currencies', CurrencyController::class);
         Route::post('currencies/update-rates', [CurrencyController::class, 'updateRates'])->name('currencies.update-rates');
+
+        // Tax Management
+        Route::resource('taxes', TaxController::class);
+        Route::get('taxes/regional', [TaxController::class, 'regional'])->name('taxes.regional');
+        Route::post('taxes/regional', [TaxController::class, 'storeRegional'])->name('taxes.regional.store');
+        Route::put('taxes/regional/{regionalTax}', [TaxController::class, 'updateRegional'])->name('taxes.regional.update');
+        Route::delete('taxes/regional/{regionalTax}', [TaxController::class, 'destroyRegional'])->name('taxes.regional.destroy');
 
         // Reports & Analytics
         Route::controller(ReportsController::class)->prefix('reports')->name('reports.')->group(function () {

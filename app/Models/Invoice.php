@@ -9,6 +9,18 @@ use Carbon\Carbon;
 
 class Invoice extends Model
 {
+    protected $attributes = [
+        'total_amount' => 0,
+        'amount_paid' => 0,
+        'balance_due' => 0,
+        'discount_amount' => 0,
+        'additional_fees' => 0,
+        'total_tax_amount' => 0,
+        'tax_rate' => 0,
+        'tax_amount' => 0,
+        'exchange_rate' => 1,
+    ];
+
     protected $fillable = [
         'invoice_number',
         'order_id',
@@ -18,12 +30,18 @@ class Invoice extends Model
         'client_phone',
         'client_address',
         'client_company',
+        'billing_country_code',
+        'currency_id',
+        'exchange_rate',
         'invoice_date',
         'due_date',
         'subtotal',
-        'tax_rate',
-        'tax_amount',
+        'tax_rate', // Legacy field - kept for compatibility
+        'tax_amount', // Legacy field - kept for compatibility
+        'total_tax_amount', // New field for multi-tax support
+        'tax_breakdown', // JSON field storing detailed tax information
         'discount_amount',
+        'additional_fees',
         'total_amount',
         'amount_paid',
         'balance_due',
@@ -40,6 +58,9 @@ class Invoice extends Model
         'subtotal' => 'decimal:2',
         'tax_rate' => 'decimal:2',
         'tax_amount' => 'decimal:2',
+        'total_tax_amount' => 'decimal:2',
+        'tax_breakdown' => 'array',
+        'exchange_rate' => 'decimal:4',
         'discount_amount' => 'decimal:2',
         'total_amount' => 'decimal:2',
         'amount_paid' => 'decimal:2',
@@ -60,6 +81,18 @@ class Invoice extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
+    public function taxes()
+    {
+        return $this->belongsToMany(Tax::class, 'invoice_taxes')
+                    ->withPivot('tax_rate', 'taxable_amount', 'tax_amount', 'is_inclusive', 'metadata')
+                    ->withTimestamps();
+    }
+
     // Helper Methods
     public static function generateInvoiceNumber(): string
     {
@@ -75,11 +108,17 @@ class Invoice extends Model
 
     public function calculateTotals(): void
     {
-        // Calculate tax amount
-        $this->tax_amount = $this->subtotal * ($this->tax_rate / 100);
+        $additionalFees = $this->additional_fees ?? 0;
         
-        // Calculate total
-        $this->total_amount = $this->subtotal + $this->tax_amount - $this->discount_amount;
+        // For backward compatibility, check if we have new tax system data
+        if ($this->total_tax_amount !== null) {
+            // Use new multi-tax system
+            $this->total_amount = $this->subtotal + $additionalFees + $this->total_tax_amount - $this->discount_amount;
+        } else {
+            // Fall back to legacy single tax calculation
+            $this->tax_amount = ($this->subtotal + $additionalFees - $this->discount_amount) * ($this->tax_rate / 100);
+            $this->total_amount = $this->subtotal + $additionalFees + $this->tax_amount - $this->discount_amount;
+        }
         
         // Calculate balance
         $this->balance_due = $this->total_amount - $this->amount_paid;
@@ -297,5 +336,57 @@ class Invoice extends Model
         $invoice->save();
 
         return $invoice;
+    }
+
+    /**
+     * Get the effective tax amount (from new or legacy system)
+     */
+    public function getEffectiveTaxAmount(): float
+    {
+        return $this->total_tax_amount ?? $this->tax_amount ?? 0;
+    }
+
+    /**
+     * Check if invoice uses the new multi-tax system
+     */
+    public function usesMultiTaxSystem(): bool
+    {
+        return $this->total_tax_amount !== null || !empty($this->tax_breakdown);
+    }
+
+    /**
+     * Get formatted tax breakdown for display
+     */
+    public function getFormattedTaxBreakdown(): array
+    {
+        if (!$this->usesMultiTaxSystem()) {
+            // Return legacy tax info in new format
+            return $this->tax_amount > 0 ? [[
+                'name' => 'Tax',
+                'code' => 'TAX',
+                'rate' => $this->tax_rate,
+                'tax_amount' => $this->tax_amount,
+                'type' => 'percentage'
+            ]] : [];
+        }
+
+        return $this->tax_breakdown ?? [];
+    }
+
+    /**
+     * Get the currency symbol or code
+     */
+    public function getCurrencySymbol(): string
+    {
+        return $this->currency?->symbol ?? $this->currency?->code ?? '$';
+    }
+
+    /**
+     * Apply tax service calculations to this invoice
+     */
+    public function applyTaxCalculations(array $selectedTaxIds = null): self
+    {
+        $taxService = app(\App\Services\TaxService::class);
+        return $taxService->applyTaxesToInvoice($this, $selectedTaxIds);
     }
 }

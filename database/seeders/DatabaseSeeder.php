@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
         // Seed Book A Call form
         $this->call(BookACallFormSeeder::class);
 
+        // Seed tax system
+        $this->call(TaxSeeder::class);
+
         // Create a test user for development
         if (app()->environment('local', 'development')) {
             User::factory()->create([

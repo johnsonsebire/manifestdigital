@@ -91,6 +91,14 @@ class Currency extends Model
     }
 
     /**
+     * Scope a query to order currencies by name.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('name', 'asc');
+    }
+
+    /**
      * Get the base currency (USD).
      */
     public static function getBaseCurrency(): ?Currency
@@ -169,5 +177,13 @@ class Currency extends Model
             'source' => $source,
             'fetched_at' => now(),
         ]);
+    }
+
+    /**
+     * Get the exchange rate (accessor for compatibility).
+     */
+    public function getExchangeRateAttribute(): float
+    {
+        return $this->exchange_rate_to_usd;
     }
 }

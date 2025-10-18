@@ -3,7 +3,7 @@
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Edit Currency: {{ $currency->name }}</h1>
         
         <a href="{{ route('admin.currencies.index') }}" 
-           class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+           class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
             Back to Currencies
         </a>
     </div>
@@ -182,11 +182,11 @@
                 <!-- Submit Buttons -->
                 <div class="flex gap-3 pt-4">
                     <button type="submit" 
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                            class="px-6 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                         Update Currency
                     </button>
                     <a href="{{ route('admin.currencies.index') }}" 
-                       class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors">
+                       class="px-6 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         Cancel
                     </a>
                 </div>
