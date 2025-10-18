@@ -43,8 +43,11 @@
 
         <!-- Invoice Form -->
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-6">
-            @if(!$order)
-            <!-- Client Selection for Manual Invoices -->
+            <form action="{{ $order ? route('admin.orders.invoices.store', $order) : route('admin.invoices.store') }}" method="POST" class="space-y-6">
+                @csrf
+                
+                @if(!$order)
+                <!-- Client Selection for Manual Invoices -->
             <div class="border-b border-zinc-200 dark:border-zinc-700 pb-6 mb-6">
                 <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Client Information</h2>
                 
@@ -149,6 +152,58 @@
                 </div>
             </div>
 
+            <!-- Invoice Information (Date & Currency) -->
+            <div class="border-b border-zinc-200 dark:border-zinc-700 pb-6 mb-6">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Invoice Information</h2>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <flux:label for="invoice_date">Invoice Date</flux:label>
+                        <flux:input 
+                            type="date" 
+                            name="invoice_date" 
+                            id="invoice_date"
+                            value="{{ old('invoice_date', date('Y-m-d')) }}"
+                            required
+                        />
+                        <flux:error name="invoice_date" />
+                    </div>
+                    
+                    <div>
+                        <flux:label for="due_date">Due Date</flux:label>
+                        <flux:input 
+                            type="date" 
+                            name="due_date" 
+                            id="due_date"
+                            value="{{ old('due_date', date('Y-m-d', strtotime('+30 days'))) }}"
+                            required
+                        />
+                        <flux:error name="due_date" />
+                    </div>
+                </div>
+
+                <!-- Currency Selection -->
+                <div class="mt-4">
+                    <flux:label for="currency_id">Invoice Currency</flux:label>
+                    <flux:select name="currency_id" id="currency_id" required>
+                        <option value="">Select Currency</option>
+                        @foreach($currencies as $currency)
+                            <option value="{{ $currency->id }}" 
+                                    data-code="{{ $currency->code }}"
+                                    data-symbol="{{ $currency->symbol }}"
+                                    data-exchange-rate="{{ $currency->exchange_rate }}"
+                                    {{ old('currency_id', $currencies->where('is_base_currency', true)->first()?->id) == $currency->id ? 'selected' : '' }}>
+                                {{ $currency->name }} ({{ $currency->code }}) - {{ $currency->symbol }}
+                            </option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="currency_id" />
+                    <flux:description>
+                        Select the currency for this invoice. Exchange rates will be applied automatically.
+                    </flux:description>
+                </div>
+            </div>
+
             <!-- Invoice Items for Manual Invoices -->
             <div class="border-b border-zinc-200 dark:border-zinc-700 pb-6 mb-6">
                 <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Invoice Items</h2>
@@ -220,58 +275,8 @@
             </div>
             @endif
 
-            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Invoice Information</h2>
+            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Additional Invoice Details</h2>
             
-            <form action="{{ $order ? route('admin.orders.invoices.store', $order) : route('admin.invoices.store') }}" method="POST" class="space-y-6">
-                @csrf
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <flux:label for="invoice_date">Invoice Date</flux:label>
-                        <flux:input 
-                            type="date" 
-                            name="invoice_date" 
-                            id="invoice_date"
-                            value="{{ old('invoice_date', date('Y-m-d')) }}"
-                            required
-                        />
-                        <flux:error name="invoice_date" />
-                    </div>
-                    
-                    <div>
-                        <flux:label for="due_date">Due Date</flux:label>
-                        <flux:input 
-                            type="date" 
-                            name="due_date" 
-                            id="due_date"
-                            value="{{ old('due_date', date('Y-m-d', strtotime('+30 days'))) }}"
-                            required
-                        />
-                        <flux:error name="due_date" />
-                    </div>
-                </div>
-
-                <!-- Currency Selection -->
-                <div>
-                    <flux:label for="currency_id">Invoice Currency</flux:label>
-                    <flux:select name="currency_id" id="currency_id" required>
-                        <option value="">Select Currency</option>
-                        @foreach($currencies as $currency)
-                            <option value="{{ $currency->id }}" 
-                                    data-code="{{ $currency->code }}"
-                                    data-symbol="{{ $currency->symbol }}"
-                                    data-exchange-rate="{{ $currency->exchange_rate }}"
-                                    {{ old('currency_id', $currencies->where('is_base_currency', true)->first()?->id) == $currency->id ? 'selected' : '' }}>
-                                {{ $currency->name }} ({{ $currency->code }}) - {{ $currency->symbol }}
-                            </option>
-                        @endforeach
-                    </flux:select>
-                    <flux:error name="currency_id" />
-                    <flux:description>
-                        Select the currency for this invoice. Exchange rates will be applied automatically.
-                    </flux:description>
-                </div>
-
                 <!-- Tax Selection -->
                 <div>
                     <flux:label>Applicable Taxes</flux:label>
@@ -569,6 +574,9 @@
                 if (discountCurrencySymbol) discountCurrencySymbol.textContent = symbol;
                 if (feesCurrencySymbol) feesCurrencySymbol.textContent = symbol;
                 
+                // Update item calculations to reflect new currency immediately
+                updateItemCalculations();
+                
                 loadApplicableTaxes(selectedOption.value);
                 updatePreview();
             } else {
@@ -576,6 +584,10 @@
                 currentExchangeRate = 1;
                 if (discountCurrencySymbol) discountCurrencySymbol.textContent = '$';
                 if (feesCurrencySymbol) feesCurrencySymbol.textContent = '$';
+                
+                // Update item calculations to show default currency
+                updateItemCalculations();
+                
                 showTaxLoading();
                 updatePreview();
             }
