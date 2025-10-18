@@ -56,6 +56,9 @@
                     <flux:navlist.item icon="cube" :href="route('admin.services.index')" :current="request()->routeIs('admin.services.*')" wire:navigate>
                         {{ __('Services') }}
                     </flux:navlist.item>
+                    <flux:navlist.item icon="banknotes" :href="route('admin.currencies.index')" :current="request()->routeIs('admin.currencies.*')" wire:navigate>
+                        {{ __('Currencies') }}
+                    </flux:navlist.item>
                 </flux:navlist.group>
                 @endcan
                 

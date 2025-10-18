@@ -20,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Add currency detection middleware to web routes
+        $middleware->web(append: [
+            \App\Http\Middleware\CurrencyMiddleware::class,
+        ]);
+        
         // Exclude payment webhook routes from CSRF verification
         $middleware->validateCsrfTokens(except: [
             'payment/webhook/*',

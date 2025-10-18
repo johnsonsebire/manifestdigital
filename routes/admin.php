@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\InvoiceController;
@@ -87,6 +88,10 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
 
         // Service Management
         Route::resource('services', ServiceManagementController::class);
+
+        // Currency Management
+        Route::resource('currencies', CurrencyController::class);
+        Route::post('currencies/update-rates', [CurrencyController::class, 'updateRates'])->name('currencies.update-rates');
 
         // Reports & Analytics
         Route::controller(ReportsController::class)->prefix('reports')->name('reports.')->group(function () {

@@ -164,11 +164,43 @@ class Service extends Model
     }
 
     /**
-     * Get formatted price.
+     * Get formatted price with currency detection.
      */
     public function getFormattedPriceAttribute(): string
     {
+        if (app()->bound(\App\Services\CurrencyService::class)) {
+            $currencyService = app(\App\Services\CurrencyService::class);
+            $priceInfo = $currencyService->getServicePrice($this);
+            return $priceInfo['formatted'];
+        }
+        
         return number_format($this->price, 2) . ' ' . $this->currency;
+    }
+
+    /**
+     * Get localized price information.
+     */
+    public function getPriceInfo(): array
+    {
+        if (app()->bound(\App\Services\CurrencyService::class)) {
+            $currencyService = app(\App\Services\CurrencyService::class);
+            return $currencyService->getServicePrice($this);
+        }
+        
+        return [
+            'price' => $this->price,
+            'currency' => \App\Models\Currency::where('code', $this->currency)->first() ?: new \App\Models\Currency(),
+            'formatted' => $this->getFormattedPriceAttribute(),
+            'is_regional' => false,
+        ];
+    }
+
+    /**
+     * Get the regional pricing for this service.
+     */
+    public function regionalPricing(): HasMany
+    {
+        return $this->hasMany(RegionalPricing::class);
     }
 
     /**
