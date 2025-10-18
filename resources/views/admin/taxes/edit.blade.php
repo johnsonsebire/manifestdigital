@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Edit Tax: ' . $tax->name)
-
-@section('content')
+<x-layouts.app title="Edit Tax: {{ $tax->name }}">
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -291,4 +287,5 @@ $(document).ready(function() {
 });
 </script>
 @endpush
-@endsection
+
+</x-layouts.app>

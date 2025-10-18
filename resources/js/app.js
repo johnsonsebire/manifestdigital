@@ -107,6 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctaFooterSection = document.querySelector('.cta-footer');
 
     function updateScrollButton() {
+        if (!scrollToTopBtn) return;
+        
         // Show/hide button based on scroll position
         if (window.pageYOffset > 300) {
             scrollToTopBtn.classList.add('show');
@@ -128,10 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    window.addEventListener('scroll', updateScrollButton);
-
-    // Initial check
-    updateScrollButton();
+    if (scrollToTopBtn) {
+        window.addEventListener('scroll', updateScrollButton);
+        // Initial check
+        updateScrollButton();
+    }
 
     if (scrollToTopBtn) {
         scrollToTopBtn.addEventListener('click', function() {

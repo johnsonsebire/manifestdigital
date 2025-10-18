@@ -290,8 +290,8 @@
                                 @endif
                             </td>
                             <td class="text-right">{{ $item->quantity }}</td>
-                            <td class="text-right">${{ number_format($item->unit_price, 2) }}</td>
-                            <td class="text-right">${{ number_format($item->total_price, 2) }}</td>
+                            <td class="text-right">{{ $invoice->getCurrencySymbol() }}{{ number_format($item->unit_price, 2) }}</td>
+                            <td class="text-right">{{ $invoice->getCurrencySymbol() }}{{ number_format($item->total_price, 2) }}</td>
                         </tr>
                     @endforeach
                 @else
@@ -302,8 +302,8 @@
                                 <div class="item-name">{{ $item['description'] }}</div>
                             </td>
                             <td class="text-right">{{ $item['quantity'] }}</td>
-                            <td class="text-right">${{ number_format($item['unit_price'], 2) }}</td>
-                            <td class="text-right">${{ number_format($item['quantity'] * $item['unit_price'], 2) }}</td>
+                            <td class="text-right">{{ $invoice->getCurrencySymbol() }}{{ number_format($item['unit_price'], 2) }}</td>
+                            <td class="text-right">{{ $invoice->getCurrencySymbol() }}{{ number_format($item['quantity'] * $item['unit_price'], 2) }}</td>
                         </tr>
                     @endforeach
                 @endif
@@ -314,35 +314,59 @@
         <div class="totals">
             <div class="totals-row">
                 <div class="totals-label">Subtotal:</div>
-                <div class="totals-value">${{ number_format($invoice->subtotal, 2) }}</div>
+                <div class="totals-value">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->subtotal, 2) }}</div>
             </div>
             
             @if($invoice->discount_amount > 0)
                 <div class="totals-row">
                     <div class="totals-label">Discount:</div>
-                    <div class="totals-value discount">-${{ number_format($invoice->discount_amount, 2) }}</div>
+                    <div class="totals-value discount">-{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->discount_amount, 2) }}</div>
+                </div>
+            @endif
+
+            @if($invoice->additional_fees > 0)
+                <div class="totals-row">
+                    <div class="totals-label">Additional Fees:</div>
+                    <div class="totals-value">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->additional_fees, 2) }}</div>
                 </div>
             @endif
             
-            <div class="totals-row">
-                <div class="totals-label">Tax ({{ number_format($invoice->tax_rate, 2) }}%):</div>
-                <div class="totals-value">${{ number_format($invoice->tax_amount, 2) }}</div>
-            </div>
+            {{-- Enhanced Tax Display --}}
+            @if($invoice->usesMultiTaxSystem())
+                {{-- New Multi-Tax System --}}
+                @php
+                    $taxBreakdown = $invoice->getFormattedTaxBreakdown();
+                @endphp
+                @foreach($taxBreakdown as $tax)
+                    <div class="totals-row">
+                        <div class="totals-label">{{ $tax['name'] }} ({{ $tax['code'] }} - {{ number_format($tax['rate'], 2) }}%):</div>
+                        <div class="totals-value">{{ $invoice->getCurrencySymbol() }}{{ number_format($tax['amount'], 2) }}</div>
+                    </div>
+                @endforeach
+            @else
+                {{-- Legacy Single Tax System --}}
+                @if($invoice->tax_amount > 0)
+                    <div class="totals-row">
+                        <div class="totals-label">Tax ({{ number_format($invoice->tax_rate, 2) }}%):</div>
+                        <div class="totals-value">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->tax_amount, 2) }}</div>
+                    </div>
+                @endif
+            @endif
             
             <div class="totals-row total">
                 <div class="totals-label">Total:</div>
-                <div class="totals-value">${{ number_format($invoice->total_amount, 2) }}</div>
+                <div class="totals-value">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->total_amount, 2) }}</div>
             </div>
             
             @if($invoice->amount_paid > 0)
                 <div class="totals-row">
                     <div class="totals-label">Amount Paid:</div>
-                    <div class="totals-value paid">-${{ number_format($invoice->amount_paid, 2) }}</div>
+                    <div class="totals-value paid">-{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->amount_paid, 2) }}</div>
                 </div>
                 
                 <div class="totals-row balance">
                     <div class="totals-label">Balance Due:</div>
-                    <div class="totals-value">${{ number_format($invoice->balance_due, 2) }}</div>
+                    <div class="totals-value">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->balance_due, 2) }}</div>
                 </div>
             @endif
         </div>

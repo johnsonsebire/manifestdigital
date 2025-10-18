@@ -163,10 +163,10 @@
                                             {{ $item->quantity }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
-                                            ${{ number_format($item->unit_price, 2) }}
+                                            {{ $invoice->getCurrencySymbol() }}{{ number_format($item->unit_price, 2) }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-right font-medium text-zinc-900 dark:text-white">
-                                            ${{ number_format($item->total_price, 2) }}
+                                            {{ $invoice->getCurrencySymbol() }}{{ number_format($item->total_price, 2) }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -180,10 +180,10 @@
                                             {{ $item['quantity'] }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-right text-zinc-900 dark:text-white">
-                                            ${{ number_format($item['unit_price'], 2) }}
+                                            {{ $invoice->getCurrencySymbol() }}{{ number_format($item['unit_price'], 2) }}
                                         </td>
                                         <td class="px-4 py-4 text-sm text-right font-medium text-zinc-900 dark:text-white">
-                                            ${{ number_format($item['quantity'] * $item['unit_price'], 2) }}
+                                            {{ $invoice->getCurrencySymbol() }}{{ number_format($item['quantity'] * $item['unit_price'], 2) }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -197,35 +197,63 @@
                     <div class="w-80">
                         <div class="flex justify-between py-2 text-sm">
                             <span class="text-zinc-600 dark:text-zinc-400">Subtotal:</span>
-                            <span class="font-medium text-zinc-900 dark:text-white">${{ number_format($invoice->subtotal, 2) }}</span>
+                            <span class="font-medium text-zinc-900 dark:text-white">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->subtotal, 2) }}</span>
                         </div>
                         
                         @if($invoice->discount_amount > 0)
                             <div class="flex justify-between py-2 text-sm">
                                 <span class="text-zinc-600 dark:text-zinc-400">Discount:</span>
-                                <span class="font-medium text-green-600 dark:text-green-400">-${{ number_format($invoice->discount_amount, 2) }}</span>
+                                <span class="font-medium text-green-600 dark:text-green-400">-{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->discount_amount, 2) }}</span>
+                            </div>
+                        @endif
+
+                        @if($invoice->additional_fees > 0)
+                            <div class="flex justify-between py-2 text-sm">
+                                <span class="text-zinc-600 dark:text-zinc-400">Additional Fees:</span>
+                                <span class="font-medium text-zinc-900 dark:text-white">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->additional_fees, 2) }}</span>
                             </div>
                         @endif
                         
-                        <div class="flex justify-between py-2 text-sm">
-                            <span class="text-zinc-600 dark:text-zinc-400">Tax ({{ number_format($invoice->tax_rate, 2) }}%):</span>
-                            <span class="font-medium text-zinc-900 dark:text-white">${{ number_format($invoice->tax_amount, 2) }}</span>
-                        </div>
+                        <!-- Enhanced Tax Display -->
+                        @if($invoice->usesMultiTaxSystem())
+                            @php $taxBreakdown = $invoice->getFormattedTaxBreakdown(); @endphp
+                            @if(!empty($taxBreakdown))
+                                @foreach($taxBreakdown as $tax)
+                                    <div class="flex justify-between py-2 text-sm">
+                                        <span class="text-zinc-600 dark:text-zinc-400">
+                                            {{ $tax['name'] }} 
+                                            <span class="text-xs">
+                                                ({{ $tax['code'] }} - {{ number_format($tax['rate'], 2) }}{{ $tax['type'] === 'percentage' ? '%' : ' flat' }})
+                                            </span>
+                                        </span>
+                                        <span class="font-medium text-zinc-900 dark:text-white">{{ $invoice->getCurrencySymbol() }}{{ number_format($tax['amount'], 2) }}</span>
+                                    </div>
+                                @endforeach
+                            @endif
+                        @else
+                            <!-- Legacy Tax Display -->
+                            @if($invoice->tax_amount > 0)
+                                <div class="flex justify-between py-2 text-sm">
+                                    <span class="text-zinc-600 dark:text-zinc-400">Tax ({{ number_format($invoice->tax_rate, 2) }}%):</span>
+                                    <span class="font-medium text-zinc-900 dark:text-white">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->tax_amount, 2) }}</span>
+                                </div>
+                            @endif
+                        @endif
                         
                         <div class="flex justify-between py-3 text-base font-semibold border-t-2 border-zinc-200 dark:border-zinc-700">
                             <span class="text-zinc-900 dark:text-white">Total:</span>
-                            <span class="text-zinc-900 dark:text-white">${{ number_format($invoice->total_amount, 2) }}</span>
+                            <span class="text-zinc-900 dark:text-white">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->total_amount, 2) }}</span>
                         </div>
                         
                         @if($invoice->amount_paid > 0)
                             <div class="flex justify-between py-2 text-sm">
                                 <span class="text-zinc-600 dark:text-zinc-400">Amount Paid:</span>
-                                <span class="font-medium text-green-600 dark:text-green-400">${{ number_format($invoice->amount_paid, 2) }}</span>
+                                <span class="font-medium text-green-600 dark:text-green-400">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->amount_paid, 2) }}</span>
                             </div>
                             
                             <div class="flex justify-between py-3 text-base font-semibold border-t border-zinc-200 dark:border-zinc-700">
                                 <span class="text-zinc-900 dark:text-white">Balance Due:</span>
-                                <span class="text-zinc-900 dark:text-white">${{ number_format($invoice->balance_due, 2) }}</span>
+                                <span class="text-zinc-900 dark:text-white">{{ $invoice->getCurrencySymbol() }}{{ number_format($invoice->balance_due, 2) }}</span>
                             </div>
                         @endif
                     </div>

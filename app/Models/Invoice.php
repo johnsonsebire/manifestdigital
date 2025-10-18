@@ -365,12 +365,32 @@ class Invoice extends Model
                 'name' => 'Tax',
                 'code' => 'TAX',
                 'rate' => $this->tax_rate,
-                'tax_amount' => $this->tax_amount,
+                'amount' => $this->tax_amount,
                 'type' => 'percentage'
             ]] : [];
         }
 
-        return $this->tax_breakdown ?? [];
+        // Ensure tax_breakdown is properly decoded as array
+        $taxBreakdown = $this->tax_breakdown;
+        
+        // If it's still a string (JSON), decode it
+        if (is_string($taxBreakdown)) {
+            $taxBreakdown = json_decode($taxBreakdown, true) ?? [];
+        }
+        
+        // Ensure it's an array
+        if (!is_array($taxBreakdown)) {
+            return [];
+        }
+
+        // Normalize the array structure to ensure 'amount' key exists
+        return array_map(function ($tax) {
+            // Handle both 'tax_amount' and 'amount' keys for backward compatibility
+            if (isset($tax['tax_amount']) && !isset($tax['amount'])) {
+                $tax['amount'] = $tax['tax_amount'];
+            }
+            return $tax;
+        }, $taxBreakdown);
     }
 
     /**

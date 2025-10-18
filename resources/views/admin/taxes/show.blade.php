@@ -1,8 +1,4 @@
-@extends('layouts.app')
-
-@section('title', 'Tax Details: ' . $tax->name)
-
-@section('content')
+<x-layouts.app title="Tax Details: {{ $tax->name }}">
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -265,8 +261,6 @@
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
                                         @php
                                             $totalCollected = $tax->invoices()
-                                                ->join('invoice_taxes', 'invoices.id', '=', 'invoice_taxes.invoice_id')
-                                                ->where('invoice_taxes.tax_id', $tax->id)
                                                 ->sum('invoice_taxes.tax_amount');
                                         @endphp
                                         GHS {{ number_format($totalCollected, 2) }}
@@ -340,4 +334,4 @@
         </div>
     </div>
 </div>
-@endsection
+</x-layouts.app>

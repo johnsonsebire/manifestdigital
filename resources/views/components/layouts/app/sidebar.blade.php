@@ -31,7 +31,7 @@
                 @endif
                 
                 @can('view-orders')
-                <flux:navlist.group :heading="__('Business')" class="grid">
+                <flux:navlist.group :heading="__('Business Operations')" class="grid">
                     <flux:navlist.item icon="shopping-bag" :href="route('admin.orders.index')" :current="request()->routeIs('admin.orders.*')" wire:navigate>
                         {{ __('Orders') }}
                     </flux:navlist.item>
@@ -41,23 +41,29 @@
                     <flux:navlist.item icon="users" :href="route('admin.customers.index')" :current="request()->routeIs('admin.customers.*')" wire:navigate>
                         {{ __('Customers') }}
                     </flux:navlist.item>
-                    <flux:navlist.item icon="arrows-right-left" :href="route('admin.change-requests.index')" :current="request()->routeIs('admin.change-requests.*')" wire:navigate>
-                        {{ __('Change Requests') }}
-                    </flux:navlist.item>
                     <flux:navlist.item icon="briefcase" :href="route('admin.projects.index')" :current="request()->routeIs('admin.projects.*')" wire:navigate>
                         {{ __('Projects') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="arrows-right-left" :href="route('admin.change-requests.index')" :current="request()->routeIs('admin.change-requests.*')" wire:navigate>
+                        {{ __('Change Requests') }}
                     </flux:navlist.item>
                     <flux:navlist.item icon="chart-bar" :href="route('admin.reports.index')" :current="request()->routeIs('admin.reports.*')" wire:navigate>
                         {{ __('Reports & Analytics') }}
                     </flux:navlist.item>
-                    <flux:navlist.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" wire:navigate>
-                        {{ __('Categories') }}
-                    </flux:navlist.item>
+                </flux:navlist.group>
+                
+                <flux:navlist.group :heading="__('Business Configuration')" class="grid">
                     <flux:navlist.item icon="cube" :href="route('admin.services.index')" :current="request()->routeIs('admin.services.*')" wire:navigate>
                         {{ __('Services') }}
                     </flux:navlist.item>
+                    <flux:navlist.item icon="tag" :href="route('admin.categories.index')" :current="request()->routeIs('admin.categories.*')" wire:navigate>
+                        {{ __('Categories') }}
+                    </flux:navlist.item>
                     <flux:navlist.item icon="banknotes" :href="route('admin.currencies.index')" :current="request()->routeIs('admin.currencies.*')" wire:navigate>
                         {{ __('Currencies') }}
+                    </flux:navlist.item>
+                    <flux:navlist.item icon="receipt-percent" :href="route('admin.taxes.index')" :current="request()->routeIs('admin.taxes.*')" wire:navigate>
+                        {{ __('Taxes') }}
                     </flux:navlist.item>
                 </flux:navlist.group>
                 @endcan

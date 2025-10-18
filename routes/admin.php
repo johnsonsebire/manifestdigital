@@ -98,12 +98,12 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
         Route::resource('currencies', CurrencyController::class);
         Route::post('currencies/update-rates', [CurrencyController::class, 'updateRates'])->name('currencies.update-rates');
 
-        // Tax Management
-        Route::resource('taxes', TaxController::class);
-        Route::get('taxes/regional', [TaxController::class, 'regional'])->name('taxes.regional');
+        // Tax Management - Regional routes must come before resource routes
+        Route::get('taxes/regional', [TaxController::class, 'regionalIndex'])->name('taxes.regional');
         Route::post('taxes/regional', [TaxController::class, 'storeRegional'])->name('taxes.regional.store');
         Route::put('taxes/regional/{regionalTax}', [TaxController::class, 'updateRegional'])->name('taxes.regional.update');
         Route::delete('taxes/regional/{regionalTax}', [TaxController::class, 'destroyRegional'])->name('taxes.regional.destroy');
+        Route::resource('taxes', TaxController::class);
 
         // Reports & Analytics
         Route::controller(ReportsController::class)->prefix('reports')->name('reports.')->group(function () {

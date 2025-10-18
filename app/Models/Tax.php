@@ -50,6 +50,14 @@ class Tax extends Model
     }
 
     /**
+     * Alias for regionalTaxes() - for backward compatibility.
+     */
+    public function regionalConfigurations(): HasMany
+    {
+        return $this->regionalTaxes();
+    }
+
+    /**
      * Calculate tax amount for a given base amount.
      */
     public function calculateTaxAmount(float $baseAmount, bool $isInclusive = null): float

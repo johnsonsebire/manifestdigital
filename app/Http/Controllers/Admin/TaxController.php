@@ -143,22 +143,24 @@ class TaxController extends Controller
     }
 
     /**
-     * Manage regional tax configurations.
+     * Display regional tax configurations index.
      */
-    public function regional(Tax $tax)
+    public function regionalIndex()
     {
-        $tax->load(['regionalTaxes.currency']);
+        $taxes = Tax::with(['regionalTaxes.currency'])->active()->get();
+        $regionalTaxes = RegionalTax::with(['tax', 'currency'])->get();
         $currencies = Currency::active()->get();
         
-        return view('admin.taxes.regional', compact('tax', 'currencies'));
+        return view('admin.taxes.regional', compact('taxes', 'regionalTaxes', 'currencies'));
     }
 
     /**
      * Store regional tax configuration.
      */
-    public function storeRegional(Request $request, Tax $tax)
+    public function storeRegional(Request $request)
     {
         $request->validate([
+            'tax_id' => 'required|exists:taxes,id',
             'currency_id' => 'required|exists:currencies,id',
             'country_code' => 'nullable|string|size:2',
             'region' => 'nullable|string|max:255',
@@ -169,7 +171,7 @@ class TaxController extends Controller
         ]);
 
         RegionalTax::create([
-            'tax_id' => $tax->id,
+            'tax_id' => $request->tax_id,
             'currency_id' => $request->currency_id,
             'country_code' => $request->country_code,
             'region' => $request->region,
@@ -180,7 +182,51 @@ class TaxController extends Controller
         ]);
 
         return redirect()
-            ->route('admin.taxes.regional', $tax)
+            ->route('admin.taxes.regional')
             ->with('success', 'Regional tax configuration added successfully.');
+    }
+
+    /**
+     * Update regional tax configuration.
+     */
+    public function updateRegional(Request $request, RegionalTax $regionalTax)
+    {
+        $request->validate([
+            'tax_id' => 'required|exists:taxes,id',
+            'currency_id' => 'required|exists:currencies,id',
+            'country_code' => 'nullable|string|size:2',
+            'region' => 'nullable|string|max:255',
+            'rate_override' => 'nullable|numeric|min:0|max:100',
+            'is_applicable' => 'boolean',
+            'is_inclusive' => 'nullable|boolean',
+            'priority' => 'integer|min:0|max:100',
+        ]);
+
+        $regionalTax->update([
+            'tax_id' => $request->tax_id,
+            'currency_id' => $request->currency_id,
+            'country_code' => $request->country_code,
+            'region' => $request->region,
+            'rate_override' => $request->rate_override,
+            'is_applicable' => $request->boolean('is_applicable'),
+            'is_inclusive' => $request->is_inclusive,
+            'priority' => $request->priority ?? 0,
+        ]);
+
+        return redirect()
+            ->route('admin.taxes.regional')
+            ->with('success', 'Regional tax configuration updated successfully.');
+    }
+
+    /**
+     * Remove regional tax configuration.
+     */
+    public function destroyRegional(RegionalTax $regionalTax)
+    {
+        $regionalTax->delete();
+
+        return redirect()
+            ->route('admin.taxes.regional')
+            ->with('success', 'Regional tax configuration deleted successfully.');
     }
 }
