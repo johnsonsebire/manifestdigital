@@ -12,6 +12,7 @@ use App\Services\TaxService;
 use App\Notifications\InvoiceSent;
 use App\Notifications\InvoicePaymentReceived;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceController extends Controller
@@ -392,30 +393,40 @@ class InvoiceController extends Controller
      */
     public function getApplicableTaxes(Request $request)
     {
-        $request->validate([
-            'country_code' => 'nullable|string|max:2',
-            'currency_id' => 'required|exists:currencies,id',
-        ]);
+        try {
+            $request->validate([
+                'country_code' => 'nullable|string|max:2',
+                'currency_id' => 'required|exists:currencies,id',
+            ]);
 
-        $taxService = app(TaxService::class);
-        $applicableTaxes = $taxService->getApplicableTaxes(
-            $request->country_code,
-            $request->currency_id
-        );
+            $taxService = app(TaxService::class);
+            $applicableTaxes = $taxService->getApplicableTaxes(
+                $request->country_code,
+                $request->currency_id
+            );
 
-        return response()->json([
-            'taxes' => $applicableTaxes->map(function ($tax) {
-                return [
-                    'id' => $tax->id,
-                    'name' => $tax->name,
-                    'code' => $tax->code,
-                    'rate' => $tax->rate,
-                    'type' => $tax->type,
-                    'is_default' => $tax->is_default,
-                    'description' => $tax->description,
-                ];
-            })
-        ]);
+            return response()->json([
+                'success' => true,
+                'taxes' => $applicableTaxes->map(function ($tax) {
+                    return [
+                        'id' => $tax->id,
+                        'name' => $tax->name,
+                        'code' => $tax->code,
+                        'rate' => $tax->rate,
+                        'type' => $tax->type,
+                        'is_default' => $tax->is_default,
+                        'description' => $tax->description,
+                    ];
+                })
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error loading applicable taxes: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to load applicable taxes. Please try again.'
+            ], 500);
+        }
     }
 
     /**
