@@ -208,5 +208,6 @@
         <x-toast-notifications />
 
         @fluxScripts
+        @stack('scripts')
     </body>
 </html>

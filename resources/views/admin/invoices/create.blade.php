@@ -4,12 +4,18 @@
         <div class="mb-6">
             <flux:breadcrumbs>
                 <flux:breadcrumbs.item href="{{ route('admin.invoices.index') }}">Invoices</flux:breadcrumbs.item>
-                <flux:breadcrumbs.item>Create Invoice</flux:breadcrumbs.item>
+                <flux:breadcrumbs.item>{{ $order ? 'Create Invoice' : 'Create Manual Invoice' }}</flux:breadcrumbs.item>
             </flux:breadcrumbs>
-            <h1 class="mt-2 text-2xl font-semibold text-zinc-900 dark:text-white">Create Invoice</h1>
-            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Generate an invoice for Order #{{ $order->id }}</p>
+            
+            <h1 class="mt-2 text-2xl font-semibold text-zinc-900 dark:text-white">
+                {{ $order ? 'Create Invoice' : 'Create Manual Invoice' }}
+            </h1>
+            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                {{ $order ? "Generate an invoice for Order #{$order->id}" : 'Create an invoice for a registered customer or new client' }}
+            </p>
         </div>
 
+        @if($order)
         <!-- Order Summary -->
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-6 mb-6">
             <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Order Details</h2>
@@ -17,28 +23,206 @@
             <div class="grid grid-cols-2 gap-4 text-sm">
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Order #:</span>
-                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order->id }}</span>
+                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order ? $order->id : 'N/A' }}</span>
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Customer:</span>
-                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order->customer->name }}</span>
+                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order ? $order->customer->name : 'N/A' }}</span>
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Order Total:</span>
-                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">${{ number_format($order->total, 2) }}</span>
+                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">${{ number_format($order ? $order->total : 0, 2) }}</span>
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Order Date:</span>
-                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order->placed_at->format('M d, Y') }}</span>
+                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order ? $order->placed_at->format('M d, Y') : 'N/A' }}</span>
                 </div>
             </div>
         </div>
+        @endif
 
         <!-- Invoice Form -->
         <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-6">
+            @if(!$order)
+            <!-- Client Selection for Manual Invoices -->
+            <div class="border-b border-zinc-200 dark:border-zinc-700 pb-6 mb-6">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Client Information</h2>
+                
+                <div class="mb-4">
+                    <flux:label>Client Type</flux:label>
+                    <div class="space-y-2 mt-2">
+                        <label class="flex items-center">
+                            <input 
+                                type="radio" 
+                                name="client_type" 
+                                value="registered" 
+                                {{ old('client_type', 'registered') == 'registered' ? 'checked' : '' }}
+                                class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 focus:ring-blue-500"
+                            />
+                            <span class="ml-2 text-sm text-zinc-900 dark:text-white">Registered Customer</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input 
+                                type="radio" 
+                                name="client_type" 
+                                value="manual" 
+                                {{ old('client_type') == 'manual' ? 'checked' : '' }}
+                                class="w-4 h-4 text-blue-600 bg-zinc-100 border-zinc-300 focus:ring-blue-500"
+                            />
+                            <span class="ml-2 text-sm text-zinc-900 dark:text-white">New/Non-Registered Client</span>
+                        </label>
+                    </div>
+                    <flux:error name="client_type" />
+                </div>
+
+                <!-- Registered Customer Selection -->
+                <div id="registered-customer-section" class="{{ old('client_type', 'registered') == 'registered' ? '' : 'hidden' }}">
+                    <flux:label for="customer_id">Select Customer</flux:label>
+                    <flux:select name="customer_id" id="customer_id">
+                        <option value="">Choose a customer</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
+                                {{ $customer->name }} ({{ $customer->email }})
+                            </option>
+                        @endforeach
+                    </flux:select>
+                    <flux:error name="customer_id" />
+                </div>
+
+                <!-- Manual Client Information -->
+                <div id="manual-client-section" class="{{ old('client_type') == 'manual' ? '' : 'hidden' }}">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <flux:label for="client_name">Client Name</flux:label>
+                            <flux:input 
+                                type="text" 
+                                name="client_name" 
+                                id="client_name"
+                                value="{{ old('client_name') }}"
+                            />
+                            <flux:error name="client_name" />
+                        </div>
+                        <div>
+                            <flux:label for="client_email">Email Address</flux:label>
+                            <flux:input 
+                                type="email" 
+                                name="client_email" 
+                                id="client_email"
+                                value="{{ old('client_email') }}"
+                            />
+                            <flux:error name="client_email" />
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <flux:label for="client_phone">Phone Number</flux:label>
+                            <flux:input 
+                                type="text" 
+                                name="client_phone" 
+                                id="client_phone"
+                                value="{{ old('client_phone') }}"
+                            />
+                            <flux:error name="client_phone" />
+                        </div>
+                        <div>
+                            <flux:label for="client_company">Company Name</flux:label>
+                            <flux:input 
+                                type="text" 
+                                name="client_company" 
+                                id="client_company"
+                                value="{{ old('client_company') }}"
+                            />
+                            <flux:error name="client_company" />
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <flux:label for="client_address">Address</flux:label>
+                        <flux:textarea 
+                            name="client_address" 
+                            id="client_address"
+                            rows="3"
+                        >{{ old('client_address') }}</flux:textarea>
+                        <flux:error name="client_address" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Items for Manual Invoices -->
+            <div class="border-b border-zinc-200 dark:border-zinc-700 pb-6 mb-6">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Invoice Items</h2>
+                
+                <div id="invoice-items">
+                    <div class="invoice-item border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 mb-4">
+                        <div class="grid grid-cols-12 gap-4">
+                            <div class="col-span-5">
+                                <flux:label for="items[0][description]">Description</flux:label>
+                                <flux:input 
+                                    type="text" 
+                                    name="items[0][description]" 
+                                    placeholder="Service or product description"
+                                    value="{{ old('items.0.description') }}"
+                                    required
+                                />
+                            </div>
+                            <div class="col-span-2">
+                                <flux:label for="items[0][quantity]">Quantity</flux:label>
+                                <flux:input 
+                                    type="number" 
+                                    name="items[0][quantity]" 
+                                    step="0.01"
+                                    min="1"
+                                    value="{{ old('items.0.quantity', '1') }}"
+                                    class="item-quantity"
+                                    required
+                                />
+                            </div>
+                            <div class="col-span-2">
+                                <flux:label for="items[0][unit_price]">Unit Price</flux:label>
+                                <flux:input 
+                                    type="number" 
+                                    name="items[0][unit_price]" 
+                                    step="0.01"
+                                    min="0"
+                                    value="{{ old('items.0.unit_price') }}"
+                                    class="item-price"
+                                    required
+                                />
+                            </div>
+                            <div class="col-span-2">
+                                <flux:label>Total</flux:label>
+                                <div class="flex items-center h-10 px-3 bg-zinc-50 dark:bg-zinc-900 rounded-md text-sm">
+                                    <span class="item-total">$0.00</span>
+                                </div>
+                            </div>
+                            <div class="col-span-1 flex items-end">
+                                <button type="button" class="remove-item text-red-600 hover:text-red-800 p-2 hidden">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center mt-4">
+                    <button type="button" id="add-item-btn" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        + Add Item
+                    </button>
+                    <div class="text-right">
+                        <div class="text-sm text-zinc-600 dark:text-zinc-400">Subtotal:</div>
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-white" id="items-subtotal">$0.00</div>
+                        <input type="hidden" name="subtotal" id="subtotal-input" value="0">
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <h2 class="text-lg font-semibold text-zinc-900 dark:text-white mb-4">Invoice Information</h2>
             
-            <form action="{{ route('admin.orders.invoices.store', $order) }}" method="POST" class="space-y-6">
+            <form action="{{ $order ? route('admin.orders.invoices.store', $order) : route('admin.invoices.store') }}" method="POST" class="space-y-6">
                 @csrf
                 
                 <div class="grid grid-cols-2 gap-4">
@@ -160,7 +344,11 @@
                         <div class="flex justify-between">
                             <span class="text-zinc-600 dark:text-zinc-400">Subtotal:</span>
                             <span class="font-medium text-zinc-900 dark:text-white" id="subtotal-preview">
-                                ${{ number_format($order->total, 2) }}
+                                @if($order)
+                                    ${{ number_format($order->total, 2) }}
+                                @else
+                                    $0.00
+                                @endif
                             </span>
                         </div>
                         
@@ -186,7 +374,7 @@
                         <div class="flex justify-between pt-2 border-t border-zinc-200 dark:border-zinc-700 font-semibold">
                             <span class="text-zinc-900 dark:text-white">Total:</span>
                             <span class="text-zinc-900 dark:text-white" id="total-preview">
-                                ${{ number_format($order->total, 2) }}
+                                ${{ number_format($order ? $order->total : 0, 2) }}
                             </span>
                         </div>
                         
@@ -198,9 +386,15 @@
                 
                 <div class="flex gap-2">
                     <flux:button type="submit" variant="primary">Create Invoice</flux:button>
-                    <a href="{{ route('admin.orders.show', $order) }}">
-                        <flux:button type="button" variant="ghost">Cancel</flux:button>
-                    </a>
+                    @if($order)
+                        <a href="{{ route('admin.orders.show', $order) }}">
+                            <flux:button type="button" variant="ghost">Cancel</flux:button>
+                        </a>
+                    @else
+                        <a href="{{ route('admin.invoices.index') }}">
+                            <flux:button type="button" variant="ghost">Cancel</flux:button>
+                        </a>
+                    @endif
                 </div>
             </form>
         </div>
@@ -208,72 +402,194 @@
 
     @push('scripts')
     <script>
+        console.log('Script loading...');
+        
         // Initialize variables
-        const baseSubtotal = {{ $order->total }};
+        const baseSubtotal = {{ $order ? $order->total : 0 }};
+        const isOrderBased = {{ $order ? 'true' : 'false' }};
+        
+        console.log('Variables initialized:', { baseSubtotal, isOrderBased });
+        
+        // DOM elements - will be initialized in DOMContentLoaded
         let currentCurrency = null;
         let currentExchangeRate = 1;
         let applicableTaxes = [];
         let selectedTaxes = [];
+        let manualSubtotal = 0;
         
-        // DOM elements
-        const currencySelect = document.getElementById('currency_id');
-        const taxSelection = document.getElementById('tax-selection');
-        const taxLoading = document.getElementById('tax-loading');
-        const discountInput = document.getElementById('discount_amount');
-        const feesInput = document.getElementById('additional_fees');
+        // Core DOM elements
+        let currencySelect, taxSelection, taxLoading, discountInput, feesInput;
+        let subtotalPreview, discountPreview, feesPreview, taxBreakdown, taxTotalPreview, totalPreview;
+        let exchangeRateInfo, discountCurrencySymbol, feesCurrencySymbol;
         
-        // Preview elements
-        const subtotalPreview = document.getElementById('subtotal-preview');
-        const discountPreview = document.getElementById('discount-preview');
-        const feesPreview = document.getElementById('fees-preview');
-        const taxBreakdown = document.getElementById('tax-breakdown');
-        const taxTotalPreview = document.getElementById('tax-total-preview');
-        const totalPreview = document.getElementById('total-preview');
-        const exchangeRateInfo = document.getElementById('exchange-rate-info');
-        const discountCurrencySymbol = document.getElementById('discount-currency');
-        const feesCurrencySymbol = document.getElementById('fees-currency');
+        // Manual invoice elements
+        let clientTypeRadios, registeredSection, manualSection, addItemBtn, itemsSubtotal, subtotalInput;
         
-        // Initialize with default currency if selected
+        // Utility functions
+        function formatAmount(amount) {
+            if (typeof amount !== 'number' || isNaN(amount)) {
+                amount = 0;
+            }
+            
+            // Get currency symbol based on current currency
+            const currencySymbols = {
+                'USD': '$',
+                'GHS': '₵',
+                'EUR': '€',
+                'GBP': '£'
+            };
+            
+            const symbol = currencySymbols[currentCurrency] || '$';
+            return symbol + amount.toFixed(2);
+        }
+        
+        // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
-            if (currencySelect.value) {
+            console.log('DOM loaded, initializing...');
+            initializeElements();
+            
+            if (!isOrderBased) {
+                console.log('Setting up manual invoice functionality...');
+                setupManualInvoice();
+            }
+            
+            if (currencySelect && currencySelect.value) {
                 loadApplicableTaxes(currencySelect.value);
             }
         });
         
-        // Currency change handler
-        currencySelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
+        function initializeElements() {
+            // Core elements
+            currencySelect = document.getElementById('currency_id');
+            taxSelection = document.getElementById('tax-selection');
+            taxLoading = document.getElementById('tax-loading');
+            discountInput = document.getElementById('discount_amount');
+            feesInput = document.getElementById('additional_fees');
+            
+            // Preview elements
+            subtotalPreview = document.getElementById('subtotal-preview');
+            discountPreview = document.getElementById('discount-preview');
+            feesPreview = document.getElementById('fees-preview');
+            taxBreakdown = document.getElementById('tax-breakdown');
+            taxTotalPreview = document.getElementById('tax-total-preview');
+            totalPreview = document.getElementById('total-preview');
+            exchangeRateInfo = document.getElementById('exchange-rate-info');
+            discountCurrencySymbol = document.getElementById('discount-currency');
+            feesCurrencySymbol = document.getElementById('fees-currency');
+            
+            // Manual invoice elements
+            clientTypeRadios = document.querySelectorAll('input[name="client_type"]');
+            registeredSection = document.getElementById('registered-customer-section');
+            manualSection = document.getElementById('manual-client-section');
+            addItemBtn = document.getElementById('add-item-btn');
+            itemsSubtotal = document.getElementById('items-subtotal');
+            subtotalInput = document.getElementById('subtotal-input');
+            
+            console.log('Elements initialized:', {
+                currencySelect: !!currencySelect,
+                clientTypeRadios: clientTypeRadios ? clientTypeRadios.length : 0,
+                registeredSection: !!registeredSection,
+                manualSection: !!manualSection
+            });
+            
+            // Add event listeners
+            if (currencySelect) {
+                currencySelect.addEventListener('change', handleCurrencyChange);
+            }
+            if (discountInput) {
+                discountInput.addEventListener('input', updatePreview);
+            }
+            if (feesInput) {
+                feesInput.addEventListener('input', updatePreview);
+            }
+        }
+        
+        function setupManualInvoice() {
+            console.log('Setting up manual invoice with radios:', clientTypeRadios.length);
+            
+            clientTypeRadios.forEach((radio, index) => {
+                console.log(`Radio ${index}: value=${radio.value}, checked=${radio.checked}`);
+                radio.addEventListener('change', function() {
+                    console.log('Radio changed to:', this.value);
+                    handleClientTypeChange(this.value);
+                });
+            });
+            
+            if (addItemBtn) {
+                addItemBtn.addEventListener('click', addInvoiceItem);
+            }
+            
+            // CRITICAL FIX: Initialize existing items with event listeners
+            initializeExistingItems();
+            
+            updateItemCalculations();
+        }
+        
+        function initializeExistingItems() {
+            console.log('Initializing existing items...');
+            
+            const itemsContainer = document.getElementById('invoice-items');
+            if (!itemsContainer) {
+                console.log('No items container found');
+                return;
+            }
+            
+            const existingItems = itemsContainer.querySelectorAll('.invoice-item');
+            console.log(`Found ${existingItems.length} existing items`);
+            
+            existingItems.forEach((item, index) => {
+                console.log(`Attaching listeners to existing item ${index}`);
+                attachItemEventListeners(item);
+            });
+            
+            console.log('Existing items initialization complete');
+        }
+        
+        function handleClientTypeChange(value) {
+            console.log('Handling client type change to:', value);
+            
+            if (value === 'registered') {
+                if (registeredSection) registeredSection.classList.remove('hidden');
+                if (manualSection) manualSection.classList.add('hidden');
+                console.log('Switched to registered customer');
+            } else if (value === 'manual') {
+                if (registeredSection) registeredSection.classList.add('hidden');
+                if (manualSection) manualSection.classList.remove('hidden');
+                console.log('Switched to manual client');
+            }
+        }
+        
+        function handleCurrencyChange() {
+            const selectedOption = currencySelect.options[currencySelect.selectedIndex];
             if (selectedOption.value) {
                 currentCurrency = selectedOption.getAttribute('data-code');
                 currentExchangeRate = parseFloat(selectedOption.getAttribute('data-exchange-rate'));
                 const symbol = selectedOption.getAttribute('data-symbol');
                 
-                // Update currency symbols
-                discountCurrencySymbol.textContent = symbol;
-                feesCurrencySymbol.textContent = symbol;
+                if (discountCurrencySymbol) discountCurrencySymbol.textContent = symbol;
+                if (feesCurrencySymbol) feesCurrencySymbol.textContent = symbol;
                 
-                // Load applicable taxes
                 loadApplicableTaxes(selectedOption.value);
-                
-                // Update preview
                 updatePreview();
             } else {
                 currentCurrency = null;
                 currentExchangeRate = 1;
-                discountCurrencySymbol.textContent = '$';
-                feesCurrencySymbol.textContent = '$';
+                if (discountCurrencySymbol) discountCurrencySymbol.textContent = '$';
+                if (feesCurrencySymbol) feesCurrencySymbol.textContent = '$';
                 showTaxLoading();
                 updatePreview();
             }
-        });
+        }
         
-        // Input change handlers
-        discountInput.addEventListener('input', updatePreview);
-        feesInput.addEventListener('input', updatePreview);
-        
-        // Load applicable taxes for selected currency
         function loadApplicableTaxes(currencyId) {
+            if (!taxSelection) return;
+            
             showTaxLoading();
+            
+            const requestData = { currency_id: currencyId };
+            if (isOrderBased && {{ $order ? $order->id : 'null' }} !== null) {
+                requestData.order_id = {{ $order ? $order->id : 'null' }};
+            }
             
             fetch('{{ route("admin.invoices.get-applicable-taxes") }}', {
                 method: 'POST',
@@ -281,10 +597,7 @@
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 },
-                body: JSON.stringify({
-                    currency_id: currencyId,
-                    order_id: {{ $order->id }}
-                })
+                body: JSON.stringify(requestData)
             })
             .then(response => response.json())
             .then(data => {
@@ -302,8 +615,9 @@
             });
         }
         
-        // Render tax selection checkboxes
         function renderTaxSelection() {
+            if (!taxSelection) return;
+            
             if (applicableTaxes.length === 0) {
                 taxSelection.innerHTML = '<div class="text-sm text-zinc-600 dark:text-zinc-400">No taxes applicable for this currency.</div>';
                 return;
@@ -340,17 +654,14 @@
             
             taxSelection.innerHTML = html;
             
-            // Add event listeners to tax checkboxes
             document.querySelectorAll('.tax-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', updateSelectedTaxes);
-                // Initialize selected taxes if checked
                 if (checkbox.checked) {
                     updateSelectedTaxes();
                 }
             });
         }
         
-        // Update selected taxes array
         function updateSelectedTaxes() {
             selectedTaxes = [];
             document.querySelectorAll('.tax-checkbox:checked').forEach(checkbox => {
@@ -365,17 +676,16 @@
             updatePreview();
         }
         
-        // Update preview calculations
         function updatePreview() {
-            const discount = parseFloat(discountInput.value) || 0;
-            const additionalFees = parseFloat(feesInput.value) || 0;
+            if (!subtotalPreview) return;
             
-            // Calculate amounts in selected currency
-            const subtotalInCurrency = baseSubtotal * currentExchangeRate;
-            const subtotalAfterDiscount = subtotalInCurrency - discount;
+            const discount = parseFloat(discountInput ? discountInput.value : 0) || 0;
+            const additionalFees = parseFloat(feesInput ? feesInput.value : 0) || 0;
+            
+            const currentSubtotal = isOrderBased ? baseSubtotal * currentExchangeRate : manualSubtotal;
+            const subtotalAfterDiscount = currentSubtotal - discount;
             const subtotalWithFees = subtotalAfterDiscount + additionalFees;
             
-            // Calculate taxes
             let totalTaxAmount = 0;
             let taxBreakdownHtml = '';
             
@@ -402,37 +712,239 @@
             
             const finalTotal = subtotalWithFees + totalTaxAmount;
             
-            // Update preview display
-            subtotalPreview.textContent = formatAmount(subtotalInCurrency);
-            feesPreview.textContent = formatAmount(additionalFees);
-            discountPreview.textContent = formatAmount(discount);
-            taxBreakdown.innerHTML = taxBreakdownHtml;
-            taxTotalPreview.textContent = formatAmount(totalTaxAmount);
-            totalPreview.textContent = formatAmount(finalTotal);
+            if (subtotalPreview) subtotalPreview.textContent = formatAmount(currentSubtotal);
+            if (feesPreview) feesPreview.textContent = formatAmount(additionalFees);
+            if (discountPreview) discountPreview.textContent = formatAmount(discount);
+            if (taxBreakdown) taxBreakdown.innerHTML = taxBreakdownHtml;
+            if (taxTotalPreview) taxTotalPreview.textContent = formatAmount(totalTaxAmount);
+            if (totalPreview) totalPreview.textContent = formatAmount(finalTotal);
             
-            // Update exchange rate info
-            if (currentCurrency && currentCurrency !== 'USD' && currentExchangeRate !== 1) {
+            if (exchangeRateInfo && currentCurrency && currentCurrency !== 'USD' && currentExchangeRate !== 1) {
                 exchangeRateInfo.textContent = `Exchange rate: 1 USD = ${currentExchangeRate} ${currentCurrency}`;
-            } else {
+            } else if (exchangeRateInfo) {
                 exchangeRateInfo.textContent = '';
             }
         }
         
-        // Format amount with current currency symbol
         function formatAmount(amount) {
-            const symbol = currentCurrency ? document.querySelector(`#currency_id option[data-code="${currentCurrency}"]`).getAttribute('data-symbol') : '$';
-            return symbol + amount.toFixed(2);
+            const symbol = currentCurrency ? document.querySelector(`#currency_id option[data-code="${currentCurrency}"]`)?.getAttribute('data-symbol') : '$';
+            return (symbol || '$') + amount.toFixed(2);
         }
         
-        // Show loading state for taxes
         function showTaxLoading() {
-            taxSelection.innerHTML = '<div class="text-sm text-zinc-600 dark:text-zinc-400" id="tax-loading">Loading applicable taxes...</div>';
+            if (taxSelection) {
+                taxSelection.innerHTML = '<div class="text-sm text-zinc-600 dark:text-zinc-400">Loading applicable taxes...</div>';
+            }
         }
         
-        // Show error message
         function showError(message) {
-            taxSelection.innerHTML = `<div class="text-sm text-red-600 dark:text-red-400">${message}</div>`;
+            if (taxSelection) {
+                taxSelection.innerHTML = `<div class="text-sm text-red-600 dark:text-red-400">${message}</div>`;
+            }
         }
+        
+        // Item management functions
+        function addInvoiceItem() {
+            console.log('Adding new invoice item...');
+            
+            const itemsContainer = document.getElementById('invoice-items');
+            if (!itemsContainer) {
+                console.error('Items container not found!');
+                return;
+            }
+            
+            const itemCount = itemsContainer.children.length;
+            console.log('Current item count:', itemCount);
+            
+            const itemHtml = `
+                <div class="invoice-item border border-zinc-200 dark:border-zinc-700 rounded-lg p-4 mb-4">
+                    <div class="grid grid-cols-12 gap-4">
+                        <div class="col-span-5">
+                            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Description</label>
+                            <input type="text" 
+                                   name="items[${itemCount}][description]" 
+                                   placeholder="Service or product description"
+                                   class="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white"
+                                   required />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Quantity</label>
+                            <input type="number" 
+                                   name="items[${itemCount}][quantity]" 
+                                   step="0.01"
+                                   min="1"
+                                   value="1"
+                                   class="item-quantity w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white"
+                                   required />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Unit Price</label>
+                            <input type="number" 
+                                   name="items[${itemCount}][unit_price]" 
+                                   step="0.01"
+                                   min="0"
+                                   class="item-price w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-700 dark:text-white"
+                                   required />
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Total</label>
+                            <div class="flex items-center h-10 px-3 bg-zinc-50 dark:bg-zinc-900 rounded-md text-sm">
+                                <span class="item-total font-medium">$0.00</span>
+                            </div>
+                        </div>
+                        <div class="col-span-1 flex items-end">
+                            <button type="button" class="remove-item text-red-600 hover:text-red-800 p-2 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20" title="Remove item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+            
+            // Add event listeners to the new item
+            const newItem = itemsContainer.lastElementChild;
+            attachItemEventListeners(newItem);
+            
+            // Update calculations and button visibility
+            updateItemCalculations();
+            updateRemoveButtons();
+            
+            console.log('New item added, total items:', itemsContainer.children.length);
+        }
+        
+        function attachItemEventListeners(itemElement) {
+            // Try both approaches: class-based (for dynamically added items) and input name-based (for pre-existing items)
+            let quantityInput = itemElement.querySelector('.item-quantity');
+            let priceInput = itemElement.querySelector('.item-price');
+            
+            // If class-based approach fails, try all quantity/price inputs in this item
+            if (!quantityInput) {
+                quantityInput = itemElement.querySelector('input[name*="[quantity]"]');
+            }
+            if (!priceInput) {
+                priceInput = itemElement.querySelector('input[name*="[unit_price]"]');
+            }
+            
+            const removeButton = itemElement.querySelector('.remove-item');
+            
+            if (quantityInput) {
+                quantityInput.addEventListener('input', updateItemCalculations);
+                console.log('Attached quantity listener to item');
+            }
+            if (priceInput) {
+                priceInput.addEventListener('input', updateItemCalculations);
+                console.log('Attached price listener to item');
+            }
+            if (removeButton) {
+                removeButton.addEventListener('click', function() {
+                    removeInvoiceItem(itemElement);
+                });
+            }
+        }
+        
+        function removeInvoiceItem(itemElement) {
+            console.log('Removing invoice item...');
+            itemElement.remove();
+            updateItemCalculations();
+            updateRemoveButtons();
+            console.log('Item removed');
+        }
+        
+        function updateRemoveButtons() {
+            const itemsContainer = document.getElementById('invoice-items');
+            if (!itemsContainer) return;
+            
+            const removeButtons = itemsContainer.querySelectorAll('.remove-item');
+            const itemCount = itemsContainer.children.length;
+            
+            removeButtons.forEach(btn => {
+                if (itemCount > 1) {
+                    btn.style.display = 'block';
+                } else {
+                    btn.style.display = 'none';
+                }
+            });
+        }
+        
+        function updateItemCalculations() {
+            console.log('Updating item calculations...');
+            
+            const itemsContainer = document.getElementById('invoice-items');
+            if (!itemsContainer) {
+                console.log('No items container found');
+                return;
+            }
+            
+            let subtotal = 0;
+            const items = itemsContainer.querySelectorAll('.invoice-item');
+            
+            console.log('Processing', items.length, 'items');
+            
+            items.forEach((item, index) => {
+                // Try both approaches: class-based (for dynamically added items) and name-based (for pre-existing items)
+                let quantityInput = item.querySelector('.item-quantity');
+                let priceInput = item.querySelector('.item-price');
+                
+                // For Flux components, we need to look inside the class containers for the actual input
+                if (quantityInput && !quantityInput.value) {
+                    quantityInput = quantityInput.querySelector('input') || quantityInput;
+                }
+                if (priceInput && !priceInput.value) {
+                    priceInput = priceInput.querySelector('input') || priceInput;
+                }
+                
+                // If class-based approach fails, try name-based approach
+                if (!quantityInput || quantityInput.value === undefined) {
+                    quantityInput = item.querySelector(`input[name="items[${index}][quantity]"]`);
+                }
+                if (!priceInput || priceInput.value === undefined) {
+                    priceInput = item.querySelector(`input[name="items[${index}][unit_price]"]`);
+                }
+                
+                const totalSpan = item.querySelector('.item-total');
+                
+                if (!quantityInput || !priceInput || !totalSpan) {
+                    console.warn('Missing input elements in item', index);
+                    return;
+                }
+                
+                const quantity = parseFloat(quantityInput.value) || 0;
+                const unitPrice = parseFloat(priceInput.value) || 0;
+                const total = quantity * unitPrice;
+                
+                // Update item total display
+                totalSpan.textContent = formatAmount(total);
+                subtotal += total;
+                
+                console.log(`Item ${index}: qty=${quantity}, price=${unitPrice}, total=${total}`);
+            });
+            
+            // Update manual subtotal
+            manualSubtotal = subtotal;
+            
+            // Update subtotal displays
+            const itemsSubtotalElement = document.getElementById('items-subtotal');
+            if (itemsSubtotalElement) {
+                itemsSubtotalElement.textContent = formatAmount(subtotal);
+            }
+            
+            // Update hidden subtotal input for form submission
+            const subtotalInput = document.getElementById('subtotal-input');
+            if (subtotalInput) {
+                subtotalInput.value = subtotal.toFixed(2);
+            }
+            
+            console.log('Total subtotal:', subtotal);
+            
+            // Update the main preview calculations
+            updatePreview();
+        }
+        
+        console.log('Script loaded successfully');
     </script>
     @endpush
 </x-layouts.app>

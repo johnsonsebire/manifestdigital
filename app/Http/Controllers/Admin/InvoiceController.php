@@ -91,9 +91,10 @@ class InvoiceController extends Controller
             return view('admin.invoices.create', compact('order', 'currencies', 'taxes'));
         }
 
-        // For manual invoices
+        // For manual invoices, get customers and pass null order
         $customers = User::role('Customer')->orderBy('name')->get();
-        return view('admin.invoices.create-manual', compact('customers', 'currencies', 'taxes'));
+        $order = null; // Explicitly set to null for the view
+        return view('admin.invoices.create', compact('order', 'customers', 'currencies', 'taxes'));
     }
 
     public function store(Request $request, Order $order = null)
