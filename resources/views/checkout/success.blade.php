@@ -4,36 +4,35 @@
     @endpush
 
     {{-- Success Hero Section --}}
-    <section class="bg-gradient-to-br from-green-600 via-green-500 to-emerald-500 text-white py-20">
-        <div class="container mx-auto px-4 text-center">
+    <section class="success-hero">
+        <div class="container">
             {{-- Success Icon --}}
-            <div class="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full mb-6">
-                <svg class="w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="success-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
             </div>
 
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Order Placed Successfully!</h1>
-            <p class="text-xl text-green-50 mb-6">
+            <h1>Order Placed Successfully!</h1>
+            <p class="success-subtitle">
                 Thank you for your order. We've received your request and will get started right away.
             </p>
-            <p class="text-lg text-green-100">
-                Order Number: <strong class="font-mono">{{ $order->uuid }}</strong>
+            <p class="order-number">
+                Order Number: <strong>{{ $order->uuid }}</strong>
             </p>
         </div>
     </section>
 
     {{-- Order Details Section --}}
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4 max-w-4xl">
-            {{-- Order Status --}}
-            <div class="bg-white rounded-lg shadow-md p-8 mb-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-gray-900">Order Details</h2>
-                    <span class="px-4 py-2 bg-yellow-100 text-yellow-800 font-semibold rounded-full">
-                        {{ ucfirst($order->status) }}
-                    </span>
-                </div>
+    <div class="success-container">
+        {{-- Order Status --}}
+        <div class="success-details">
+            <div class="success-details-header">
+                <h2>Order Details</h2>
+                <span class="order-status">
+                    {{ ucfirst($order->status) }}
+                </span>
+            </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>

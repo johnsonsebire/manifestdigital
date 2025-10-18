@@ -213,8 +213,15 @@ class CartService
         $count = $this->getCount();
         $subtotal = $this->getSubtotal();
 
+        // Add cart_key to each item for frontend reference
+        $itemsWithKeys = [];
+        foreach ($items as $cartKey => $item) {
+            $item['cart_key'] = $cartKey;
+            $itemsWithKeys[] = $item;
+        }
+
         return [
-            'items' => array_values($items), // Re-index for JSON
+            'items' => $itemsWithKeys,
             'count' => $count,
             'subtotal' => $subtotal,
             'formatted_subtotal' => '$' . number_format($subtotal, 2),

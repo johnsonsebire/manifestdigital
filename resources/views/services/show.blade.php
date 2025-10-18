@@ -1,44 +1,46 @@
 <x-layouts.frontend :title="$service->title . ' | Manifest Digital'">
+    @push('styles')
+        @vite('resources/css/service-detail.css')
+    @endpush
+
     {{-- Hero Section with Service Title --}}
-    <section class="bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 text-white py-16">
-        <div class="container mx-auto px-4">
+    <section class="service-hero">
+        <div class="container">
             {{-- Breadcrumbs --}}
-            <nav class="mb-6">
-                <ol class="flex items-center space-x-2 text-sm text-purple-200">
-                    <li><a href="{{ route('home') }}" class="hover:text-white">Home</a></li>
-                    <li>/</li>
-                    <li><a href="{{ route('services.index') }}" class="hover:text-white">Services</a></li>
-                    @if($service->categories->isNotEmpty())
-                        <li>/</li>
-                        <li><a href="{{ route('categories.show', $service->categories->first()->slug) }}" class="hover:text-white">{{ $service->categories->first()->title }}</a></li>
-                    @endif
-                    <li>/</li>
-                    <li class="text-white font-semibold">{{ $service->title }}</li>
-                </ol>
+            <nav class="service-breadcrumbs">
+                <a href="{{ route('home') }}">Home</a>
+                <span>/</span>
+                <a href="{{ route('services.index') }}">Services</a>
+                @if($service->categories->isNotEmpty())
+                    <span>/</span>
+                    <a href="{{ route('categories.show', $service->categories->first()->slug) }}">{{ $service->categories->first()->title }}</a>
+                @endif
+                <span>/</span>
+                <span class="current">{{ $service->title }}</span>
             </nav>
 
-            <div class="max-w-4xl">
+            <div class="service-hero-content">
                 {{-- Service Type Badge --}}
-                <span class="inline-block px-4 py-2 text-sm font-semibold rounded-full bg-orange-100 text-orange-700 mb-4">
+                <span class="service-type-badge">
                     {{ ucfirst(str_replace('_', ' ', $service->type)) }}
                 </span>
 
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ $service->title }}</h1>
-                <p class="text-xl text-orange-100 mb-6">{{ $service->description }}</p>
+                <h1>{{ $service->title }}</h1>
+                <p class="subtitle">{{ $service->description }}</p>
 
                 {{-- Price Display --}}
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="text-4xl font-bold text-white">${{ number_format($service->price, 2) }}</span>
+                <div class="service-price-display">
+                    <span class="service-price">${{ number_format($service->price, 2) }}</span>
                 </div>
 
                 {{-- Quick CTA --}}
-                <div class="flex gap-4">
+                <div class="service-hero-actions">
                     <button 
                         onclick="scrollToOrder()"
-                        class="bg-white text-orange-700 font-bold py-3 px-8 rounded-lg hover:bg-orange-50 transition-colors duration-200">
+                        class="btn-hero-primary">
                         Order Now
                     </button>
-                    <a href="{{ route('contact') }}" class="border-2 border-white text-white font-bold py-3 px-8 rounded-lg hover:bg-white hover:text-orange-700 transition-colors duration-200">
+                    <a href="{{ route('contact') }}" class="btn-hero-secondary">
                         Contact Us
                     </a>
                 </div>
@@ -47,171 +49,165 @@
     </section>
 
     {{-- Main Content Section --}}
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {{-- Main Content Column --}}
-                <div class="lg:col-span-2">
-                    {{-- Service Details --}}
-                    <div class="bg-white rounded-lg shadow-md p-8 mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Service Details</h2>
-                        <div class="prose max-w-none text-gray-700">
-                            {!! nl2br(e($service->full_description ?? $service->description)) !!}
-                        </div>
+    <section class="service-content">
+        <div class="service-layout">
+            {{-- Main Content Column --}}
+            <div class="service-main">
+                {{-- Service Details --}}
+                <div class="service-card">
+                    <h2>Service Details</h2>
+                    <div class="service-description">
+                        {!! nl2br(e($service->full_description ?? $service->description)) !!}
                     </div>
-
-                    {{-- Features Section --}}
-                    @if(isset($service->metadata['features']) && is_array($service->metadata['features']))
-                        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">What's Included</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                @foreach($service->metadata['features'] as $feature)
-                                    <div class="flex items-start gap-3">
-                                        <svg class="w-6 h-6 text-green-500 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        <span class="text-gray-700">{{ $feature }}</span>
-                                    </div>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Service Variants --}}
-                    @if($service->variants->isNotEmpty())
-                        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Available Options</h2>
-                            <div class="space-y-4">
-                                @foreach($service->variants as $variant)
-                                    @if($variant->available)
-                                        <div class="border border-gray-200 rounded-lg p-6 hover:border-orange-500 transition-colors cursor-pointer variant-option" data-variant-id="{{ $variant->id }}" data-variant-price="{{ $variant->price }}">
-                                            <div class="flex justify-between items-start mb-3">
-                                                <h3 class="text-lg font-bold text-gray-900">{{ $variant->name }}</h3>
-                                                <div class="text-right">
-                                                    <span class="text-xl font-bold text-gray-900">${{ number_format($variant->price, 2) }}</span>
-                                                </div>
-                                            </div>
-                                            @if($variant->description)
-                                                <p class="text-gray-600 mb-3">{{ $variant->description }}</p>
-                                            @endif
-                                            @if(isset($variant->features) && is_array($variant->features))
-                                                <ul class="space-y-2">
-                                                    @foreach($variant->features as $feature)
-                                                        <li class="flex items-center gap-2 text-sm text-gray-700">
-                                                            <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                            {{ $feature }}
-                                                        </li>
-                                                    @endforeach
-                                                </ul>
-                                            @endif
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
-
-                    {{-- Related Services --}}
-                    @if($relatedServices->isNotEmpty())
-                        <div class="bg-white rounded-lg shadow-md p-8">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Services</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                @foreach($relatedServices as $related)
-                                    <a href="{{ route('services.show', $related->slug) }}" class="border border-gray-200 rounded-lg p-4 hover:border-orange-500 hover:shadow-md transition-all duration-200">
-                                        <h3 class="font-bold text-gray-900 mb-2">{{ $related->title }}</h3>
-                                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ $related->description }}</p>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-lg font-bold text-orange-600">
-                                                ${{ number_format($related->price, 2) }}
-                                            </span>
-                                            <span class="text-sm text-orange-600 font-semibold">View Details →</span>
-                                        </div>
-                                    </a>
-                                @endforeach
-                            </div>
-                        </div>
-                    @endif
                 </div>
 
-                {{-- Sidebar (Order Form) --}}
-                <div class="lg:col-span-1">
-                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-24" id="orderForm">
-                        <h3 class="text-xl font-bold text-gray-900 mb-6">Order This Service</h3>
-
-                        {{-- Selected Price Display --}}
-                        <div class="bg-orange-50 rounded-lg p-4 mb-6">
-                            <div class="text-sm text-gray-600 mb-1">Total Price</div>
-                            <div class="text-3xl font-bold text-orange-600" id="displayPrice">
-                                ${{ number_format($service->price, 2) }}
-                            </div>
+                {{-- Features Section --}}
+                @if(isset($service->metadata['features']) && is_array($service->metadata['features']))
+                    <div class="service-card">
+                        <h2>What's Included</h2>
+                        <div class="features-grid">
+                            @foreach($service->metadata['features'] as $feature)
+                                <div class="feature-item">
+                                    <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span class="feature-text">{{ $feature }}</span>
+                                </div>
+                            @endforeach
                         </div>
+                    </div>
+                @endif
 
-                        {{-- Variant Selection (if applicable) --}}
-                        @if($service->variants->isNotEmpty())
-                            <div class="mb-6">
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">Select Option</label>
-                                <select id="variantSelect" class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-                                    <option value="">Base Service - ${{ number_format($service->price, 2) }}</option>
-                                    @foreach($service->variants as $variant)
-                                        @if($variant->available)
-                                            <option value="{{ $variant->id }}" data-price="{{ $variant->price }}">
-                                                {{ $variant->name }} - ${{ number_format($variant->price, 2) }}
-                                            </option>
+                {{-- Service Variants --}}
+                @if($service->variants->isNotEmpty())
+                    <div class="service-card">
+                        <h2>Available Options</h2>
+                        <div class="variants-list">
+                            @foreach($service->variants as $variant)
+                                @if($variant->available)
+                                    <div class="variant-option" data-variant-id="{{ $variant->id }}" data-variant-price="{{ $variant->price }}">
+                                        <div class="variant-header">
+                                            <h3 class="variant-name">{{ $variant->name }}</h3>
+                                            <div class="variant-price">${{ number_format($variant->price, 2) }}</div>
+                                        </div>
+                                        @if($variant->description)
+                                            <p class="variant-description">{{ $variant->description }}</p>
                                         @endif
-                                    @endforeach
-                                </select>
-                            </div>
-                        @endif
-
-                        {{-- Quantity --}}
-                        <div class="mb-6">
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">Quantity</label>
-                            <input 
-                                type="number" 
-                                id="quantity" 
-                                value="1" 
-                                min="1" 
-                                class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                            >
+                                        @if(isset($variant->features) && is_array($variant->features))
+                                            <div class="variant-features">
+                                                @foreach($variant->features as $feature)
+                                                    <div class="variant-feature">
+                                                        <svg class="variant-feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                        <span>{{ $feature }}</span>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
                         </div>
+                    </div>
+                @endif
 
-                        {{-- Add to Cart Button --}}
-                        <button 
-                            onclick="addToCart()"
-                            class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-lg mb-3 transition-colors duration-200">
-                            Add to Cart
-                        </button>
-
-                        {{-- Request Quote Button --}}
-                        <a 
-                            href="{{ route('request-quote') }}" 
-                            class="block w-full text-center border-2 border-orange-600 text-orange-600 hover:bg-orange-50 font-bold py-4 px-6 rounded-lg transition-colors duration-200">
-                            Request Custom Quote
-                        </a>
-
-                        {{-- Service Info --}}
-                        <div class="mt-6 pt-6 border-t border-gray-200 space-y-3 text-sm text-gray-600">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Professional team</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>Money-back guarantee</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                </svg>
-                                <span>24/7 support</span>
-                            </div>
+                {{-- Related Services --}}
+                @if($relatedServices->isNotEmpty())
+                    <div class="service-card">
+                        <h2>Related Services</h2>
+                        <div class="related-services-grid">
+                            @foreach($relatedServices as $related)
+                                <a href="{{ route('services.show', $related->slug) }}" class="related-service-card">
+                                    <h3 class="related-service-title">{{ $related->title }}</h3>
+                                    <p class="related-service-description">{{ $related->description }}</p>
+                                    <div class="related-service-footer">
+                                        <span class="related-service-price">
+                                            ${{ number_format($related->price, 2) }}
+                                        </span>
+                                        <span class="related-service-link">View Details →</span>
+                                    </div>
+                                </a>
+                            @endforeach
                         </div>
+                    </div>
+                @endif
+            </div>
+
+            {{-- Sidebar (Order Form) --}}
+            <div class="order-sidebar" id="orderForm">
+                <h3>Order This Service</h3>
+
+                {{-- Selected Price Display --}}
+                <div class="price-display">
+                    <div class="price-label">Total Price</div>
+                    <div class="price-amount" id="displayPrice">
+                        ${{ number_format($service->price, 2) }}
+                    </div>
+                </div>
+
+                {{-- Variant Selection (if applicable) --}}
+                @if($service->variants->isNotEmpty())
+                    <div class="form-group">
+                        <label class="form-label">Select Option</label>
+                        <select id="variantSelect" class="form-select">
+                            <option value="">Base Service - ${{ number_format($service->price, 2) }}</option>
+                            @foreach($service->variants as $variant)
+                                @if($variant->available)
+                                    <option value="{{ $variant->id }}" data-price="{{ $variant->price }}">
+                                        {{ $variant->name }} - ${{ number_format($variant->price, 2) }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                    </div>
+                @endif
+
+                {{-- Quantity --}}
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <input 
+                        type="number" 
+                        id="quantity" 
+                        value="1" 
+                        min="1" 
+                        class="form-input"
+                    >
+                </div>
+
+                {{-- Add to Cart Button --}}
+                <button 
+                    onclick="addToCart()"
+                    class="btn-add-cart">
+                    Add to Cart
+                </button>
+
+                {{-- Request Quote Button --}}
+                <a 
+                    href="{{ route('request-quote') }}" 
+                    class="btn-quote">
+                    Request Custom Quote
+                </a>
+
+                {{-- Service Info --}}
+                <div class="service-info">
+                    <div class="service-info-item">
+                        <svg class="service-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Professional team</span>
+                    </div>
+                    <div class="service-info-item">
+                        <svg class="service-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>Money-back guarantee</span>
+                    </div>
+                    <div class="service-info-item">
+                        <svg class="service-info-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>24/7 support</span>
                     </div>
                 </div>
             </div>

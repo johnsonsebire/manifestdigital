@@ -5,53 +5,55 @@
 
     {{-- Hero Section --}}
     <section class="checkout-hero">
-        <div class="container mx-auto px-4">
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Checkout</h1>
-            <p class="text-xl text-orange-100">Complete your order</p>
+        <div class="container">
+            <h1>Checkout</h1>
+            <p class="subtitle">Complete your order</p>
         </div>
     </section>
 
     {{-- Main Checkout Section --}}
-    <section class="py-12 bg-gray-50">
-        <div class="container mx-auto px-4">
-            {{-- Alert Messages --}}
-            @if(session('success'))
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
-                    <p>{{ session('success') }}</p>
-                </div>
-            @endif
+    <div class="checkout-container">
+    {{-- Alert Messages --}}
+    @if(session('success'))
+        <div class="alert alert-success" role="alert">
+            <p>{{ session('success') }}</p>
+        </div>
+    @endif
 
-            @if(session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
-                    <p>{{ session('error') }}</p>
-                </div>
-            @endif
+    @if(session('error'))
+        <div class="alert alert-error" role="alert">
+            <p>{{ session('error') }}</p>
+        </div>
+    @endif
 
-            @if($errors->any())
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
-                    <h3 class="font-bold mb-2">Please fix the following errors:</h3>
-                    <ul class="list-disc list-inside">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+    @if($errors->any())
+        <div class="alert alert-error" role="alert">
+            <h3>Please fix the following errors:</h3>
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm">
-                @csrf
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {{-- Checkout Form Column --}}
-                    <div class="lg:col-span-2 space-y-6">
-                        {{-- Customer Information --}}
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Customer Information</h2>
+        <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm" class="checkout-form">
+            @csrf
+            
+            <div class="checkout-layout">
+                {{-- Checkout Form Column --}}
+                <div class="checkout-main">
+                    {{-- Customer Information --}}
+                    <div class="checkout-form-section">
+                        <div class="checkout-section-header">
+                            <h2>Customer Information</h2>
+                            <p>Enter your details for order processing</p>
+                        </div>
 
                             @if($user)
                                 {{-- Authenticated User --}}
-                                <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                                    <p class="text-green-800">
+                                <div class="alert alert-success">
+                                    <p>
                                         <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
@@ -64,84 +66,89 @@
                                 <input type="hidden" name="customer_email" value="{{ $user->email }}">
                             @else
                                 {{-- Guest Checkout Fields --}}
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <label for="customer_name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name *</label>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="customer_name" class="form-label form-label-required">Full Name</label>
                                         <input 
                                             type="text" 
                                             id="customer_name" 
                                             name="customer_name" 
                                             value="{{ old('customer_name') }}"
                                             required
-                                            class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                            class="form-input"
                                         >
                                         @error('customer_name')
-                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                            <span class="form-error">{{ $message }}</span>
                                         @enderror
                                     </div>
 
-                                    <div>
-                                        <label for="customer_email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address *</label>
+                                    <div class="form-group">
+                                        <label for="customer_email" class="form-label form-label-required">Email Address</label>
                                         <input 
                                             type="email" 
                                             id="customer_email" 
                                             name="customer_email" 
                                             value="{{ old('customer_email') }}"
                                             required
-                                            class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                            class="form-input"
                                         >
                                         @error('customer_email')
-                                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                            <span class="form-error">{{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
 
-                                <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                    <p class="text-blue-800 text-sm">
-                                        Already have an account? 
-                                        <a href="{{ route('login') }}" class="font-semibold underline hover:text-blue-900">Log in</a> 
-                                        for a faster checkout experience.
-                                    </p>
+                                <div class="form-group">
+                                    <div class="alert alert-info">
+                                        <p>
+                                            Already have an account? 
+                                            <a href="{{ route('login') }}" class="font-semibold underline hover:text-blue-900">Log in</a> 
+                                            for a faster checkout experience.
+                                        </p>
+                                    </div>
                                 </div>
                             @endif
 
                             {{-- Phone and Address (for all users) --}}
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label for="customer_phone" class="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customer_phone" class="form-label">Phone Number</label>
                                     <input 
                                         type="tel" 
                                         id="customer_phone" 
                                         name="customer_phone" 
                                         value="{{ old('customer_phone') }}"
-                                        class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                        class="form-input"
                                     >
                                     @error('customer_phone')
-                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        <span class="form-error">{{ $message }}</span>
                                     @enderror
                                 </div>
 
-                                <div>
-                                    <label for="customer_address" class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
+                                <div class="form-group">
+                                    <label for="customer_address" class="form-label">Address</label>
                                     <input 
                                         type="text" 
                                         id="customer_address" 
                                         name="customer_address" 
                                         value="{{ old('customer_address') }}"
-                                        class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                                        class="form-input"
                                     >
                                     @error('customer_address')
-                                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                        <span class="form-error">{{ $message }}</span>
                                     @enderror
                                 </div>
                             </div>
                         </div>
 
                         {{-- Payment Method --}}
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Payment Method</h2>
+                        <div class="checkout-form-section">
+                            <div class="checkout-section-header">
+                                <h2>Payment Method</h2>
+                                <p>Choose how you would like to pay</p>
+                            </div>
 
-                            <div class="space-y-3">
+                            <div class="payment-methods">
                                 @php
                                     $paymentMethods = [
                                         'paystack' => ['name' => 'Paystack', 'description' => 'Pay with card via Paystack', 'icon' => '💳'],
@@ -152,40 +159,43 @@
                                 @endphp
 
                                 @foreach($paymentMethods as $method => $details)
-                                    <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-orange-500 transition-colors">
+                                    <label class="payment-method-option {{ old('payment_method', 'paystack') === $method ? 'selected' : '' }}">
                                         <input 
                                             type="radio" 
                                             name="payment_method" 
                                             value="{{ $method }}" 
                                             {{ old('payment_method', 'paystack') === $method ? 'checked' : '' }}
                                             required
-                                            class="mt-1 text-orange-600 focus:ring-orange-500"
+                                            class="payment-method-radio"
                                         >
-                                        <div class="ml-3 flex-1">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-2xl">{{ $details['icon'] }}</span>
-                                                <span class="font-bold text-gray-900">{{ $details['name'] }}</span>
-                                            </div>
-                                            <p class="text-sm text-gray-600">{{ $details['description'] }}</p>
+                                        <div class="payment-method-icon">{{ $details['icon'] }}</div>
+                                        <div class="payment-method-details">
+                                            <h3 class="payment-method-name">{{ $details['name'] }}</h3>
+                                            <p class="payment-method-description">{{ $details['description'] }}</p>
                                         </div>
                                     </label>
                                 @endforeach
                             </div>
 
                             @error('payment_method')
-                                <p class="text-red-600 text-sm mt-2">{{ $message }}</p>
+                                <span class="form-error">{{ $message }}</span>
                             @enderror
                         </div>
 
                         {{-- Order Notes (Optional) --}}
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Order Notes (Optional)</h2>
-                            <textarea 
-                                name="notes" 
-                                rows="4" 
-                                placeholder="Any special requirements or notes about your order..."
-                                class="w-full rounded-lg border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                            >{{ old('notes') }}</textarea>
+                        <div class="checkout-form-section">
+                            <div class="checkout-section-header">
+                                <h2>Order Notes</h2>
+                                <p>Any special requirements or notes about your order (optional)</p>
+                            </div>
+                            <div class="form-group">
+                                <textarea 
+                                    name="notes" 
+                                    rows="4" 
+                                    placeholder="Any special requirements or notes about your order..."
+                                    class="form-textarea"
+                                >{{ old('notes') }}</textarea>
+                            </div>
                         </div>
 
                         {{-- Cart Items (Hidden for Validation) --}}
@@ -197,86 +207,123 @@
                         @endforeach
                     </div>
 
-                    {{-- Order Summary Sidebar --}}
-                    <div class="lg:col-span-1">
-                        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                            <h2 class="text-2xl font-bold text-gray-900 mb-6">Order Summary</h2>
+                {{-- Order Summary Sidebar --}}
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
 
                             {{-- Cart Items --}}
-                            <div class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+                            <div class="order-items">
                                 @foreach($cart['items'] as $item)
-                                    <div class="flex gap-3 pb-4 border-b border-gray-200">
-                                        <div class="w-16 h-16 rounded bg-gradient-to-br from-orange-500 to-orange-600 flex-shrink-0 flex items-center justify-center">
+                                    <div class="order-item">
+                                        <div class="order-item-image-container">
                                             @if($item['image_url'])
-                                                <img src="{{ $item['image_url'] }}" alt="{{ $item['service_title'] }}" class="w-full h-full object-cover rounded">
+                                                <img src="{{ $item['image_url'] }}" alt="{{ $item['service_title'] }}" class="order-item-image">
                                             @else
-                                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                                </svg>
+                                                <div class="order-item-image order-item-image-placeholder">
+                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                                    </svg>
+                                                </div>
                                             @endif
                                         </div>
-                                        <div class="flex-1 min-w-0">
-                                            <h4 class="font-semibold text-gray-900 text-sm">{{ $item['service_title'] }}</h4>
+                                        <div class="order-item-details">
+                                            <h4 class="order-item-name">{{ $item['service_title'] }}</h4>
                                             @if($item['variant_name'])
-                                                <p class="text-xs text-gray-600">{{ $item['variant_name'] }}</p>
+                                                <p class="order-item-variant">{{ $item['variant_name'] }}</p>
                                             @endif
-                                            <div class="flex justify-between items-center mt-1">
-                                                <span class="text-sm text-gray-600">Qty: {{ $item['quantity'] }}</span>
-                                                <span class="font-bold text-orange-600">${{ number_format($item['price'] * $item['quantity'], 2) }}</span>
-                                            </div>
+                                            <p class="order-item-quantity">Qty: {{ $item['quantity'] }}</p>
                                         </div>
+                                        <div class="order-item-price">${{ number_format($item['price'] * $item['quantity'], 2) }}</div>
                                     </div>
                                 @endforeach
                             </div>
 
                             {{-- Totals --}}
-                            <div class="space-y-3 mb-6">
-                                <div class="flex justify-between text-gray-700">
-                                    <span>Subtotal ({{ $cart['count'] }} items)</span>
-                                    <span class="font-semibold">{{ $cart['formatted_subtotal'] }}</span>
-                                </div>
-                                <div class="flex justify-between text-gray-700">
-                                    <span>Tax</span>
-                                    <span>$0.00</span>
-                                </div>
-                                <div class="border-t border-gray-200 pt-3">
-                                    <div class="flex justify-between text-2xl font-bold">
-                                        <span class="text-gray-900">Total</span>
-                                        <span class="text-orange-600">{{ $cart['formatted_subtotal'] }}</span>
-                                    </div>
+                            <div class="order-summary-row">
+                                <span class="order-summary-label">Subtotal ({{ $cart['count'] }} items)</span>
+                                <span class="order-summary-value">{{ $cart['formatted_subtotal'] }}</span>
+                            </div>
+                            <div class="order-summary-row">
+                                <span class="order-summary-label">Tax</span>
+                                <span class="order-summary-value">$0.00</span>
+                            </div>
+                            
+                            <div class="order-summary-divider"></div>
+                            
+                            <div class="order-total">
+                                <div class="order-summary-row">
+                                    <span class="order-summary-label">Total</span>
+                                    <span class="order-summary-value">{{ $cart['formatted_subtotal'] }}</span>
                                 </div>
                             </div>
 
                             {{-- Place Order Button --}}
-                            <button 
-                                type="submit" 
-                                class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-6 rounded-lg mb-3 transition-colors duration-200">
-                                Place Order
-                            </button>
+                            <div class="checkout-actions">
+                                <button 
+                                    type="submit" 
+                                    class="btn-place-order">
+                                    Place Order
+                                </button>
+                            </div>
 
-                            <a href="{{ route('cart.index') }}" class="block text-center text-orange-600 hover:text-orange-700 font-semibold">
-                                ← Back to Cart
-                            </a>
+                            <div style="text-align: center; margin-top: 16px;">
+                                <a href="{{ route('cart.index') }}" class="btn-back">
+                                    ← Back to Cart
+                                </a>
+                            </div>
 
                             {{-- Security Badges --}}
-                            <div class="mt-6 pt-6 border-t border-gray-200 space-y-2 text-sm text-gray-600">
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="security-badges">
+                                <div class="security-badge">
+                                    <svg class="security-badge-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
-                                    <span>Secure SSL Encryption</span>
+                                    <span>SSL Secure</span>
                                 </div>
-                                <div class="flex items-center gap-2">
-                                    <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="security-badge">
+                                    <svg class="security-badge-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
-                                    <span>Money-back Guarantee</span>
+                                    <span>Money-back</span>
                                 </div>
                             </div>
-                        </div>
-                    </div>
                 </div>
-            </form>
-        </div>
-    </section>
+            </div>
+        </form>
+    </div>
+
+    {{-- Checkout JavaScript --}}
+    <script>
+        // Handle payment method selection visual feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentOptions = document.querySelectorAll('.payment-method-option');
+            const radioInputs = document.querySelectorAll('input[name="payment_method"]');
+
+            radioInputs.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Remove selected class from all options
+                    paymentOptions.forEach(option => {
+                        option.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to the chosen option
+                    if (this.checked) {
+                        this.closest('.payment-method-option').classList.add('selected');
+                    }
+                });
+            });
+
+            // Form validation feedback
+            const form = document.getElementById('checkoutForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const submitButton = form.querySelector('.btn-place-order');
+                    if (submitButton) {
+                        submitButton.textContent = 'Processing...';
+                        submitButton.disabled = true;
+                    }
+                });
+            }
+        });
+    </script>
 </x-layouts.frontend>

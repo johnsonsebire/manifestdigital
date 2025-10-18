@@ -3,23 +3,17 @@
         @vite('resources/css/checkout.css')
     @endpush
 
-    <div class="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 text-center">
+    <div class="payment-processing">
+        <div class="payment-processing-content">
             <!-- Loading Spinner -->
-            <div class="flex justify-center">
-                <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-orange-600"></div>
+            <div class="payment-loader">
+                <div class="spinner"></div>
             </div>
             
-            <div>
-                <h2 class="text-3xl font-extrabold text-zinc-900 dark:text-white">
-                    Processing Payment
-                </h2>
-                <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    Please wait while we redirect you to the payment gateway...
-                </p>
-                <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
-                    Order #{{ $order->order_number }}
-                </p>
+            <div class="payment-processing-text">
+                <h2>Processing Payment</h2>
+                <p>Please wait while we redirect you to the payment gateway...</p>
+                <p class="order-number">Order #{{ $order->order_number }}</p>
             </div>
 
             <!-- Auto-submit form -->
