@@ -11,8 +11,12 @@
                 <div>
                     <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">{{ $project->title }}</h1>
                     <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                        Order <a href="{{ route('admin.orders.show', $project->order) }}" class="text-primary-600 hover:text-primary-700" wire:navigate>#{{ $project->order->order_number }}</a>
-                        • Customer: {{ $project->order->customer->name }}
+                        @if($project->order && $project->order->customer)
+                            Order <a href="{{ route('admin.orders.show', $project->order) }}" class="text-primary-600 hover:text-primary-700" wire:navigate>#{{ $project->order->order_number }}</a>
+                            • Customer: {{ $project->order->customer->name }}
+                        @else
+                            Independent Project • No associated order
+                        @endif
                     </p>
                 </div>
                 
@@ -109,32 +113,34 @@
                 @endif
 
                 <!-- Order Items -->
-                <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
-                    <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
-                        <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Order Items</h2>
-                    </div>
-                    <div class="p-6">
-                        <div class="space-y-4">
-                            @foreach($project->order->items as $item)
-                                <div class="flex justify-between items-start pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-0 last:pb-0">
-                                    <div class="flex-1">
-                                        <h3 class="font-medium text-zinc-900 dark:text-white">
-                                            {{ $item->service->title }}
-                                        </h3>
-                                        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                            Quantity: {{ $item->quantity }}
-                                        </p>
-                                    </div>
-                                    <div class="text-right">
-                                        <div class="font-medium text-zinc-900 dark:text-white">
-                                            ₦{{ number_format($item->subtotal, 2) }}
+                @if($project->order && $project->order->items)
+                    <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
+                        <div class="px-6 py-4 border-b border-zinc-200 dark:border-zinc-700">
+                            <h2 class="text-lg font-semibold text-zinc-900 dark:text-white">Order Items</h2>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                @foreach($project->order->items as $item)
+                                    <div class="flex justify-between items-start pb-4 border-b border-zinc-200 dark:border-zinc-700 last:border-0 last:pb-0">
+                                        <div class="flex-1">
+                                            <h3 class="font-medium text-zinc-900 dark:text-white">
+                                                {{ $item->service->title }}
+                                            </h3>
+                                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                                                Quantity: {{ $item->quantity }}
+                                            </p>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="font-medium text-zinc-900 dark:text-white">
+                                                ₦{{ number_format($item->subtotal, 2) }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Milestones -->
                 <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
@@ -762,12 +768,14 @@
                                 {{ $project->budget ? '₦' . number_format($project->budget, 2) : 'Not set' }}
                             </div>
                         </div>
-                        <div>
-                            <div class="text-zinc-500 dark:text-zinc-400">Order Total</div>
-                            <div class="text-zinc-900 dark:text-white mt-1">
-                                ₦{{ number_format($project->order->total_amount, 2) }}
+                        @if($project->order)
+                            <div>
+                                <div class="text-zinc-500 dark:text-zinc-400">Order Total</div>
+                                <div class="text-zinc-900 dark:text-white mt-1">
+                                    ₦{{ number_format($project->order->total_amount, 2) }}
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
 
@@ -1051,14 +1059,16 @@
                             </svg>
                             Edit Project Details
                         </a>
-                        <a href="{{ route('customer.orders.show', $project->order) }}" 
-                            class="flex items-center text-sm text-zinc-700 dark:text-zinc-300 hover:text-primary-600 dark:hover:text-primary-400"
-                            wire:navigate>
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                            </svg>
-                            View Related Order
-                        </a>
+                        @if($project->order)
+                            <a href="{{ route('customer.orders.show', $project->order) }}" 
+                                class="flex items-center text-sm text-zinc-700 dark:text-zinc-300 hover:text-primary-600 dark:hover:text-primary-400"
+                                wire:navigate>
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                </svg>
+                                View Related Order
+                            </a>
+                        @endif
                         @if($project->status !== 'cancelled')
                             <form method="POST" action="{{ route('admin.projects.destroy', $project) }}" onsubmit="return confirm('Are you sure? This will permanently delete the project.')">
                                 @csrf

@@ -198,14 +198,20 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="text-sm text-zinc-900 dark:text-white">
-                                            {{ $project->order->customer->name }}
-                                        </div>
-                                        <a href="{{ route('admin.orders.show', $project->order) }}" 
-                                            class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"
-                                            wire:navigate>
-                                            #{{ $project->order->order_number }}
-                                        </a>
+                                        @if($project->order && $project->order->customer)
+                                            <div class="text-sm text-zinc-900 dark:text-white">
+                                                {{ $project->order->customer->name }}
+                                            </div>
+                                            <a href="{{ route('admin.orders.show', $project->order) }}" 
+                                                class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                                                wire:navigate>
+                                                #{{ $project->order->order_number }}
+                                            </a>
+                                        @else
+                                            <div class="text-sm text-zinc-500 dark:text-zinc-400">
+                                                No customer assigned
+                                            </div>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">

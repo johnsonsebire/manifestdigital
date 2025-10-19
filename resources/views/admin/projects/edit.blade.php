@@ -9,8 +9,12 @@
             </a>
             <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Edit Project</h1>
             <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                Order <a href="{{ route('admin.orders.show', $project->order) }}" class="text-primary-600 hover:text-primary-700" wire:navigate>#{{ $project->order->order_number }}</a>
-                • Customer: {{ $project->order->customer->name }}
+                @if($project->order && $project->order->customer)
+                    Order <a href="{{ route('admin.orders.show', $project->order) }}" class="text-primary-600 hover:text-primary-700" wire:navigate>#{{ $project->order->order_number }}</a>
+                    • Customer: {{ $project->order->customer->name }}
+                @else
+                    Independent Project • No associated order
+                @endif
             </p>
         </div>
 
