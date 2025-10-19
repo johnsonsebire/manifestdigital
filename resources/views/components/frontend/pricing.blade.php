@@ -20,7 +20,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '250', 'period' => '/month'],
                 'cancelText' => 'Cancel anytime • 14-day guarantee',
                 'ctaText' => 'Start Building',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'website-essentials'),
                 'features' => [
                     'Up to 5 pages',
                     'Responsive design',
@@ -39,7 +39,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '500', 'period' => '/month'],
                 'cancelText' => 'Cancel anytime • 14-day guarantee',
                 'ctaText' => 'Get Professional',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'website-professional'),
                 'features' => [
                     'Up to 15 pages',
                     'Custom UI/UX design',
@@ -60,7 +60,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '1,500', 'period' => '/month'],
                 'cancelText' => 'Custom terms available',
                 'ctaText' => 'Talk to Sales',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'website-enterprise'),
                 'features' => [
                     'Unlimited pages',
                     'Premium custom design',
@@ -86,7 +86,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '2,500', 'period' => '/project'],
                 'cancelText' => '1-2 weeks delivery',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'basic-ui-ux-design'),
                 'features' => [
                     'Up to 3 screen designs',
                     'Wireframe sketches',
@@ -105,7 +105,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '6,000', 'period' => '/project'],
                 'cancelText' => '2-4 weeks delivery',
                 'ctaText' => 'Get Professional',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'professional-ui-ux-design'),
                 'features' => [
                     'Up to 10 screen designs',
                     'Interactive prototypes',
@@ -126,7 +126,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '10,000+', 'period' => ''],
                 'cancelText' => 'Custom timeline',
                 'ctaText' => 'Contact Us',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'enterprise-ui-ux-design'),
                 'features' => [
                     'Unlimited screens & flows',
                     'Advanced interactive prototypes',
@@ -152,7 +152,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '50', 'period' => '/month'],
                 'cancelText' => 'Annual billing available',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'starter-web-hosting'),
                 'features' => [
                     '5GB SSD storage',
                     '50GB bandwidth',
@@ -170,7 +170,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '150', 'period' => '/month'],
                 'cancelText' => 'Annual billing available',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'business-web-hosting'),
                 'features' => [
                     '25GB SSD storage',
                     '200GB bandwidth',
@@ -189,7 +189,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '400', 'period' => '/month'],
                 'cancelText' => 'Dedicated resources',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'premium-web-hosting'),
                 'features' => [
                     '100GB SSD storage',
                     'Unlimited bandwidth',
@@ -214,7 +214,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '300', 'period' => '/year'],
                 'cancelText' => 'Auto-renewal available',
                 'ctaText' => 'Register Now',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'com-domain-registration'),
                 'features' => [
                     'Free DNS management',
                     'Free WHOIS privacy',
@@ -230,7 +230,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '600', 'period' => '/year'],
                 'cancelText' => 'Local business identity',
                 'ctaText' => 'Register Now',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'gh-domain-registration'),
                 'features' => [
                     'Free DNS management',
                     'Local SEO advantage',
@@ -247,7 +247,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => 'Custom', 'period' => ''],
                 'cancelText' => 'Contact for pricing',
                 'ctaText' => 'Contact Us',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'premium-domain-acquisition'),
                 'features' => [
                     'Short & memorable names',
                     'Brandable domains',
@@ -269,7 +269,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '5,000', 'period' => 'starting'],
                 'cancelText' => '2-4 weeks delivery',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'simple-mobile-app'),
                 'features' => [
                     'iOS or Android (single platform)',
                     'Up to 5 screens',
@@ -287,7 +287,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '25,000', 'period' => 'starting'],
                 'cancelText' => '6-8 weeks delivery',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'professional-mobile-app'),
                 'features' => [
                     'iOS & Android (both platforms)',
                     'Up to 15 screens',
@@ -306,7 +306,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '50,000+', 'period' => ''],
                 'cancelText' => 'Custom timeline',
                 'ctaText' => 'Contact Us',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'enterprise-mobile-app'),
                 'features' => [
                     'Multi-platform (iOS, Android, Web)',
                     'Unlimited screens',
@@ -330,7 +330,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '500', 'period' => '/hour'],
                 'cancelText' => 'Minimum 2 hours',
                 'ctaText' => 'Book Session',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'hourly-technical-consulting'),
                 'features' => [
                     'Technical advice',
                     'Strategy planning',
@@ -347,7 +347,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '5,000', 'period' => '/month'],
                 'cancelText' => '10 hours included',
                 'ctaText' => 'Get Started',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'monthly-consulting-retainer'),
                 'features' => [
                     '10 consulting hours/month',
                     'Priority scheduling',
@@ -365,7 +365,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => 'Custom', 'period' => ''],
                 'cancelText' => 'Tailored to your needs',
                 'ctaText' => 'Contact Us',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'project-based-consulting'),
                 'features' => [
                     'Full project assessment',
                     'Technology selection',
@@ -388,7 +388,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '3,000', 'period' => '/period'],
                 'cancelText' => 'Flexible scheduling',
                 'ctaText' => 'Book Now',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'individual-technical-training'),
                 'features' => [
                     'Personalized curriculum',
                     'Hands-on exercises',
@@ -405,7 +405,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => '2,000', 'period' => '/period'],
                 'cancelText' => 'Full-day workshop',
                 'ctaText' => 'Book Workshop',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'team-technical-training'),
                 'features' => [
                     'Customized content',
                     'Interactive sessions',
@@ -423,7 +423,7 @@ $defaultPricingCategories = [
                 'price' => ['currency' => 'GH₵', 'amount' => 'Custom', 'period' => ''],
                 'cancelText' => 'Multi-day programs',
                 'ctaText' => 'Contact Us',
-                'ctaUrl' => '#',
+                'ctaUrl' => route('services.show', 'corporate-training-program'),
                 'features' => [
                     'Unlimited participants',
                     'Custom curriculum design',
