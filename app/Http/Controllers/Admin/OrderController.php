@@ -111,9 +111,10 @@ class OrderController extends Controller
         $this->authorize('manage-orders');
 
         $validated = $request->validate([
-            'customer_id' => 'required|exists:users,id',
-            'customer_name' => 'nullable|string|max:255',
-            'customer_email' => 'nullable|email|max:255',
+            'customer_type' => 'required|in:registered,manual',
+            'customer_id' => 'required_if:customer_type,registered|nullable|exists:users,id',
+            'customer_name' => 'required_if:customer_type,manual|nullable|string|max:255',
+            'customer_email' => 'required_if:customer_type,manual|nullable|email|max:255',
             'customer_phone' => 'nullable|string|max:20',
             'customer_address' => 'nullable|string|max:500',
             'status' => 'required|in:pending,initiated,paid,processing,completed,cancelled,refunded',
@@ -132,17 +133,9 @@ class OrderController extends Controller
         try {
             DB::beginTransaction();
 
-            // Get customer information
-            $customer = User::findOrFail($validated['customer_id']);
-
-            // Create order
-            $order = Order::create([
+            // Prepare order data
+            $orderData = [
                 'uuid' => Str::uuid(),
-                'customer_id' => $customer->id,
-                'customer_name' => $validated['customer_name'] ?: $customer->name,
-                'customer_email' => $validated['customer_email'] ?: $customer->email,
-                'customer_phone' => $validated['customer_phone'] ?: $customer->phone,
-                'customer_address' => $validated['customer_address'] ?: $customer->address,
                 'status' => $validated['status'],
                 'payment_status' => $validated['payment_status'],
                 'payment_method' => $validated['payment_method'],
@@ -157,7 +150,30 @@ class OrderController extends Controller
                     'creation_ip' => $request->ip(),
                 ],
                 'placed_at' => now(),
-            ]);
+            ];
+
+            if ($validated['customer_type'] === 'registered') {
+                // Registered customer
+                $customer = User::findOrFail($validated['customer_id']);
+                $orderData['customer_id'] = $customer->id;
+                $orderData['customer_name'] = $validated['customer_name'] ?: $customer->name;
+                $orderData['customer_email'] = $validated['customer_email'] ?: $customer->email;
+                $orderData['customer_phone'] = $validated['customer_phone'] ?: $customer->phone;
+                $orderData['customer_address'] = $validated['customer_address'] ?: $customer->address;
+            } else {
+                // Manual customer (non-registered)
+                $orderData['customer_id'] = null;
+                $orderData['customer_name'] = $validated['customer_name'];
+                $orderData['customer_email'] = $validated['customer_email'];
+                $orderData['customer_phone'] = $validated['customer_phone'];
+                $orderData['customer_address'] = $validated['customer_address'];
+                
+                // Add flag to metadata to indicate manual customer
+                $orderData['metadata']['is_manual_customer'] = true;
+            }
+
+            // Create order
+            $order = Order::create($orderData);
 
             // Create order items and calculate subtotal
             $subtotal = 0;
@@ -202,13 +218,18 @@ class OrderController extends Controller
             ]);
 
             // Log activity
+            $customerDisplay = $validated['customer_type'] === 'registered' 
+                ? User::find($validated['customer_id'])->name
+                : $validated['customer_name'];
+
             activity()
                 ->performedOn($order)
                 ->causedBy(auth()->user())
                 ->withProperties([
                     'order_total' => $total,
                     'items_count' => count($validated['items']),
-                    'customer_name' => $customer->name,
+                    'customer_name' => $customerDisplay,
+                    'customer_type' => $validated['customer_type'],
                 ])
                 ->log('Order created by staff');
 

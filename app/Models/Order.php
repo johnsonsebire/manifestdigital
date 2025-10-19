@@ -82,6 +82,24 @@ class Order extends Model
     }
 
     /**
+     * Get the customer name for display purposes.
+     * Returns the related customer's name if it exists, otherwise returns the manual customer name.
+     */
+    public function getCustomerDisplayName(): string
+    {
+        return $this->customer?->name ?? $this->customer_name ?? 'Unknown Customer';
+    }
+
+    /**
+     * Get the customer email for display purposes.
+     * Returns the related customer's email if it exists, otherwise returns the manual customer email.
+     */
+    public function getCustomerDisplayEmail(): string
+    {
+        return $this->customer?->email ?? $this->customer_email ?? 'No email provided';
+    }
+
+    /**
      * Get the order items for this order.
      */
     public function items(): HasMany

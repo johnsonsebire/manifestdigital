@@ -82,6 +82,40 @@ class Project extends Model
     }
 
     /**
+     * Get the client name for display purposes.
+     * Returns the related client's name if it exists, otherwise returns the order's customer name.
+     */
+    public function getClientDisplayName(): string
+    {
+        if ($this->client) {
+            return $this->client->name;
+        }
+        
+        if ($this->order) {
+            return $this->order->getCustomerDisplayName();
+        }
+        
+        return 'Unknown Client';
+    }
+
+    /**
+     * Get the client email for display purposes.
+     * Returns the related client's email if it exists, otherwise returns the order's customer email.
+     */
+    public function getClientDisplayEmail(): string
+    {
+        if ($this->client) {
+            return $this->client->email;
+        }
+        
+        if ($this->order) {
+            return $this->order->getCustomerDisplayEmail();
+        }
+        
+        return 'No email provided';
+    }
+
+    /**
      * Get the team members assigned to this project.
      */
     public function team(): BelongsToMany

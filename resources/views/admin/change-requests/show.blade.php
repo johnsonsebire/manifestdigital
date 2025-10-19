@@ -287,7 +287,7 @@
                                 Name
                             </label>
                             <p class="text-sm text-zinc-900 dark:text-white">
-                                {{ $changeRequest->order->customer->name ?? 'N/A' }}
+                                {{ $changeRequest->order->getCustomerDisplayName() }}
                             </p>
                         </div>
                         

@@ -212,14 +212,9 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
                                 {{ $order->order_number }}
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
-                                @if($order->customer)
-                                    <div>{{ $order->customer->name }}</div>
-                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->customer->email }}</div>
-                                @else
-                                    <div>{{ $order->customer_name ?? 'Guest' }}</div>
-                                    <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->customer_email ?? 'N/A' }}</div>
-                                @endif
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
+                                <div>{{ $order->getCustomerDisplayName() }}</div>
+                                <div class="text-xs text-zinc-500 dark:text-zinc-400">{{ $order->getCustomerDisplayEmail() }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-500 dark:text-zinc-400">
                                 {{ $order->items_count }} {{ Str::plural('item', $order->items_count) }}

@@ -107,10 +107,14 @@ class ProjectController extends Controller
         // Get the order to retrieve client_id
         $order = Order::findOrFail($validated['order_id']);
         
-        // Add client_id from order's customer
+        // Only set client_id if the order has a registered customer
+        // For manual customers (non-registered), client_id will be null
         $validated['client_id'] = $order->customer_id;
 
         $project = Project::create($validated);
+
+        // Update the order to link it to this project
+        $order->update(['assigned_project_id' => $project->id]);
 
         // Log activity
         ActivityLog::create([

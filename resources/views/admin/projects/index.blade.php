@@ -198,9 +198,9 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if($project->order && $project->order->customer)
+                                        @if($project->order)
                                             <div class="text-sm text-zinc-900 dark:text-white">
-                                                {{ $project->order->customer->name }}
+                                                {{ $project->order->getCustomerDisplayName() }}
                                             </div>
                                             <a href="{{ route('admin.orders.show', $project->order) }}" 
                                                 class="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"

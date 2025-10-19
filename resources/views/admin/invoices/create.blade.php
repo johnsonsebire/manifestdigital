@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Customer:</span>
-                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order ? $order->customer->name : 'N/A' }}</span>
+                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{{ $order ? $order->getCustomerDisplayName() : 'N/A' }}</span>
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Order Total:</span>

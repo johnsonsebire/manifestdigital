@@ -29,12 +29,35 @@
                     <div class="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4">
                         <h3 class="text-base font-medium text-zinc-900 dark:text-white mb-4">Customer Information</h3>
                         
-                        <!-- Customer Selection -->
+                        <!-- Customer Type Selection -->
                         <div class="mb-4">
-                            <label for="customer_id" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                                Customer <span class="text-red-500">*</span>
+                            <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                Customer Type <span class="text-red-500">*</span>
                             </label>
-                            <select name="customer_id" id="customer_id" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_id') border-red-500 @enderror" required>
+                            <div class="space-y-2">
+                                <label class="flex items-center">
+                                    <input type="radio" name="customer_type" value="registered" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-zinc-300 dark:border-zinc-600" {{ old('customer_type', 'registered') == 'registered' ? 'checked' : '' }}>
+                                    <span class="ml-2 text-sm text-zinc-700 dark:text-zinc-300">Registered Customer</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="customer_type" value="manual" class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-zinc-300 dark:border-zinc-600" {{ old('customer_type') == 'manual' ? 'checked' : '' }}>
+                                    <span class="ml-2 text-sm text-zinc-700 dark:text-zinc-300">New Customer (Manual Entry)</span>
+                                </label>
+                            </div>
+                            <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                                Choose "Registered Customer" to select from existing customers, or "New Customer" to create an order for someone not yet registered.
+                            </p>
+                            @error('customer_type')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Registered Customer Selection -->
+                        <div id="registeredCustomerSection" class="mb-4">
+                            <label for="customer_id" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                                Select Customer <span class="text-red-500">*</span>
+                            </label>
+                            <select name="customer_id" id="customer_id" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_id') border-red-500 @enderror">
                                 <option value="">Select a customer...</option>
                                 @foreach($customers as $customer)
                                     <option value="{{ $customer->id }}" 
@@ -52,19 +75,23 @@
                             @enderror
                         </div>
 
-                        <!-- Customer Details (Auto-filled) -->
+                        <!-- Customer Details -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="customer_name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Customer Name</label>
-                                <input type="text" name="customer_name" id="customer_name" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_name') border-red-500 @enderror" value="{{ old('customer_name') }}" placeholder="Will be filled automatically">
+                                <label for="customer_name" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                                    Customer Name <span class="text-red-500 manual-required">*</span>
+                                </label>
+                                <input type="text" name="customer_name" id="customer_name" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_name') border-red-500 @enderror" value="{{ old('customer_name') }}" placeholder="Enter customer name">
                                 @error('customer_name')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <div>
-                                <label for="customer_email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Customer Email</label>
-                                <input type="email" name="customer_email" id="customer_email" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_email') border-red-500 @enderror" value="{{ old('customer_email') }}" placeholder="Will be filled automatically">
+                                <label for="customer_email" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                                    Customer Email <span class="text-red-500 manual-required">*</span>
+                                </label>
+                                <input type="email" name="customer_email" id="customer_email" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_email') border-red-500 @enderror" value="{{ old('customer_email') }}" placeholder="Enter customer email">
                                 @error('customer_email')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
@@ -72,7 +99,7 @@
 
                             <div>
                                 <label for="customer_phone" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Customer Phone</label>
-                                <input type="text" name="customer_phone" id="customer_phone" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_phone') border-red-500 @enderror" value="{{ old('customer_phone') }}" placeholder="Will be filled automatically">
+                                <input type="text" name="customer_phone" id="customer_phone" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_phone') border-red-500 @enderror" value="{{ old('customer_phone') }}" placeholder="Enter customer phone">
                                 @error('customer_phone')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
@@ -80,7 +107,7 @@
 
                             <div class="md:col-span-2">
                                 <label for="customer_address" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Customer Address</label>
-                                <textarea name="customer_address" id="customer_address" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_address') border-red-500 @enderror" rows="2" placeholder="Will be filled automatically">{{ old('customer_address') }}</textarea>
+                                <textarea name="customer_address" id="customer_address" class="w-full rounded-md border-zinc-300 dark:border-zinc-600 dark:bg-zinc-700 dark:text-white shadow-sm focus:border-primary-500 focus:ring-primary-500 @error('customer_address') border-red-500 @enderror" rows="2" placeholder="Enter customer address">{{ old('customer_address') }}</textarea>
                                 @error('customer_address')
                                     <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                                 @enderror
@@ -273,13 +300,67 @@
         let itemIndex = 0;
         const services = @json($services);
         
-        // Auto-fill customer information
-        document.getElementById('customer_id').addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            document.getElementById('customer_name').value = selectedOption.dataset.name || '';
-            document.getElementById('customer_email').value = selectedOption.dataset.email || '';
-            document.getElementById('customer_phone').value = selectedOption.dataset.phone || '';
-            document.getElementById('customer_address').value = selectedOption.dataset.address || '';
+        // Customer type handling
+        const customerTypeRadios = document.querySelectorAll('input[name="customer_type"]');
+        const registeredSection = document.getElementById('registeredCustomerSection');
+        const customerSelect = document.getElementById('customer_id');
+        const manualRequired = document.querySelectorAll('.manual-required');
+        
+        function toggleCustomerType() {
+            const selectedType = document.querySelector('input[name="customer_type"]:checked').value;
+            
+            if (selectedType === 'registered') {
+                registeredSection.style.display = 'block';
+                customerSelect.required = true;
+                
+                // Hide manual required indicators
+                manualRequired.forEach(element => {
+                    element.style.display = 'none';
+                });
+                
+                // Clear manual fields when switching to registered
+                if (customerSelect.value) {
+                    const selectedOption = customerSelect.options[customerSelect.selectedIndex];
+                    document.getElementById('customer_name').value = selectedOption.dataset.name || '';
+                    document.getElementById('customer_email').value = selectedOption.dataset.email || '';
+                    document.getElementById('customer_phone').value = selectedOption.dataset.phone || '';
+                    document.getElementById('customer_address').value = selectedOption.dataset.address || '';
+                }
+            } else {
+                registeredSection.style.display = 'none';
+                customerSelect.required = false;
+                customerSelect.value = '';
+                
+                // Show manual required indicators
+                manualRequired.forEach(element => {
+                    element.style.display = 'inline';
+                });
+                
+                // Clear fields for manual entry
+                document.getElementById('customer_name').value = '';
+                document.getElementById('customer_email').value = '';
+                document.getElementById('customer_phone').value = '';
+                document.getElementById('customer_address').value = '';
+            }
+        }
+        
+        // Initialize customer type on page load
+        toggleCustomerType();
+        
+        // Listen for customer type changes
+        customerTypeRadios.forEach(radio => {
+            radio.addEventListener('change', toggleCustomerType);
+        });
+
+        // Auto-fill customer information for registered customers
+        customerSelect.addEventListener('change', function() {
+            if (document.querySelector('input[name="customer_type"]:checked').value === 'registered') {
+                const selectedOption = this.options[this.selectedIndex];
+                document.getElementById('customer_name').value = selectedOption.dataset.name || '';
+                document.getElementById('customer_email').value = selectedOption.dataset.email || '';
+                document.getElementById('customer_phone').value = selectedOption.dataset.phone || '';
+                document.getElementById('customer_address').value = selectedOption.dataset.address || '';
+            }
         });
 
         // Add first item on page load
@@ -391,6 +472,26 @@
 
         // Form validation
         document.getElementById('orderForm').addEventListener('submit', function(e) {
+            const customerType = document.querySelector('input[name="customer_type"]:checked').value;
+            
+            // Validate customer information
+            if (customerType === 'registered') {
+                if (!customerSelect.value) {
+                    e.preventDefault();
+                    alert('Please select a registered customer.');
+                    return false;
+                }
+            } else {
+                const customerName = document.getElementById('customer_name').value.trim();
+                const customerEmail = document.getElementById('customer_email').value.trim();
+                
+                if (!customerName || !customerEmail) {
+                    e.preventDefault();
+                    alert('Please fill in customer name and email for manual entry.');
+                    return false;
+                }
+            }
+            
             if (document.querySelectorAll('.order-item').length === 0) {
                 e.preventDefault();
                 alert('Please add at least one order item.');

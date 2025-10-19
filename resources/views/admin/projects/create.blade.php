@@ -31,7 +31,7 @@
                             <option value="">Choose an order...</option>
                             @forelse($orders as $order)
                                 <option value="{{ $order->id }}" {{ old('order_id') == $order->id ? 'selected' : '' }}>
-                                    #{{ $order->order_number }} - {{ $order->customer->name }} ({{ $order->items->count() }} items, ₦{{ number_format($order->total, 2) }})
+                                    #{{ $order->order_number }} - {{ $order->getCustomerDisplayName() }} ({{ $order->items->count() }} items, ₦{{ number_format($order->total, 2) }})
                                 </option>
                             @empty
                                 <option value="" disabled>No orders available (all orders have projects or are cancelled)</option>

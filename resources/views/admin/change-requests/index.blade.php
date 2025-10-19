@@ -104,8 +104,8 @@
                                         </a>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-zinc-900 dark:text-white">{{ $request->order->customer->name ?? 'N/A' }}</div>
-                                        <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $request->order->customer->email ?? '' }}</div>
+                                        <div class="text-sm text-zinc-900 dark:text-white">{{ $request->order->getCustomerDisplayName() }}</div>
+                                        <div class="text-sm text-zinc-500 dark:text-zinc-400">{{ $request->order->getCustomerDisplayEmail() }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="text-sm text-zinc-900 dark:text-white">

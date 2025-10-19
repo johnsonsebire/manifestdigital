@@ -226,7 +226,7 @@
                             <div>
                                 <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Name</div>
                                 <div class="mt-1 text-sm text-zinc-900 dark:text-white">
-                                    {{ $order->customer ? $order->customer->name : ($order->customer_name ?? 'Guest') }}
+                                    {{ $order->getCustomerDisplayName() }}
                                 </div>
                             </div>
                             <div>
