@@ -37,6 +37,18 @@ class DatabaseSeeder extends Seeder
         // Seed tax system
         $this->call(TaxSeeder::class);
 
+        // Seed currency system (must come before services and regional pricing)
+        $this->call(CurrencySeeder::class);
+
+        // Seed service categories (must come before services)
+        $this->call(CategorySeeder::class);
+
+        // Seed services (must come before regional pricing)
+        $this->call(ServiceSeeder::class);
+
+        // Seed regional pricing (must come after currencies and services)
+        $this->call(RegionalPricingSeeder::class);
+
         // Create a test user for development
         if (app()->environment('local', 'development')) {
             User::factory()->create([

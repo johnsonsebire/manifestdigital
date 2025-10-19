@@ -114,7 +114,8 @@ class Currency extends Model
         $formatted = number_format($amount, $this->decimal_places);
         
         if ($this->format) {
-            return str_replace(['{{amount}}', '{{symbol}}'], [$formatted, $this->symbol], $this->format);
+            // Support both {amount} and {{amount}} template formats for backward compatibility
+            return str_replace(['{amount}', '{{amount}}', '{symbol}', '{{symbol}}'], [$formatted, $formatted, $this->symbol, $this->symbol], $this->format);
         }
         
         return $this->symbol . $formatted;
