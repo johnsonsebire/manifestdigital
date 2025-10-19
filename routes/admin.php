@@ -124,12 +124,12 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
         // Activity Logs
         Route::controller(ActivityLogController::class)->prefix('activity-logs')->name('activity-logs.')->group(function () {
             Route::get('/', 'index')->name('index');
-            Route::get('/{activity}', 'show')->name('show');
             Route::delete('/cleanup', 'cleanup')->name('cleanup');
             Route::get('/export/csv', 'export')->name('export');
             Route::get('/statistics', 'statistics')->name('statistics');
             Route::get('/timeline', 'timeline')->name('timeline');
             Route::get('/recent', 'recent')->name('recent');
+            Route::get('/{activity}', 'show')->name('show');
         });
 
         // Email Preview (for development/testing)

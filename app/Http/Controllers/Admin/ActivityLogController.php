@@ -233,18 +233,51 @@ class ActivityLogController extends Controller
      */
     public function timeline(Request $request)
     {
-        $request->validate([
-            'subject_type' => 'required|string',
-            'subject_id' => 'required|integer',
-        ]);
+        try {
+            $request->validate([
+                'subject_type' => 'required|string',
+                'subject_id' => 'required|integer',
+            ]);
 
-        $activities = Activity::where('subject_type', $request->subject_type)
-            ->where('subject_id', $request->subject_id)
-            ->with('causer')
-            ->latest()
-            ->paginate(20);
+            $activities = Activity::where('subject_type', $request->subject_type)
+                ->where('subject_id', $request->subject_id)
+                ->with('causer')
+                ->latest()
+                ->limit(20)
+                ->get()
+                ->map(function ($activity) {
+                    return [
+                        'id' => $activity->id,
+                        'description' => $activity->description,
+                        'event' => $activity->event,
+                        'log_name' => $activity->log_name,
+                        'created_at' => $activity->created_at->toISOString(),
+                        'causer' => $activity->causer ? [
+                            'id' => $activity->causer->id,
+                            'name' => $activity->causer->name,
+                        ] : null,
+                    ];
+                });
 
-        return response()->json($activities);
+            return response()->json([
+                'success' => true,
+                'data' => $activities,
+                'count' => $activities->count(),
+                'debug' => [
+                    'subject_type' => $request->subject_type,
+                    'subject_id' => $request->subject_id,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+                'debug' => [
+                    'subject_type' => $request->get('subject_type'),
+                    'subject_id' => $request->get('subject_id'),
+                ]
+            ], 500);
+        }
     }
 
     /**

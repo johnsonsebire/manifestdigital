@@ -1,9 +1,6 @@
-@extends('components.layouts.admin')
-
-@section('title', 'Activity Logs')
-
-@section('content')
-<div class="space-y-6">
+<x-layouts.app :title="__('Activity Logs')">
+    <div class="p-6">
+        <div class="space-y-6">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -296,8 +293,8 @@
         </div>
     </div>
 </div>
-
-@endsection
+        </div>
+    </div>
 
 @push('scripts')
 <script>
@@ -321,3 +318,4 @@ document.getElementById('cleanup-modal').addEventListener('click', function(e) {
 });
 </script>
 @endpush
+</x-layouts.app>

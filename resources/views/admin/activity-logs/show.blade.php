@@ -1,9 +1,6 @@
-@extends('components.layouts.admin')
-
-@section('title', 'Activity Log Details')
-
-@section('content')
-<div class="space-y-6">
+<x-layouts.app :title="__('Activity Log Details')">
+    <div class="p-6">
+        <div class="space-y-6">
     <!-- Header -->
     <div class="flex items-center space-x-4">
         <a href="{{ route('admin.activity-logs.index') }}" 
@@ -219,19 +216,23 @@
         </div>
     </div>
     @endif
-</div>
-@endsection
-
+        </div>
+    </div>
 @if($activity->subject_type && $activity->subject_id)
 @push('scripts')
 <script>
 // Load related activities
 fetch('/admin/activity-logs/timeline?subject_type={{ urlencode($activity->subject_type) }}&subject_id={{ $activity->subject_id }}')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         const container = document.getElementById('related-activities');
         
-        if (data.data && data.data.length > 0) {
+        if (data.success && data.data && data.data.length > 0) {
             container.innerHTML = data.data.map(activity => `
                 <div class="px-4 py-3 flex items-center justify-between">
                     <div class="flex items-center min-w-0 flex-1">
@@ -261,7 +262,7 @@ fetch('/admin/activity-logs/timeline?subject_type={{ urlencode($activity->subjec
     .catch(error => {
         console.error('Error loading related activities:', error);
         document.getElementById('related-activities').innerHTML = 
-            '<div class="px-4 py-3 text-center text-red-500">Error loading related activities.</div>';
+            '<div class="px-4 py-3 text-center text-red-500">Error loading related activities. Check console for details.</div>';
     });
 
 function getEventBadgeClass(event) {
@@ -279,3 +280,4 @@ function formatDate(dateString) {
 </script>
 @endpush
 @endif
+</x-layouts.app>

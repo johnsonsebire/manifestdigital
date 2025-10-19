@@ -116,12 +116,102 @@ class PagesController extends Controller
     }
 
     /**
-     * Show the Contact page.
+     * Show the Mobile App Design page.
      *
      * @return \Illuminate\View\View
      */
-    public function contact()
+    public function mobileAppDesign()
     {
-        return view('pages.contact');
+        return view('pages.mobile-app-design');
+    }
+
+    /**
+     * Show the Website Development page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function websiteDevelopment()
+    {
+        return view('pages.website-development');
+    }
+
+    /**
+     * Show the SAP Consulting page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function sapConsulting()
+    {
+        return view('pages.sap-consulting');
+    }
+
+    /**
+     * Show the Brand Positioning page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function brandPositioning()
+    {
+        return view('pages.brand-positioning');
+    }
+
+    /**
+     * Show the IT Training page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function itTraining()
+    {
+        return view('pages.it-training');
+    }
+
+    /**
+     * Show the SEO Services page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function seoServices()
+    {
+        return view('pages.seo-services');
+    }
+
+    /**
+     * Show the QA Testing page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function qaTesting()
+    {
+        return view('pages.qa-testing');
+    }
+
+    /**
+     * Show the Blockchain Solutions page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function blockchainSolutions()
+    {
+        return view('pages.blockchain-solutions');
+    }
+
+    /**
+     * Show the Cyber Security page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function cyberSecurity()
+    {
+        return view('pages.cyber-security');
+    }
+
+    /**
+     * Show the Cloud Computing page.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function cloudComputing()
+    {
+        return view('pages.cloud-computing');
     }
 }
