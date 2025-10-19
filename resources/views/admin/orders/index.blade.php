@@ -5,6 +5,14 @@
                 <h1 class="text-2xl font-bold text-zinc-900 dark:text-white">Order Management</h1>
                 <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Manage and track customer orders</p>
             </div>
+            <div>
+                <a href="{{ route('admin.orders.create') }}" class="inline-flex items-center px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Create Order
+                </a>
+            </div>
         </header>
 
         <!-- Statistics Cards -->
@@ -274,6 +282,5 @@
                 {{ $orders->links() }}
             </div>
         @endif
-        </div>
     </div>
 </x-layouts.app>

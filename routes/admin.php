@@ -26,6 +26,8 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
         // Order Management
         Route::controller(OrderController::class)->prefix('orders')->name('orders.')->group(function () {
             Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
             Route::get('/{order}', 'show')->name('show');
             
             // Order actions

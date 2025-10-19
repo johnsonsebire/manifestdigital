@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Payment;
 use App\Models\Project;
+use App\Models\Service;
+use App\Models\ServiceVariant;
 use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
@@ -78,6 +82,148 @@ class OrderController extends Controller
         ];
 
         return view('admin.orders.index', compact('orders', 'stats', 'customers'));
+    }
+
+    /**
+     * Show the form for creating a new order.
+     */
+    public function create()
+    {
+        $this->authorize('manage-orders');
+
+        // Get customers for dropdown
+        $customers = User::role('Customer')->orderBy('name')->get();
+
+        // Get available services with variants
+        $services = Service::with('variants')
+            ->where('available', true)
+            ->orderBy('title')
+            ->get();
+
+        return view('admin.orders.create', compact('customers', 'services'));
+    }
+
+    /**
+     * Store a newly created order.
+     */
+    public function store(Request $request)
+    {
+        $this->authorize('manage-orders');
+
+        $validated = $request->validate([
+            'customer_id' => 'required|exists:users,id',
+            'customer_name' => 'nullable|string|max:255',
+            'customer_email' => 'nullable|email|max:255',
+            'customer_phone' => 'nullable|string|max:20',
+            'customer_address' => 'nullable|string|max:500',
+            'status' => 'required|in:pending,initiated,paid,processing,completed,cancelled,refunded',
+            'payment_status' => 'required|in:unpaid,pending,paid,partial,refunded',
+            'payment_method' => 'nullable|string|in:paystack,stripe,paypal,bank_transfer',
+            'items' => 'required|array|min:1',
+            'items.*.service_id' => 'required|exists:services,id',
+            'items.*.variant_id' => 'nullable|exists:service_variants,id',
+            'items.*.quantity' => 'required|integer|min:1|max:100',
+            'items.*.unit_price' => 'required|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0',
+            'tax' => 'nullable|numeric|min:0',
+            'notes' => 'nullable|string|max:2000',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Get customer information
+            $customer = User::findOrFail($validated['customer_id']);
+
+            // Create order
+            $order = Order::create([
+                'uuid' => Str::uuid(),
+                'customer_id' => $customer->id,
+                'customer_name' => $validated['customer_name'] ?: $customer->name,
+                'customer_email' => $validated['customer_email'] ?: $customer->email,
+                'customer_phone' => $validated['customer_phone'] ?: $customer->phone,
+                'customer_address' => $validated['customer_address'] ?: $customer->address,
+                'status' => $validated['status'],
+                'payment_status' => $validated['payment_status'],
+                'payment_method' => $validated['payment_method'],
+                'subtotal' => 0, // Will be calculated
+                'discount' => $validated['discount'] ?? 0,
+                'tax' => $validated['tax'] ?? 0,
+                'total' => 0, // Will be calculated
+                'notes' => $validated['notes'],
+                'metadata' => [
+                    'created_by_staff' => auth()->id(),
+                    'created_by_staff_name' => auth()->user()->name,
+                    'creation_ip' => $request->ip(),
+                ],
+                'placed_at' => now(),
+            ]);
+
+            // Create order items and calculate subtotal
+            $subtotal = 0;
+            foreach ($validated['items'] as $item) {
+                $service = Service::findOrFail($item['service_id']);
+                
+                // Get variant name if variant is specified
+                $variantName = null;
+                if (!empty($item['variant_id'])) {
+                    $variant = ServiceVariant::findOrFail($item['variant_id']);
+                    // Ensure variant belongs to the service
+                    if ($variant->service_id !== $service->id) {
+                        throw new \Exception("Variant does not belong to the selected service.");
+                    }
+                    $variantName = $variant->name;
+                }
+
+                $lineTotal = $item['unit_price'] * $item['quantity'];
+                $subtotal += $lineTotal;
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'service_id' => $item['service_id'],
+                    'variant_id' => $item['variant_id'] ?? null,
+                    'title' => $service->title,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['unit_price'],
+                    'line_total' => $lineTotal,
+                    'metadata' => [
+                        'variant_name' => $variantName,
+                        'type' => $service->type,
+                        'created_by_staff' => auth()->id(),
+                    ],
+                ]);
+            }
+
+            // Update order totals
+            $total = $subtotal - $order->discount + $order->tax;
+            $order->update([
+                'subtotal' => $subtotal,
+                'total' => $total,
+            ]);
+
+            // Log activity
+            activity()
+                ->performedOn($order)
+                ->causedBy(auth()->user())
+                ->withProperties([
+                    'order_total' => $total,
+                    'items_count' => count($validated['items']),
+                    'customer_name' => $customer->name,
+                ])
+                ->log('Order created by staff');
+
+            DB::commit();
+
+            return redirect()
+                ->route('admin.orders.show', $order)
+                ->with('success', 'Order created successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()
+                ->withInput()
+                ->with('error', 'Failed to create order: ' . $e->getMessage());
+        }
     }
 
     /**

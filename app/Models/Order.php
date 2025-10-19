@@ -218,6 +218,14 @@ class Order extends Model
     }
 
     /**
+     * Get the order number (uses UUID for display).
+     */
+    public function getOrderNumberAttribute(): string
+    {
+        return strtoupper(substr($this->uuid, 0, 8));
+    }
+
+    /**
      * Configure activity logging options.
      */
     public function getActivitylogOptions(): LogOptions
