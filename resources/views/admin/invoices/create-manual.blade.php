@@ -205,7 +205,7 @@
                             <div class="col-span-2">
                                 <label class="block text-sm font-medium text-zinc-900 dark:text-white mb-1">Line Total</label>
                                 <div class="h-10 flex items-center px-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-300 dark:border-zinc-600">
-                                    <span class="line-total text-sm font-medium text-zinc-900 dark:text-white">$0.00</span>
+                                    <span class="line-total text-sm font-medium text-zinc-900 dark:text-white">{{ $userCurrency->symbol }}0.00</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-end">
@@ -263,22 +263,22 @@
                         <div class="space-y-2 text-sm">
                             <div class="flex justify-between">
                                 <span class="text-zinc-600 dark:text-zinc-400">Subtotal:</span>
-                                <span class="font-medium text-zinc-900 dark:text-white" id="subtotal-preview">$0.00</span>
+                                <span class="font-medium text-zinc-900 dark:text-white" id="subtotal-preview">{{ $userCurrency->symbol }}0.00</span>
                             </div>
                             
                             <div class="flex justify-between">
                                 <span class="text-zinc-600 dark:text-zinc-400">Discount:</span>
-                                <span class="font-medium text-zinc-900 dark:text-white" id="discount-preview">$0.00</span>
+                                <span class="font-medium text-zinc-900 dark:text-white" id="discount-preview">{{ $userCurrency->symbol }}0.00</span>
                             </div>
                             
                             <div class="flex justify-between">
                                 <span class="text-zinc-600 dark:text-zinc-400">Tax:</span>
-                                <span class="font-medium text-zinc-900 dark:text-white" id="tax-preview">$0.00</span>
+                                <span class="font-medium text-zinc-900 dark:text-white" id="tax-preview">{{ $userCurrency->symbol }}0.00</span>
                             </div>
                             
                             <div class="flex justify-between pt-2 border-t border-zinc-200 dark:border-zinc-700 font-semibold">
                                 <span class="text-zinc-900 dark:text-white">Total:</span>
-                                <span class="text-zinc-900 dark:text-white" id="total-preview">$0.00</span>
+                                <span class="text-zinc-900 dark:text-white" id="total-preview">{{ $userCurrency->symbol }}0.00</span>
                             </div>
                         </div>
                     </div>
@@ -379,7 +379,7 @@
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-zinc-900 dark:text-white mb-1">Line Total</label>
                     <div class="h-10 flex items-center px-3 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-300 dark:border-zinc-600">
-                        <span class="line-total text-sm font-medium text-zinc-900 dark:text-white">$0.00</span>
+                        <span class="line-total text-sm font-medium text-zinc-900 dark:text-white">{{ $userCurrency->symbol }}0.00</span>
                     </div>
                 </div>
                 <div class="col-span-1 flex items-end">

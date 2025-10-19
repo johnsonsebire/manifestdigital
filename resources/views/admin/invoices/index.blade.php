@@ -179,10 +179,10 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
-                                    ${{ number_format($invoice->total_amount, 2) }}
+                                    {!! $currencyService->formatAmount($invoice->total_amount ?? 0, $userCurrency->code) !!}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-zinc-900 dark:text-white">
-                                    ${{ number_format($invoice->balance_due, 2) }}
+                                    {!! $currencyService->formatAmount($invoice->balance_due ?? 0, $userCurrency->code) !!}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <flux:badge :color="$invoice->status_color" size="sm">

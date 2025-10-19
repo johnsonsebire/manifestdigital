@@ -132,7 +132,7 @@
                                         </div>
                                         <div class="text-right">
                                             <div class="font-medium text-zinc-900 dark:text-white">
-                                                ₦{{ number_format($item->subtotal, 2) }}
+                                                {!! $currencyService->formatAmount($item->line_total ?? 0, $userCurrency->code) !!}
                                             </div>
                                         </div>
                                     </div>
@@ -772,7 +772,7 @@
                             <div>
                                 <div class="text-zinc-500 dark:text-zinc-400">Order Total</div>
                                 <div class="text-zinc-900 dark:text-white mt-1">
-                                    ₦{{ number_format($project->order->total_amount, 2) }}
+                                    {!! $currencyService->formatAmount($project->order->total ?? 0, $userCurrency->code) !!}
                                 </div>
                             </div>
                         @endif

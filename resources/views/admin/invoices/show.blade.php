@@ -366,7 +366,7 @@
                                     {{ \Carbon\Carbon::parse($payment['date'])->format('M d, Y') }}
                                 </td>
                                 <td class="px-4 py-3 text-sm font-medium text-green-600 dark:text-green-400">
-                                    ${{ number_format($payment['amount'], 2) }}
+                                    {!! $currencyService->formatAmount($payment['amount'] ?? 0, $userCurrency->code) !!}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-zinc-900 dark:text-white">
                                     {{ ucfirst(str_replace('_', ' ', $payment['payment_method'] ?? 'N/A')) }}

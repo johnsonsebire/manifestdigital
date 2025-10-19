@@ -113,11 +113,11 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white">
-                                        GHS {{ number_format($request->order->total_amount, 2) }}
+                                        {!! $currencyService->formatAmount($request->order->total_amount ?? 0, $userCurrency->code) !!}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold">
                                         <span class="{{ $request->proposed_amount > $request->order->total_amount ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
-                                            GHS {{ number_format($request->proposed_amount, 2) }}
+                                            {!! $currencyService->formatAmount($request->proposed_amount ?? 0, $userCurrency->code) !!}
                                         </span>
                                         <span class="text-xs text-zinc-500 dark:text-zinc-400 ml-1">
                                             ({{ $request->proposed_amount > $request->order->total_amount ? '+' : '' }}{{ number_format($request->proposed_amount - $request->order->total_amount, 2) }})

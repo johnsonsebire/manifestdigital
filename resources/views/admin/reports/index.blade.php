@@ -59,9 +59,9 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Revenue</p>
-                        <p class="mt-2 text-3xl font-semibold text-zinc-900 dark:text-white">GHS {{ number_format($summary['revenue']['total'], 2) }}</p>
+                        <p class="mt-2 text-3xl font-semibold text-zinc-900 dark:text-white">{!! $currencyService->formatAmount($summary['revenue']['total'] ?? 0, $userCurrency->code) !!}</p>
                         <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                            GHS {{ number_format($summary['revenue']['this_month'], 2) }} this month
+                            {!! $currencyService->formatAmount($summary['revenue']['this_month'] ?? 0, $userCurrency->code) !!} this month
                         </p>
                     </div>
                     <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
@@ -71,7 +71,7 @@
                     </div>
                 </div>
                 <div class="mt-4 text-xs text-zinc-600 dark:text-zinc-400">
-                    YTD: GHS {{ number_format($summary['revenue']['this_year'], 2) }}
+                    YTD: {!! $currencyService->formatAmount($summary['revenue']['this_year'] ?? 0, $userCurrency->code) !!}
                 </div>
             </div>
 
@@ -115,7 +115,7 @@
                 </div>
                 <div class="mt-4 flex justify-between text-xs">
                     <span class="text-red-600 dark:text-red-400">{{ $summary['invoices']['overdue'] }} overdue</span>
-                    <span class="text-zinc-600 dark:text-zinc-400">GHS {{ number_format($summary['invoices']['outstanding'], 2) }} due</span>
+                    <span class="text-zinc-600 dark:text-zinc-400">{!! $currencyService->formatAmount($summary['invoices']['outstanding'] ?? 0, $userCurrency->code) !!} due</span>
                 </div>
             </div>
         </div>
@@ -163,7 +163,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-zinc-600 dark:text-zinc-400">Outstanding</p>
-                        <p class="text-2xl font-bold text-amber-600">GHS {{ number_format($invoices['total_outstanding'], 2) }}</p>
+                        <p class="text-2xl font-bold text-amber-600">{!! $currencyService->formatAmount($invoices['total_outstanding'] ?? 0, $userCurrency->code) !!}</p>
                     </div>
                 </div>
                 <canvas id="invoiceStatusChart" height="200"></canvas>
@@ -189,7 +189,7 @@
                                 <p class="text-sm text-zinc-600 dark:text-zinc-400">{{ $service['times_ordered'] }} orders • {{ $service['total_quantity'] }} units</p>
                             </div>
                             <div class="text-right">
-                                <p class="font-semibold text-green-600 dark:text-green-400">GHS {{ number_format($service['total_revenue'], 2) }}</p>
+                                <p class="font-semibold text-green-600 dark:text-green-400">{!! $currencyService->formatAmount($service['total_revenue'] ?? 0, $userCurrency->code) !!}</p>
                             </div>
                         </div>
                     @empty
@@ -225,7 +225,7 @@
                                     {{ $customer['order_count'] }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold text-green-600 dark:text-green-400">
-                                    GHS {{ number_format($customer['total_revenue'], 2) }}
+                                    {!! $currencyService->formatAmount($customer['total_revenue'] ?? 0, $userCurrency->code) !!}
                                 </td>
                             </tr>
                         @empty
@@ -276,7 +276,7 @@
                         beginAtZero: true,
                         ticks: {
                             callback: function(value) {
-                                return 'GHS ' + value.toLocaleString();
+                                return '{{ $userCurrency->symbol }}' + value.toLocaleString();
                             }
                         }
                     }

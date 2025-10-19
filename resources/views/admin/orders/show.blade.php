@@ -86,10 +86,10 @@
                                             Qty: {{ $item->quantity }}
                                         </div>
                                         <div class="font-medium text-zinc-900 dark:text-white">
-                                            ₦{{ number_format($item->price, 2) }}
+                                                                                        {!! $currencyService->formatAmount($item->price ?? 0, $userCurrency->code) !!}
                                         </div>
                                         <div class="text-sm text-zinc-500 dark:text-zinc-400">
-                                            Subtotal: ₦{{ number_format($item->subtotal, 2) }}
+                                            Subtotal:                                             Subtotal: {!! $currencyService->formatAmount($item->subtotal ?? 0, $userCurrency->code) !!}
                                         </div>
                                     </div>
                                 </div>
@@ -101,23 +101,23 @@
                             <div class="space-y-2">
                                 <div class="flex justify-between text-sm">
                                     <span class="text-zinc-600 dark:text-zinc-400">Subtotal</span>
-                                    <span class="text-zinc-900 dark:text-white">₦{{ number_format($order->subtotal, 2) }}</span>
+                                    <span class="text-zinc-900 dark:text-white">                                    <span class="text-zinc-900 dark:text-white">{!! $currencyService->formatAmount($order->subtotal ?? 0, $userCurrency->code) !!}</span></span>
                                 </div>
                                 @if($order->discount_amount > 0)
                                     <div class="flex justify-between text-sm">
                                         <span class="text-zinc-600 dark:text-zinc-400">Discount</span>
-                                        <span class="text-green-600">-₦{{ number_format($order->discount_amount, 2) }}</span>
+                                                                                <span class="text-green-600">-{!! $currencyService->formatAmount($order->discount_amount ?? 0, $userCurrency->code) !!}</span>
                                     </div>
                                 @endif
                                 @if($order->tax_amount > 0)
                                     <div class="flex justify-between text-sm">
                                         <span class="text-zinc-600 dark:text-zinc-400">Tax</span>
-                                        <span class="text-zinc-900 dark:text-white">₦{{ number_format($order->tax_amount, 2) }}</span>
+                                        <span class="text-zinc-900 dark:text-white">{!! $currencyService->formatAmount($order->tax_amount ?? 0, $userCurrency->code) !!}</span>
                                     </div>
                                 @endif
                                 <div class="flex justify-between text-lg font-semibold pt-2 border-t border-zinc-200 dark:border-zinc-700">
                                     <span class="text-zinc-900 dark:text-white">Total</span>
-                                    <span class="text-zinc-900 dark:text-white">₦{{ number_format($order->total, 2) }}</span>
+                                    <span class="text-zinc-900 dark:text-white">                                    <span class="text-zinc-900 dark:text-white">{!! $currencyService->formatAmount($order->total ?? 0, $userCurrency->code) !!}</span></span>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                                             </div>
                                             <div class="text-right">
                                                 <div class="font-medium text-zinc-900 dark:text-white">
-                                                    ₦{{ number_format($payment->amount, 2) }}
+                                                                                                        {!! $currencyService->formatAmount($payment->amount ?? 0, $userCurrency->code) !!}
                                                 </div>
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium 
                                                     {{ $payment->status === 'successful' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' : '' }}

@@ -210,7 +210,7 @@
                         <div class="space-y-3">
                             <div class="flex justify-between text-sm">
                                 <span class="text-zinc-600 dark:text-zinc-400">Subtotal:</span>
-                                <span id="subtotalDisplay" class="font-medium text-zinc-900 dark:text-white">₦0.00</span>
+                                <span id="subtotalDisplay" class="font-medium text-zinc-900 dark:text-white">{{ $userCurrency->symbol }}0.00</span>
                             </div>
                             
                             <div class="grid grid-cols-2 gap-3">
@@ -233,7 +233,7 @@
                             <div class="pt-3 border-t border-zinc-200 dark:border-zinc-700">
                                 <div class="flex justify-between text-lg font-semibold">
                                     <span class="text-zinc-900 dark:text-white">Total:</span>
-                                    <span id="totalDisplay" class="text-zinc-900 dark:text-white">₦0.00</span>
+                                    <span id="totalDisplay" class="text-zinc-900 dark:text-white">{{ $userCurrency->symbol }}0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -265,7 +265,7 @@
                     <option value="">Select a service...</option>
                     @foreach($services as $service)
                         <option value="{{ $service->id }}" data-price="{{ $service->price }}">
-                            {{ $service->title }} (₦{{ number_format($service->price, 2) }})
+                            {{ $service->title }} ({!! $currencyService->formatAmount($service->price ?? 0, $userCurrency->code) !!})
                         </option>
                     @endforeach
                 </select>

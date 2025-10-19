@@ -111,7 +111,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white font-medium">
-                                    ₦{{ number_format($service->price, 2) }}
+                                    {!! $currencyService->formatAmount($service->price ?? 0, $userCurrency->code) !!}
                                     @if($service->billing_interval)
                                         <span class="text-xs text-zinc-500 dark:text-zinc-400">/ {{ $service->billing_interval }}</span>
                                     @endif

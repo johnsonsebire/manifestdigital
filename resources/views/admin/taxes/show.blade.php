@@ -263,7 +263,7 @@
                                             $totalCollected = $tax->invoices()
                                                 ->sum('invoice_taxes.tax_amount');
                                         @endphp
-                                        GHS {{ number_format($totalCollected, 2) }}
+                                        {!! $currencyService->formatAmount($totalCollected ?? 0, $userCurrency->code) !!}
                                     </div>
                                 </div>
                                 <div class="col-auto">

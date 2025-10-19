@@ -105,7 +105,7 @@
                                         </div>
                                         <div class="text-right">
                                             <div class="text-sm font-semibold text-zinc-900 dark:text-white">
-                                                ${{ number_format($order->total, 2) }}
+                                                {!! $currencyService->formatAmount($order->total ?? 0, $userCurrency->code) !!}
                                             </div>
                                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
                                                 @if($order->status === 'pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200

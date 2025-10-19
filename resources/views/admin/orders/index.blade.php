@@ -37,10 +37,17 @@
                 <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Completed</div>
                 <div class="mt-1 text-2xl font-semibold text-green-600">{{ $stats['completed'] }}</div>
             </div>
-            <div class="bg-white dark:bg-zinc-800 rounded-lg shadow p-4">
-                <div class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Total Revenue</div>
-                <div class="mt-1 text-2xl font-semibold text-emerald-600">GHS {{ number_format($stats['total_revenue'], 2) }}</div>
-            </div>
+                            <div class="flex items-center">
+                    <div class="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-sm text-zinc-600 dark:text-zinc-400">Total Revenue</div>
+                        <div class="mt-1 text-2xl font-semibold text-emerald-600">{!! $currencyService->formatAmount($stats['total_revenue'] ?? 0, $userCurrency->code) !!}</div>
+                    </div>
+                </div>
         </div>
 
         <!-- Filters -->
@@ -220,7 +227,7 @@
                                 {{ $order->items_count }} {{ Str::plural('item', $order->items_count) }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-zinc-900 dark:text-white font-medium">
-                                ₦{{ number_format($order->total, 2) }}
+                                {!! $currencyService->formatAmount($order->total ?? 0, $userCurrency->code) !!}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
                                 @php

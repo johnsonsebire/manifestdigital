@@ -31,7 +31,7 @@
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Order Total:</span>
-                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">${{ number_format($order ? $order->total : 0, 2) }}</span>
+                    <span class="ml-2 font-medium text-zinc-900 dark:text-white">{!! $currencyService->formatAmount($order ? $order->total : 0 ?? 0, $userCurrency->code) !!}</span>
                 </div>
                 <div>
                     <span class="text-zinc-600 dark:text-zinc-400">Order Date:</span>
@@ -248,7 +248,7 @@
                             <div class="col-span-2">
                                 <flux:label>Total</flux:label>
                                 <div class="flex items-center h-10 px-3 bg-zinc-50 dark:bg-zinc-900 rounded-md text-sm">
-                                    <span class="item-total">$0.00</span>
+                                    <span class="item-total">{{ $userCurrency->symbol }}0.00</span>
                                 </div>
                             </div>
                             <div class="col-span-1 flex items-end">
@@ -268,7 +268,7 @@
                     </button>
                     <div class="text-right">
                         <div class="text-sm text-zinc-600 dark:text-zinc-400">Subtotal:</div>
-                        <div class="text-lg font-semibold text-zinc-900 dark:text-white" id="items-subtotal">$0.00</div>
+                        <div class="text-lg font-semibold text-zinc-900 dark:text-white" id="items-subtotal">{{ $userCurrency->symbol }}0.00</div>
                         <input type="hidden" name="subtotal" id="subtotal-input" value="0">
                     </div>
                 </div>
@@ -350,21 +350,21 @@
                             <span class="text-zinc-600 dark:text-zinc-400">Subtotal:</span>
                             <span class="font-medium text-zinc-900 dark:text-white" id="subtotal-preview">
                                 @if($order)
-                                    ${{ number_format($order->total, 2) }}
+                                    {!! $currencyService->formatAmount($order->total ?? 0, $userCurrency->code) !!}
                                 @else
-                                    $0.00
+                                    {{ $userCurrency->symbol }}0.00
                                 @endif
                             </span>
                         </div>
                         
                         <div class="flex justify-between">
                             <span class="text-zinc-600 dark:text-zinc-400">Additional Fees:</span>
-                            <span class="font-medium text-zinc-900 dark:text-white" id="fees-preview">$0.00</span>
+                            <span class="font-medium text-zinc-900 dark:text-white" id="fees-preview">{{ $userCurrency->symbol }}0.00</span>
                         </div>
                         
                         <div class="flex justify-between">
                             <span class="text-zinc-600 dark:text-zinc-400">Discount:</span>
-                            <span class="font-medium text-zinc-900 dark:text-white" id="discount-preview">$0.00</span>
+                            <span class="font-medium text-zinc-900 dark:text-white" id="discount-preview">{{ $userCurrency->symbol }}0.00</span>
                         </div>
                         
                         <div id="tax-breakdown" class="space-y-1">
@@ -373,13 +373,13 @@
                         
                         <div class="flex justify-between">
                             <span class="text-zinc-600 dark:text-zinc-400">Total Tax:</span>
-                            <span class="font-medium text-zinc-900 dark:text-white" id="tax-total-preview">$0.00</span>
+                            <span class="font-medium text-zinc-900 dark:text-white" id="tax-total-preview">{{ $userCurrency->symbol }}0.00</span>
                         </div>
                         
                         <div class="flex justify-between pt-2 border-t border-zinc-200 dark:border-zinc-700 font-semibold">
                             <span class="text-zinc-900 dark:text-white">Total:</span>
                             <span class="text-zinc-900 dark:text-white" id="total-preview">
-                                ${{ number_format($order ? $order->total : 0, 2) }}
+                                {!! $currencyService->formatAmount($order ? $order->total : 0 ?? 0, $userCurrency->code) !!}
                             </span>
                         </div>
                         
@@ -824,7 +824,7 @@
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">Total</label>
                             <div class="flex items-center h-10 px-3 bg-zinc-50 dark:bg-zinc-900 rounded-md text-sm">
-                                <span class="item-total font-medium">$0.00</span>
+                                <span class="item-total font-medium">{{ $userCurrency->symbol }}0.00</span>
                             </div>
                         </div>
                         <div class="col-span-1 flex items-end">

@@ -118,7 +118,7 @@
                                         <div>
                                             <h3 class="font-medium text-zinc-900 dark:text-white">{{ $service->title }}</h3>
                                             <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                                ₦{{ number_format($service->price, 2) }}
+                                                {!! $currencyService->formatAmount($service->price ?? 0, $userCurrency->code) !!}
                                                 @if($service->billing_interval)
                                                     / {{ $service->billing_interval }}
                                                 @endif

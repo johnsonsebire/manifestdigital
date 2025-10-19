@@ -97,7 +97,7 @@
                                             @if(isset($change['amount']))
                                                 <div class="text-right">
                                                     <span class="text-sm font-semibold text-zinc-900 dark:text-white">
-                                                        GHS {{ number_format($change['amount'], 2) }}
+                                                        {!! $currencyService->formatAmount($change['amount'] ?? 0, $userCurrency->code) !!}
                                                     </span>
                                                 </div>
                                             @endif
@@ -118,7 +118,7 @@
                                     Current Amount
                                 </label>
                                 <p class="text-lg font-semibold text-zinc-900 dark:text-white">
-                                    GHS {{ number_format($changeRequest->order->total_amount, 2) }}
+                                    {!! $currencyService->formatAmount($changeRequest->order->total_amount ?? 0, $userCurrency->code) !!}
                                 </p>
                             </div>
                             <div>
@@ -126,10 +126,10 @@
                                     Proposed Amount
                                 </label>
                                 <p class="text-lg font-semibold {{ $changeRequest->proposed_amount > $changeRequest->order->total_amount ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400' }}">
-                                    GHS {{ number_format($changeRequest->proposed_amount, 2) }}
+                                    {!! $currencyService->formatAmount($changeRequest->proposed_amount ?? 0, $userCurrency->code) !!}
                                 </p>
                                 <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                                    Difference: {{ $changeRequest->proposed_amount > $changeRequest->order->total_amount ? '+' : '' }}GHS {{ number_format(abs($changeRequest->proposed_amount - $changeRequest->order->total_amount), 2) }}
+                                    Difference: {{ $changeRequest->proposed_amount > $changeRequest->order->total_amount ? '+' : '' }}{!! $currencyService->formatAmount(abs($changeRequest->proposed_amount - $changeRequest->order->total_amount ?? 0, $userCurrency->code)) !!}
                                 </p>
                             </div>
                         </div>
