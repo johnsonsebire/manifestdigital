@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -118,5 +119,26 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
             Route::get('/', 'index')->name('index');
             Route::post('/company', 'updateCompany')->name('company.update');
             Route::post('/invoice', 'updateInvoice')->name('invoice.update');
+        });
+
+        // Activity Logs
+        Route::controller(ActivityLogController::class)->prefix('activity-logs')->name('activity-logs.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{activity}', 'show')->name('show');
+            Route::delete('/cleanup', 'cleanup')->name('cleanup');
+            Route::get('/export/csv', 'export')->name('export');
+            Route::get('/statistics', 'statistics')->name('statistics');
+            Route::get('/timeline', 'timeline')->name('timeline');
+            Route::get('/recent', 'recent')->name('recent');
+        });
+
+        // Email Preview (for development/testing)
+        Route::controller(\App\Http\Controllers\Admin\EmailPreviewController::class)->prefix('email-preview')->name('email-preview.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/order-status-changed', 'orderStatusChanged')->name('order-status-changed');
+            Route::get('/invoice-sent', 'invoiceSent')->name('invoice-sent');
+            Route::get('/invoice-payment-received', 'invoicePaymentReceived')->name('invoice-payment-received');
+            Route::get('/project-created', 'projectCreated')->name('project-created');
+            Route::get('/new-project-message', 'newProjectMessage')->name('new-project-message');
         });
     });

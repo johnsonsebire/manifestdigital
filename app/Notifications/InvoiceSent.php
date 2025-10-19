@@ -36,14 +36,10 @@ class InvoiceSent extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('Invoice ' . $this->invoice->invoice_number . ' - Payment Due')
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('You have received a new invoice for your order.')
-            ->line('**Invoice Number:** ' . $this->invoice->invoice_number)
-            ->line('**Amount Due:** $' . number_format($this->invoice->total_amount, 2))
-            ->line('**Due Date:** ' . $this->invoice->due_date->format('F d, Y'))
-            ->action('View Invoice', route('customer.invoices.show', $this->invoice))
-            ->line('Please make payment before the due date to avoid any delays.')
-            ->line('Thank you for your business!');
+            ->view('emails.invoice-sent', [
+                'notifiable' => $notifiable,
+                'invoice' => $this->invoice,
+            ]);
     }
 
     /**

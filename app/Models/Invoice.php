@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Carbon\Carbon;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Invoice extends Model
 {
+    use LogsActivity;
     protected $attributes = [
         'total_amount' => 0,
         'amount_paid' => 0,
@@ -408,5 +411,40 @@ class Invoice extends Model
     {
         $taxService = app(\App\Services\TaxService::class);
         return $taxService->applyTaxesToInvoice($this, $selectedTaxIds);
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'invoice_number',
+                'status',
+                'issue_date',
+                'due_date',
+                'sent_date',
+                'paid_date',
+                'subtotal',
+                'tax_rate',
+                'tax_amount',
+                'total_tax_amount',
+                'discount_amount',
+                'total_amount',
+                'amount_paid',
+                'notes',
+                'terms',
+                'payment_method'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Invoice created',
+                'updated' => 'Invoice updated',
+                'deleted' => 'Invoice deleted',
+                default => "Invoice {$eventName}",
+            })
+            ->useLogName('invoices');
     }
 }

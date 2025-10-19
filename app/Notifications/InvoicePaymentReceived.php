@@ -35,24 +35,13 @@ class InvoicePaymentReceived extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $message = (new MailMessage)
+        return (new MailMessage)
             ->subject('Payment Received - Invoice ' . $this->invoice->invoice_number)
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('We have received your payment!')
-            ->line('**Invoice Number:** ' . $this->invoice->invoice_number)
-            ->line('**Payment Amount:** $' . number_format($this->amount, 2))
-            ->line('**Total Invoice Amount:** $' . number_format($this->invoice->total_amount, 2));
-
-        if ($this->invoice->balance_due > 0) {
-            $message->line('**Remaining Balance:** $' . number_format($this->invoice->balance_due, 2));
-        } else {
-            $message->line('✅ This invoice has been paid in full.');
-        }
-
-        $message->action('View Invoice', route('customer.invoices.show', $this->invoice))
-            ->line('Thank you for your payment!');
-
-        return $message;
+            ->view('emails.invoice-payment-received', [
+                'notifiable' => $notifiable,
+                'invoice' => $this->invoice,
+                'amount' => $this->amount,
+            ]);
     }
 
     /**

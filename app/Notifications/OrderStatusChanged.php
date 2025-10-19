@@ -36,28 +36,14 @@ class OrderStatusChanged extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $statusMessages = [
-            'pending' => 'Your order is pending review.',
-            'approved' => 'Great news! Your order has been approved and a project has been created.',
-            'processing' => 'Your order is being processed.',
-            'completed' => 'Your order has been completed successfully!',
-            'cancelled' => 'Your order has been cancelled.',
-            'paid' => 'Payment received! Your order will be processed shortly.',
-        ];
-
-        $message = (new MailMessage)
+        return (new MailMessage)
             ->subject('Order #' . $this->order->id . ' Status Updated')
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('Your order status has been updated from **' . ucfirst($this->oldStatus) . '** to **' . ucfirst($this->newStatus) . '**.');
-
-        if (isset($statusMessages[$this->newStatus])) {
-            $message->line($statusMessages[$this->newStatus]);
-        }
-
-        $message->action('View Order', route('customer.orders.show', $this->order))
-            ->line('Thank you for your business!');
-
-        return $message;
+            ->view('emails.order-status-changed', [
+                'notifiable' => $notifiable,
+                'order' => $this->order,
+                'oldStatus' => $this->oldStatus,
+                'newStatus' => $this->newStatus,
+            ]);
     }
 
     /**

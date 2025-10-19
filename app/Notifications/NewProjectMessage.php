@@ -39,28 +39,13 @@ class NewProjectMessage extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $messagePreview = str($this->message->content)->limit(150);
-        
-        $mail = (new MailMessage)
+        return (new MailMessage)
             ->subject('New Message in Project: ' . $this->project->title)
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('You have a new message in project **' . $this->project->title . '**.')
-            ->line('**From:** ' . $this->message->user->name)
-            ->line('**Message:**')
-            ->line($messagePreview);
-
-        if ($this->message->attachments && count($this->message->attachments) > 0) {
-            $mail->line('📎 This message includes ' . count($this->message->attachments) . ' attachment(s).');
-        }
-
-        $route = $notifiable->hasRole('Customer') 
-            ? route('customer.projects.show', $this->project)
-            : route('admin.projects.show', $this->project);
-
-        $mail->action('View Project', $route)
-            ->line('Reply to continue the conversation.');
-
-        return $mail;
+            ->view('emails.new-project-message', [
+                'notifiable' => $notifiable,
+                'project' => $this->project,
+                'message' => $this->message,
+            ]);
     }
 
     /**

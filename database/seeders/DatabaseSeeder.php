@@ -25,8 +25,14 @@ class DatabaseSeeder extends Seeder
         // Seed the contact form
         $this->call(ContactFormSeeder::class);
 
+        // Seed Quote Request form
+        $this->call(RequestQuoteFormSeeder::class);
+
         // Seed Book A Call form
         $this->call(BookACallFormSeeder::class);
+
+        // Seed Team Profile Update Form
+        $this->call(TeamProfileFormSeeder::class);
 
         // Seed tax system
         $this->call(TaxSeeder::class);

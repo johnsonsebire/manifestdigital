@@ -90,6 +90,16 @@
                         {{ __('Settings') }}
                     </flux:navlist.item>
 
+                    <flux:navlist.item icon="clipboard-document-list" :href="route('admin.activity-logs.index')" :current="request()->routeIs('admin.activity-logs.*')" wire:navigate>
+                        {{ __('Activity Logs') }}
+                    </flux:navlist.item>
+
+                    @if(app()->environment('local', 'staging'))
+                    <flux:navlist.item icon="envelope-open" :href="route('admin.email-preview.index')" :current="request()->routeIs('admin.email-preview.*')" wire:navigate>
+                        {{ __('Email Preview') }}
+                    </flux:navlist.item>
+                    @endif
+
                     <flux:navlist.item icon="envelope" href="https://mail.zoho.com" target="_blank">
                         {{ __('Staff Email') }}
                     </flux:navlist.item>

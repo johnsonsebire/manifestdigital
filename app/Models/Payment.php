@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Payment extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -83,5 +85,31 @@ class Payment extends Model
     public function getFormattedAmountAttribute(): string
     {
         return number_format($this->amount, 2) . ' ' . $this->currency;
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'amount',
+                'currency',
+                'method',
+                'status',
+                'reference',
+                'paid_at',
+                'gateway_response'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Payment initiated',
+                'updated' => 'Payment status updated',
+                'deleted' => 'Payment record deleted',
+                default => "Payment {$eventName}",
+            })
+            ->useLogName('payments');
     }
 }

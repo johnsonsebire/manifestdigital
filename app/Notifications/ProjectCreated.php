@@ -36,14 +36,10 @@ class ProjectCreated extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject('New Project Created: ' . $this->project->title)
-            ->greeting('Hello ' . $notifiable->name . '!')
-            ->line('Great news! A new project has been created for your order.')
-            ->line('**Project:** ' . $this->project->title)
-            ->line('**Status:** ' . ucfirst($this->project->status))
-            ->line('**Start Date:** ' . ($this->project->start_date ? $this->project->start_date->format('F d, Y') : 'To be determined'))
-            ->action('View Project', route('customer.projects.show', $this->project))
-            ->line('You can track the progress and communicate with our team through the project dashboard.')
-            ->line('Thank you for choosing our services!');
+            ->view('emails.project-created', [
+                'notifiable' => $notifiable,
+                'project' => $this->project,
+            ]);
     }
 
     /**

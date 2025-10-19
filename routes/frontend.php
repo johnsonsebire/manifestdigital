@@ -27,9 +27,16 @@ Route::get('/solutions', [PagesController::class, 'solutions'])->name('solutions
 Route::get('/policies', [PagesController::class, 'policies'])->name('policies');
 Route::get('/blog', [PagesController::class, 'blog'])->name('blog');
 Route::get('/blog/{slug}', [PagesController::class, 'blogDetail'])->name('blog.show');
+Route::get('/mobile-app-design', [PagesController::class, 'mobileAppDesign'])->name('mobile-app-design');
+Route::get('/website-development', [PagesController::class, 'websiteDevelopment'])->name('website-development');
+Route::get('/sap-consulting', [PagesController::class, 'sapConsulting'])->name('sap-consulting');
+Route::get('/brand-positioning', [PagesController::class, 'brandPositioning'])->name('brand-positioning');
+Route::get('/it-training', [PagesController::class, 'itTraining'])->name('it-training');
+Route::get('/seo-services', [PagesController::class, 'seoServices'])->name('seo-services');
+Route::get('/qa-testing', [PagesController::class, 'qaTesting'])->name('qa-testing');
+Route::get('/blockchain-solutions', [PagesController::class, 'blockchainSolutions'])->name('blockchain-solutions');
+Route::get('/cyber-security', [PagesController::class, 'cyberSecurity'])->name('cyber-security');
 Route::get('/contact', [PagesController::class, 'contact'])->name('contact');
-
-// Service Catalog Routes (Public Product Browsing)
 Route::get('/services', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
 Route::get('/services/{slug}', [App\Http\Controllers\ServiceController::class, 'show'])->name('services.show');
 Route::post('/services/{slug}/price', [App\Http\Controllers\ServiceController::class, 'getPrice'])->name('services.price');

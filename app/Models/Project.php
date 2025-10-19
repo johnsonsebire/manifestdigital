@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -231,5 +233,38 @@ class Project extends Model
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'description',
+                'status',
+                'priority',
+                'budget',
+                'budget_spent',
+                'start_date',
+                'end_date',
+                'actual_start_date',
+                'actual_end_date',
+                'estimated_hours',
+                'actual_hours',
+                'completion_percentage',
+                'metadata'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Project created',
+                'updated' => 'Project updated',
+                'deleted' => 'Project deleted',
+                default => "Project {$eventName}",
+            })
+            ->useLogName('projects');
     }
 }

@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -169,5 +171,34 @@ class Task extends Model
             3 => 'Urgent',
             default => 'Medium',
         };
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'title',
+                'description',
+                'status',
+                'priority',
+                'assignee_id',
+                'due_date',
+                'start_date',
+                'estimated_hours',
+                'spent_hours',
+                'metadata'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Task created',
+                'updated' => 'Task updated',
+                'deleted' => 'Task deleted',
+                default => "Task {$eventName}",
+            })
+            ->useLogName('tasks');
     }
 }

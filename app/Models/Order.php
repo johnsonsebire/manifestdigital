@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -213,5 +215,36 @@ class Order extends Model
     public function getFormattedTotalAttribute(): string
     {
         return number_format($this->total, 2) . ' ' . $this->currency;
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'status',
+                'payment_status',
+                'subtotal',
+                'tax_rate',
+                'tax_amount',
+                'discount_amount',
+                'total_amount',
+                'amount_paid',
+                'priority',
+                'deadline',
+                'notes',
+                'special_requirements'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Order created',
+                'updated' => 'Order updated',
+                'deleted' => 'Order deleted',
+                default => "Order {$eventName}",
+            })
+            ->useLogName('orders');
     }
 }

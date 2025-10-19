@@ -9,11 +9,13 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -96,5 +98,31 @@ class User extends Authenticatable
         return $this->belongsToMany(Project::class, 'project_team_members', 'user_id', 'project_id')
             ->withPivot('role')
             ->withTimestamps();
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'email',
+                'phone',
+                'company',
+                'address',
+                'email_verified_at'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->dontLogIfAttributesChangedOnly(['password', 'remember_token'])
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'User account created',
+                'updated' => 'User profile updated',
+                'deleted' => 'User account deleted',
+                default => "User {$eventName}",
+            })
+            ->useLogName('users');
     }
 }

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Form extends Model
 {
+    use LogsActivity;
     /**
      * The attributes that are mass assignable.
      *
@@ -98,5 +101,33 @@ class Form extends Model
     public function requiresRecaptcha(): bool
     {
         return $this->recaptcha_status !== 'disabled';
+    }
+
+    /**
+     * Configure activity logging options.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'title',
+                'description',
+                'is_active',
+                'requires_login',
+                'recaptcha_status',
+                'store_submissions',
+                'send_notifications',
+                'notification_email'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            ->setDescriptionForEvent(fn(string $eventName) => match($eventName) {
+                'created' => 'Form created',
+                'updated' => 'Form updated',
+                'deleted' => 'Form deleted',
+                default => "Form {$eventName}",
+            })
+            ->useLogName('forms');
     }
 }
