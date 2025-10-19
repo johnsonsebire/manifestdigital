@@ -42,6 +42,21 @@ class CurrencyService
             return $country->currency;
         }
         
+        // For local development or when geolocation fails,
+        // check if we have GHS regional pricing available and default to that
+        // (assuming Ghana-based business)
+        $hasGhsRegionalPricing = RegionalPricing::whereHas('currency', function($query) {
+            $query->where('code', 'GHS');
+        })->exists();
+        
+        if ($hasGhsRegionalPricing) {
+            $ghsCurrency = Currency::where('code', 'GHS')->active()->first();
+            if ($ghsCurrency) {
+                session(['currency_code' => 'GHS']);
+                return $ghsCurrency;
+            }
+        }
+        
         // Fallback to USD (base currency)
         return Currency::getBaseCurrency() ?: $this->createDefaultCurrency();
     }
@@ -111,9 +126,25 @@ class CurrencyService
      */
     protected function getRegionalPrice(Service $service, Currency $currency): ?RegionalPricing
     {
+        // First, try to find pricing based on the currency itself
+        // This is useful when we know the user wants GHS pricing
+        if ($currency->code !== 'USD') {
+            // Try currency-based regional pricing first
+            $regionalPrice = RegionalPricing::where('service_id', $service->id)
+                ->where('currency_id', $currency->id)
+                ->active()
+                ->orderBy('created_at', 'desc')
+                ->first();
+                
+            if ($regionalPrice) {
+                return $regionalPrice;
+            }
+        }
+        
+        // Then try country detection
         $country = $this->detectCountryFromIp(request()->ip());
         
-        // Try country-specific pricing first
+        // Try country-specific pricing
         if ($country) {
             $regionalPrice = RegionalPricing::where('service_id', $service->id)
                 ->where('currency_id', $currency->id)
@@ -137,6 +168,25 @@ class CurrencyService
                 if ($regionalPrice) {
                     return $regionalPrice;
                 }
+            }
+        }
+        
+        // If we have GHS currency but no country detected (local dev), 
+        // assume Ghana/West Africa region
+        if ($currency->code === 'GHS') {
+            $regionalPrice = RegionalPricing::where('service_id', $service->id)
+                ->where('currency_id', $currency->id)
+                ->where(function($query) {
+                    $query->where('country_code', 'GH')
+                          ->orWhere('region', 'West Africa')
+                          ->orWhereNull('country_code');
+                })
+                ->active()
+                ->orderBy('country_code', 'desc') // Prefer country-specific over regional
+                ->first();
+                
+            if ($regionalPrice) {
+                return $regionalPrice;
             }
         }
         

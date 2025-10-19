@@ -10,6 +10,7 @@
 ])
 
 @php
+// Default static pricing as fallback - will be replaced by dynamic pricing
 $defaultPricingCategories = [
     'websites' => [
         'title' => 'Websites',
@@ -31,7 +32,8 @@ $defaultPricingCategories = [
                     '30-day support'
                 ],
                 'hasAccent' => true,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'website-essentials'
             ],
             [
                 'name' => 'Professional',
@@ -52,7 +54,8 @@ $defaultPricingCategories = [
                     '90-day support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => true
+                'isPopular' => true,
+                'serviceSlug' => 'website-professional'
             ],
             [
                 'name' => 'Enterprise',
@@ -73,7 +76,8 @@ $defaultPricingCategories = [
                     '1-year support included'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'website-enterprise'
             ]
         ]
     ],
@@ -97,7 +101,8 @@ $defaultPricingCategories = [
                     'Style guide basics'
                 ],
                 'hasAccent' => true,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'basic-ui-ux-design'
             ],
             [
                 'name' => 'Professional Design',
@@ -121,6 +126,28 @@ $defaultPricingCategories = [
                 'isPopular' => true
             ],
             [
+                'name' => 'Complete Design',
+                'tagline' => 'Full UX/UI solution',
+                'price' => ['currency' => 'GH₵', 'amount' => '6,000', 'period' => '/project'],
+                'cancelText' => '3-4 weeks delivery',
+                'ctaText' => 'Get Full Package',
+                'ctaUrl' => route('services.show', 'complete-ui-ux-design'),
+                'features' => [
+                    'Unlimited screens',
+                    'User research & personas',
+                    'Interactive prototypes',
+                    'Complete user journey mapping',
+                    'Usability testing',
+                    'Unlimited revisions',
+                    'Complete design system',
+                    'Developer handoff package',
+                    '60-day support'
+                ],
+                'hasAccent' => false,
+                'isPopular' => true,
+                'serviceSlug' => 'complete-ui-ux-design'
+            ],
+            [
                 'name' => 'Enterprise Design',
                 'tagline' => 'Full-scale UX solution',
                 'price' => ['currency' => 'GH₵', 'amount' => '10,000+', 'period' => ''],
@@ -139,7 +166,8 @@ $defaultPricingCategories = [
                     '6-month support & updates'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'enterprise-ui-ux-design'
             ]
         ]
     ],
@@ -162,7 +190,8 @@ $defaultPricingCategories = [
                     'Email support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'starter-web-hosting'
             ],
             [
                 'name' => 'Business Hosting',
@@ -181,7 +210,8 @@ $defaultPricingCategories = [
                     'Free CDN'
                 ],
                 'hasAccent' => false,
-                'isPopular' => true
+                'isPopular' => true,
+                'serviceSlug' => 'business-web-hosting'
             ],
             [
                 'name' => 'Premium Hosting',
@@ -201,7 +231,8 @@ $defaultPricingCategories = [
                     'Dedicated IP'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'premium-web-hosting'
             ]
         ]
     ],
@@ -222,7 +253,8 @@ $defaultPricingCategories = [
                     '24/7 support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'com-domain-registration'
             ],
             [
                 'name' => '.gh Domains',
@@ -239,7 +271,8 @@ $defaultPricingCategories = [
                     '24/7 support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => true
+                'isPopular' => true,
+                'serviceSlug' => 'gh-domain-registration'
             ],
             [
                 'name' => 'Premium Domains',
@@ -256,7 +289,8 @@ $defaultPricingCategories = [
                     'Free transfer support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'premium-domain-acquisition'
             ]
         ]
     ],
@@ -279,7 +313,8 @@ $defaultPricingCategories = [
                     '30-day support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'simple-mobile-app'
             ],
             [
                 'name' => 'Professional App',
@@ -298,7 +333,8 @@ $defaultPricingCategories = [
                     '90-day support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => true
+                'isPopular' => true,
+                'serviceSlug' => 'professional-mobile-app'
             ],
             [
                 'name' => 'Enterprise App',
@@ -317,7 +353,8 @@ $defaultPricingCategories = [
                     '1-year support & maintenance'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'enterprise-mobile-app'
             ]
         ]
     ],
@@ -339,7 +376,8 @@ $defaultPricingCategories = [
                     'Follow-up email summary'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'hourly-technical-consulting'
             ],
             [
                 'name' => 'Monthly Retainer',
@@ -357,7 +395,8 @@ $defaultPricingCategories = [
                     'Email & Slack support'
                 ],
                 'hasAccent' => false,
-                'isPopular' => true
+                'isPopular' => true,
+                'serviceSlug' => 'monthly-consulting-retainer'
             ],
             [
                 'name' => 'Project Consulting',
@@ -375,7 +414,8 @@ $defaultPricingCategories = [
                     'Custom SLA'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'project-based-consulting'
             ]
         ]
     ],
@@ -397,7 +437,8 @@ $defaultPricingCategories = [
                     'Learning resources included'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'individual-technical-training'
             ],
             [
                 'name' => 'Team Training',
@@ -415,7 +456,8 @@ $defaultPricingCategories = [
                     'Training materials'
                 ],
                 'hasAccent' => false,
-                'isPopular' => true
+                'isPopular' => true,
+                'serviceSlug' => 'team-technical-training'
             ],
             [
                 'name' => 'Corporate Training',
@@ -433,7 +475,8 @@ $defaultPricingCategories = [
                     'Management reporting'
                 ],
                 'hasAccent' => false,
-                'isPopular' => false
+                'isPopular' => false,
+                'serviceSlug' => 'corporate-training-program'
             ]
         ]
     ]
@@ -448,6 +491,26 @@ $categoriesList = empty($pricingCategories) ? $defaultPricingCategories : $prici
     
     <h2{{ $animateOnScroll ? ' class=animate-on-scroll' : '' }}>{{ $title }}</h2>
     <p class="pricing-subheading{{ $animateOnScroll ? ' animate-on-scroll' : '' }}">{{ $subtitle }}</p>
+
+    <!-- Currency Switcher -->
+    <div class="currency-switcher{{ $animateOnScroll ? ' animate-on-scroll' : '' }}">
+        <div class="currency-switcher-container">
+            <label for="currency-select" class="currency-label">
+                <i class="fas fa-globe" aria-hidden="true"></i>
+                Currency:
+            </label>
+            <select id="currency-select" class="currency-select" aria-label="Select currency">
+                <option value="GHS" data-symbol="GH₵">Ghana Cedi (GH₵)</option>
+                <option value="USD" data-symbol="$">US Dollar ($)</option>
+                <option value="EUR" data-symbol="€">Euro (€)</option>
+                <option value="GBP" data-symbol="£">British Pound (£)</option>
+            </select>
+            <div class="currency-loading" style="display: none;">
+                <i class="fas fa-spinner fa-spin" aria-hidden="true"></i>
+                <span>Updating prices...</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Desktop Pricing Tabs with Navigation -->
     <div class="pricing-tabs-wrapper{{ $animateOnScroll ? ' animate-on-scroll' : '' }}">
@@ -493,7 +556,7 @@ $categoriesList = empty($pricingCategories) ? $defaultPricingCategories : $prici
                         @endif
                         <h3>{{ $plan['name'] }}</h3>
                         <p class="pricing-tagline">{{ $plan['tagline'] }}</p>
-                        <div class="price">
+                        <div class="price" data-service-slug="{{ $plan['serviceSlug'] ?? '' }}">
                             <span class="currency">{{ $plan['price']['currency'] }}</span>
                             <span class="amount">{{ $plan['price']['amount'] }}</span>
                             @if($plan['price']['period'])
@@ -572,4 +635,354 @@ $categoriesList = empty($pricingCategories) ? $defaultPricingCategories : $prici
         font-size: 0.9rem;
     }
 }
+
+/* Currency Switcher Styles */
+.currency-switcher {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0 2.5rem;
+}
+
+.currency-switcher-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #ffffff 0%, #fbfbfb 100%);
+    border: 2px solid #e1e1e1;
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.currency-switcher-container:hover {
+    border-color: #ff5722;
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.15);
+}
+
+.currency-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    cursor: default;
+}
+
+.currency-label .fas {
+    color: #ff5722;
+    font-size: 1rem;
+}
+
+.currency-select {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    min-width: 180px;
+}
+
+.currency-select:hover {
+    border-color: #ff5722;
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.1);
+}
+
+.currency-select:focus {
+    outline: none;
+    border-color: #ff5722;
+    box-shadow: 0 0 0 3px rgba(255, 87, 34, 0.2);
+}
+
+.currency-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.currency-loading .fas {
+    color: #ff5722;
+}
+
+/* Loading state for dynamic pricing */
+.price.loading .amount {
+    opacity: 0.6;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Error notice styles */
+.pricing-error-notice {
+    background: linear-gradient(135deg, #ffe8e8 0%, #ffebeb 100%);
+    border: 1px solid #ffccc7;
+    border-radius: 8px;
+    margin: 1rem auto 2rem;
+    max-width: 600px;
+    animation: slideInDown 0.3s ease-out;
+}
+
+.error-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+}
+
+.error-icon {
+    color: #d63031;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.error-text {
+    color: #333;
+    font-size: 0.95rem;
+    flex-grow: 1;
+}
+
+.error-close {
+    background: none;
+    border: none;
+    color: #d63031;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.error-close:hover {
+    background-color: rgba(214, 48, 49, 0.1);
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsiveness for currency switcher */
+@media (max-width: 768px) {
+    .currency-switcher-container {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .currency-label {
+        justify-content: center;
+        font-size: 0.9rem;
+    }
+
+    .currency-select {
+        min-width: 160px;
+        font-size: 0.9rem;
+    }
+
+    .currency-loading {
+        font-size: 0.85rem;
+    }
+
+    .pricing-error-notice {
+        margin: 1rem 1rem 2rem;
+    }
+
+    .error-content {
+        padding: 0.875rem 1rem;
+    }
+
+    .error-text {
+        font-size: 0.9rem;
+    }
+}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dynamic pricing from currency service
+    loadDynamicPricing();
+    
+    // Setup currency switcher
+    const currencySelect = document.getElementById('currency-select');
+    if (currencySelect) {
+        currencySelect.addEventListener('change', handleCurrencyChange);
+    }
+});
+
+async function loadDynamicPricing(currency = null) {
+    try {
+        // Add loading state
+        const priceElements = document.querySelectorAll('.price[data-service-slug]');
+        priceElements.forEach(el => el.classList.add('loading'));
+        
+        // Show currency loading if currency is being changed
+        if (currency) {
+            showCurrencyLoading(true);
+        }
+
+        // Build API URL with currency parameter
+        const apiUrl = currency ? `/api/pricing?currency=${currency}` : '/api/pricing';
+
+        // Fetch dynamic pricing data
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            console.warn('Dynamic pricing API not available, using static prices');
+            return;
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            updatePricingDisplay(data.data);
+            updateCurrencySelect(data.data.currency);
+        }
+    } catch (error) {
+        console.warn('Error loading dynamic pricing:', error);
+        showError('Failed to load pricing. Please refresh the page.');
+    } finally {
+        // Remove loading state
+        const priceElements = document.querySelectorAll('.price[data-service-slug]');
+        priceElements.forEach(el => el.classList.remove('loading'));
+        
+        showCurrencyLoading(false);
+    }
+}
+
+function handleCurrencyChange(event) {
+    const selectedCurrency = event.target.value;
+    loadDynamicPricing(selectedCurrency);
+}
+
+function showCurrencyLoading(show) {
+    const loadingElement = document.querySelector('.currency-loading');
+    const selectElement = document.getElementById('currency-select');
+    
+    if (loadingElement && selectElement) {
+        loadingElement.style.display = show ? 'flex' : 'none';
+        selectElement.disabled = show;
+    }
+}
+
+function updateCurrencySelect(currency) {
+    const selectElement = document.getElementById('currency-select');
+    if (selectElement && currency.code) {
+        selectElement.value = currency.code;
+    }
+}
+
+function showError(message) {
+    // Create or update error notice
+    let errorNotice = document.querySelector('.pricing-error-notice');
+    if (!errorNotice) {
+        errorNotice = document.createElement('div');
+        errorNotice.className = 'pricing-error-notice';
+        const pricingSection = document.querySelector('.pricing');
+        if (pricingSection) {
+            pricingSection.insertBefore(errorNotice, pricingSection.firstChild);
+        }
+    }
+    
+    errorNotice.innerHTML = `
+        <div class="error-content">
+            <i class="fas fa-exclamation-triangle error-icon"></i>
+            <span class="error-text">${message}</span>
+            <button class="error-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+        if (errorNotice && errorNotice.parentElement) {
+            errorNotice.remove();
+        }
+    }, 5000);
+}
+
+function updatePricingDisplay(pricingData) {
+    const { currency, services } = pricingData;
+    
+    // Update each service price
+    services.forEach(service => {
+        const priceElement = document.querySelector(`[data-service-slug="${service.slug}"]`);
+        
+        if (priceElement && service.price !== null) {
+            // Update currency symbol
+            const currencySpan = priceElement.querySelector('.currency');
+            if (currencySpan) {
+                currencySpan.textContent = currency.symbol;
+            }
+            
+            // Update amount
+            const amountSpan = priceElement.querySelector('.amount');
+            if (amountSpan && service.price !== null) {
+                // Use the numeric price directly and format it properly
+                const numericPrice = parseFloat(service.price);
+                if (numericPrice === 0) {
+                    amountSpan.textContent = 'Custom';
+                } else {
+                    // Format with commas for thousands
+                    amountSpan.textContent = numericPrice.toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    });
+                }
+            }
+        }
+    });
+
+    // Update regional pricing notice if needed
+    updateRegionalNotice(currency);
+}
+
+function updateRegionalNotice(currency) {
+    const noticeElement = document.querySelector('.regional-discount-notice .notice-text');
+    
+    if (noticeElement && currency.code !== 'GHS') {
+        // Show that pricing is automatically adjusted for their region
+        noticeElement.innerHTML = `
+            <strong>Regional Pricing Active:</strong> 
+            Prices automatically adjusted for your region (${currency.code}). 
+            Base pricing shown in ${currency.symbol} with regional discounts already applied.
+            For questions, contact: <a href="mailto:sales@manifestghana.com">sales@manifestghana.com</a>
+        `;
+    }
+}
+</script>

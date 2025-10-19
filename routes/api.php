@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProjectsController;
 use App\Http\Controllers\Api\CurrencyController;
+use App\Http\Controllers\PricingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/projects', [App\Http\Controllers\Api\ProjectsController::class, 'index']);
+
+// Pricing API routes
+Route::get('/pricing', [PricingController::class, 'getPricingData']);
 
 // Currency API routes
 Route::prefix('currency')->name('currency.')->group(function () {
