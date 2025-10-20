@@ -150,11 +150,48 @@
                     </a>
                 </div>
 
-                <!-- Form Submission (Existing) -->
+                <!-- Subscription Expiring -->
                 <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6 hover:shadow-lg transition-shadow">
                     <div class="flex items-center mb-4">
                         <div class="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
                             <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white">Subscription Expiring</h3>
+                            <p class="text-sm text-zinc-600 dark:text-zinc-400">Renewal reminder notification</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <a href="{{ route('admin.email-preview.subscription-expiring', ['days' => 30]) }}" 
+                           class="block px-3 py-1.5 text-sm bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded transition-colors"
+                           target="_blank">
+                            30 days before
+                        </a>
+                        <a href="{{ route('admin.email-preview.subscription-expiring', ['days' => 15]) }}" 
+                           class="block px-3 py-1.5 text-sm bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded transition-colors"
+                           target="_blank">
+                            15 days before
+                        </a>
+                        <a href="{{ route('admin.email-preview.subscription-expiring', ['days' => 5]) }}" 
+                           class="block px-3 py-1.5 text-sm bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded transition-colors"
+                           target="_blank">
+                            5 days before
+                        </a>
+                        <a href="{{ route('admin.email-preview.subscription-expiring', ['days' => 0]) }}" 
+                           class="block px-3 py-1.5 text-sm bg-orange-50 dark:bg-orange-900/20 hover:bg-orange-100 dark:hover:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded transition-colors"
+                           target="_blank">
+                            Expiration day
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Form Submission (Existing) -->
+                <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                             </svg>
                         </div>

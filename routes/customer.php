@@ -4,6 +4,8 @@ use App\Http\Controllers\Customer\InvoiceController;
 use App\Http\Controllers\Customer\OrderChangeRequestController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\ProjectController;
+use App\Http\Controllers\Customer\SubscriptionController;
+use App\Http\Controllers\SubscriptionRenewalController;
 use Illuminate\Support\Facades\Route;
 
 // Customer routes - protected by auth and verified
@@ -34,5 +36,26 @@ Route::middleware(['web', 'auth', 'verified'])
         Route::controller(ProjectController::class)->prefix('projects')->name('projects.')->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{project}', 'show')->name('show');
+        });
+
+        // Subscriptions
+        Route::controller(SubscriptionController::class)->prefix('subscriptions')->name('subscriptions.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{subscription}', 'show')->name('show');
+            Route::get('/{subscription}/cancel', 'requestCancellation')->name('request-cancellation');
+            Route::post('/{subscription}/cancel', 'submitCancellationRequest')->name('submit-cancellation');
+            Route::post('/{subscription}/toggle-auto-renewal', 'toggleAutoRenewal')->name('toggle-auto-renewal');
+        });
+    });
+
+// Subscription Renewal routes - separate from customer prefix for cleaner URLs
+Route::middleware(['web', 'auth', 'verified'])
+    ->name('renewal.')
+    ->group(function () {
+        Route::controller(SubscriptionRenewalController::class)->group(function () {
+            Route::get('/subscriptions/{subscription}/renew', 'index')->name('index');
+            Route::post('/subscriptions/{subscription}/renew', 'store')->name('store');
+            Route::get('/subscriptions/renew/payment/{uuid}', 'payment')->name('payment');
+            Route::get('/subscriptions/renew/success/{uuid}', 'success')->name('success');
         });
     });

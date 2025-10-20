@@ -9,7 +9,12 @@ use App\Models\Project;
 use App\Models\ProjectMessage;
 use App\Models\User;
 use App\Models\Form;
+use App\Models\Service;
+use App\Models\Subscription;
+use App\Models\ServiceExpirationReminder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class EmailPreviewController extends Controller
 {
@@ -255,5 +260,299 @@ class EmailPreviewController extends Controller
         $form->exists = true;
         
         return $form;
+    }
+
+    /**
+     * Preview subscription expiring email
+     */
+    public function subscriptionExpiring(Request $request)
+    {
+        $daysRemaining = $request->input('days', 15);
+        $subscription = $this->getSampleSubscription($daysRemaining);
+        
+        return view('emails.subscriptions.expiring', [
+            'subscription' => $subscription,
+            'daysRemaining' => $daysRemaining,
+        ]);
+    }
+
+    /**
+     * Generate preview for reminder configuration
+     * 
+     * POST /admin/email-preview/reminder
+     */
+    public function previewReminder(Request $request)
+    {
+        $validated = $request->validate([
+            'service_id' => ['nullable', 'exists:services,id'],
+            'subscription_id' => ['nullable', 'exists:subscriptions,id'],
+            'days_before' => ['required', 'integer', 'min:0', 'max:90'],
+            'custom_message' => ['nullable', 'string'],
+            'template' => ['nullable', 'string'],
+        ]);
+
+        try {
+            // Get subscription
+            if (isset($validated['subscription_id'])) {
+                $subscription = Subscription::with(['service', 'customer'])
+                    ->findOrFail($validated['subscription_id']);
+            } elseif (isset($validated['service_id'])) {
+                $service = Service::findOrFail($validated['service_id']);
+                $subscription = $this->getSampleSubscriptionForService($service);
+            } else {
+                $subscription = $this->getSampleSubscription($validated['days_before']);
+            }
+
+            // Adjust expiration date
+            $subscription->expires_at = now()->addDays($validated['days_before']);
+            $daysRemaining = $validated['days_before'];
+
+            // Determine template
+            $template = $validated['template'] ?? 'emails.subscriptions.expiring';
+
+            // Render email
+            $html = view($template, [
+                'subscription' => $subscription,
+                'daysRemaining' => $daysRemaining,
+                'customMessage' => $validated['custom_message'] ?? null,
+            ])->render();
+
+            // Get subject line
+            $subject = $this->getEmailSubject($subscription, $daysRemaining);
+
+            return response()->json([
+                'success' => true,
+                'subject' => $subject,
+                'html' => $html,
+                'subscription' => [
+                    'service' => $subscription->service->title,
+                    'customer' => $subscription->customer->name,
+                    'expires_at' => $subscription->expires_at->format('F j, Y'),
+                    'days_remaining' => $daysRemaining,
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Email preview generation failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to generate preview: ' . $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Send test reminder email
+     * 
+     * POST /admin/email-preview/send-test
+     */
+    public function sendTestReminder(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => ['required', 'email'],
+            'service_id' => ['nullable', 'exists:services,id'],
+            'subscription_id' => ['nullable', 'exists:subscriptions,id'],
+            'days_before' => ['required', 'integer', 'min:0', 'max:90'],
+            'custom_message' => ['nullable', 'string'],
+            'template' => ['nullable', 'string'],
+        ]);
+
+        try {
+            // Get subscription
+            if (isset($validated['subscription_id'])) {
+                $subscription = Subscription::with(['service', 'customer'])
+                    ->findOrFail($validated['subscription_id']);
+            } elseif (isset($validated['service_id'])) {
+                $service = Service::findOrFail($validated['service_id']);
+                $subscription = $this->getSampleSubscriptionForService($service);
+            } else {
+                $subscription = $this->getSampleSubscription($validated['days_before']);
+            }
+
+            // Adjust expiration date
+            $testSubscription = clone $subscription;
+            $testSubscription->expires_at = now()->addDays($validated['days_before']);
+            $daysRemaining = $validated['days_before'];
+
+            // Determine template
+            $template = $validated['template'] ?? 'emails.subscriptions.expiring';
+
+            // Get subject and html
+            $subject = "[TEST] " . $this->getEmailSubject($testSubscription, $daysRemaining);
+            $html = view($template, [
+                'subscription' => $testSubscription,
+                'daysRemaining' => $daysRemaining,
+                'customMessage' => $validated['custom_message'] ?? null,
+            ])->render();
+
+            // Send test email
+            Mail::html($html, function ($message) use ($validated, $subject) {
+                $message->to($validated['email'])
+                    ->subject($subject);
+            });
+
+            Log::info('Test reminder email sent', [
+                'to' => $validated['email'],
+                'service_id' => $validated['service_id'] ?? null,
+                'days_before' => $validated['days_before'],
+                'sent_by' => auth()->id(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Test email sent successfully to {$validated['email']}",
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Test email send failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to send test email: ' . $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
+     * Get sample subscription
+     */
+    private function getSampleSubscription(int $daysUntilExpiration = 15): Subscription
+    {
+        // Try to find an existing subscription
+        $subscription = Subscription::with(['service', 'customer'])
+            ->whereIn('status', ['active', 'pending_renewal'])
+            ->first();
+
+        if ($subscription) {
+            return $subscription;
+        }
+
+        // Create sample subscription
+        $service = Service::where('is_subscription', true)->first() 
+            ?? $this->createSampleService();
+        
+        $customer = User::role('Customer')->first() 
+            ?? $this->createSampleCustomer();
+
+        $subscription = new Subscription([
+            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'service_id' => $service->id,
+            'customer_id' => $customer->id,
+            'status' => 'active',
+            'billing_interval' => $service->billing_interval ?? 'monthly',
+            'price' => $service->price,
+            'currency' => $service->currency ?? 'USD',
+            'started_at' => now()->subMonths(3),
+            'expires_at' => now()->addDays($daysUntilExpiration),
+            'auto_renew' => false,
+        ]);
+
+        // Mark as existing so route model binding works
+        $subscription->exists = true;
+        $subscription->service = $service;
+        $subscription->customer = $customer;
+
+        return $subscription;
+    }
+
+    /**
+     * Get sample subscription for specific service
+     */
+    private function getSampleSubscriptionForService(Service $service): Subscription
+    {
+        // Try to find existing subscription for this service
+        $subscription = Subscription::with(['service', 'customer'])
+            ->where('service_id', $service->id)
+            ->whereIn('status', ['active', 'pending_renewal'])
+            ->first();
+
+        if ($subscription) {
+            return $subscription;
+        }
+
+        // Create sample subscription
+        $customer = User::role('Customer')->first() 
+            ?? $this->createSampleCustomer();
+
+        $subscription = new Subscription([
+            'uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'service_id' => $service->id,
+            'customer_id' => $customer->id,
+            'status' => 'active',
+            'billing_interval' => $service->billing_interval ?? 'monthly',
+            'price' => $service->price,
+            'currency' => $service->currency ?? 'USD',
+            'started_at' => now()->subMonths(3),
+            'expires_at' => now()->addDays(15),
+            'auto_renew' => false,
+        ]);
+
+        // Mark as existing so route model binding works
+        $subscription->exists = true;
+        $subscription->service = $service;
+        $subscription->customer = $customer;
+
+        return $subscription;
+    }
+
+    /**
+     * Create sample service
+     */
+    private function createSampleService(): Service
+    {
+        $service = new Service([
+            'title' => 'Premium Web Hosting',
+            'description' => 'Professional web hosting with 24/7 support',
+            'is_subscription' => true,
+            'price' => 29.99,
+            'currency' => 'USD',
+            'billing_interval' => 'monthly',
+            'subscription_duration_months' => 1,
+            'renewal_discount_percentage' => 10,
+        ]);
+
+        $service->id = 1;
+        $service->exists = true;
+
+        return $service;
+    }
+
+    /**
+     * Create sample customer
+     */
+    private function createSampleCustomer(): User
+    {
+        $customer = new User([
+            'name' => 'John Doe',
+            'email' => 'john.doe@example.com',
+        ]);
+
+        $customer->id = 1;
+        $customer->exists = true;
+
+        return $customer;
+    }
+
+    /**
+     * Get email subject line
+     */
+    private function getEmailSubject(Subscription $subscription, int $daysRemaining): string
+    {
+        $service = $subscription->service->title;
+
+        if ($daysRemaining > 1) {
+            return "Your {$service} subscription expires in {$daysRemaining} days";
+        } elseif ($daysRemaining === 1) {
+            return "Your {$service} subscription expires tomorrow";
+        } else {
+            return "Your {$service} subscription expires today";
+        }
     }
 }

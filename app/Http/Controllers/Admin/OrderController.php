@@ -12,17 +12,21 @@ use App\Models\Service;
 use App\Models\ServiceVariant;
 use App\Models\User;
 use App\Services\OrderService;
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class OrderController extends Controller
 {
     protected OrderService $orderService;
+    protected SubscriptionService $subscriptionService;
 
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderService $orderService, SubscriptionService $subscriptionService)
     {
         $this->orderService = $orderService;
+        $this->subscriptionService = $subscriptionService;
     }
 
     /**
@@ -233,6 +237,9 @@ class OrderController extends Controller
                 ])
                 ->log('Order created by staff');
 
+            // Create subscriptions for subscription-type services
+            $this->createSubscriptionsForOrder($order);
+
             DB::commit();
 
             return redirect()
@@ -404,6 +411,83 @@ class OrderController extends Controller
             return back()->with('success', 'Order status updated successfully.');
         } catch (\Exception $e) {
             return back()->with('error', 'Failed to update order status: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Create subscriptions for subscription-type services in the order.
+     */
+    protected function createSubscriptionsForOrder(Order $order): void
+    {
+        // Load order items with services and customer
+        $order->load(['items.service', 'customer']);
+
+        // Ensure customer exists (for admin-created orders)
+        if (!$order->customer) {
+            // For admin orders without a customer, we need to either:
+            // 1. Skip subscription creation (log warning)
+            // 2. Create the subscription but defer customer assignment
+            // Let's log a warning and skip for now
+            Log::warning('Cannot create subscriptions for order without customer', [
+                'order_id' => $order->id,
+                'order_uuid' => $order->uuid,
+            ]);
+            return;
+        }
+
+        foreach ($order->items as $orderItem) {
+            $service = $orderItem->service;
+
+            // Skip if not a subscription service
+            if (!$service->requiresSubscriptionManagement()) {
+                continue;
+            }
+
+            // Create a subscription for each quantity
+            for ($i = 0; $i < $orderItem->quantity; $i++) {
+                try {
+                    $subscription = $this->subscriptionService->createSubscription(
+                        $order,
+                        $service,
+                        $order->customer,
+                        [
+                            'start_date' => now(),
+                            'auto_renew' => $service->auto_renew_enabled,
+                            'metadata' => [
+                                'order_item_id' => $orderItem->id,
+                                'quantity_instance' => $i + 1,
+                                'variant_id' => $orderItem->variant_id,
+                                'variant_name' => $orderItem->metadata['variant_name'] ?? null,
+                                'unit_price' => $orderItem->unit_price,
+                                'created_by_admin' => auth()->id(),
+                                'created_from_admin_panel' => true,
+                            ],
+                        ]
+                    );
+
+                    Log::info('Subscription created from admin order', [
+                        'order_id' => $order->id,
+                        'order_uuid' => $order->uuid,
+                        'service_id' => $service->id,
+                        'subscription_id' => $subscription->id,
+                        'subscription_uuid' => $subscription->uuid,
+                        'quantity_instance' => $i + 1,
+                        'created_by' => auth()->id(),
+                    ]);
+
+                } catch (\Exception $e) {
+                    Log::error('Failed to create subscription from admin order', [
+                        'order_id' => $order->id,
+                        'service_id' => $service->id,
+                        'error' => $e->getMessage(),
+                        'quantity_instance' => $i + 1,
+                        'created_by' => auth()->id(),
+                    ]);
+                    
+                    // Don't fail the entire order for subscription creation errors
+                    // Log error and continue - admin can manually create subscriptions later
+                }
+            }
         }
     }
 }

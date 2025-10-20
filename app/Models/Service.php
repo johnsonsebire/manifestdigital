@@ -32,6 +32,20 @@ class Service extends Model
         'available',
         'visible',
         'created_by',
+        // Subscription-related fields
+        'is_subscription',
+        'subscription_duration_months',
+        'auto_renew_enabled',
+        'minimum_billing_term_months',
+        'grace_period_days',
+        'prorated_billing',
+        'early_termination_fee',
+        'setup_fee',
+        'cancellation_policy',
+        'renewal_discount_percentage',
+        'reminder_schedule',
+        'custom_expiration_email_template',
+        'subscription_metadata',
     ];
 
     /**
@@ -44,6 +58,15 @@ class Service extends Model
         'available' => 'boolean',
         'visible' => 'boolean',
         'price' => 'decimal:2',
+        // Subscription-related casts
+        'is_subscription' => 'boolean',
+        'auto_renew_enabled' => 'boolean',
+        'prorated_billing' => 'boolean',
+        'early_termination_fee' => 'decimal:2',
+        'setup_fee' => 'decimal:2',
+        'renewal_discount_percentage' => 'decimal:2',
+        'reminder_schedule' => 'array',
+        'subscription_metadata' => 'array',
     ];
 
     /**
@@ -156,6 +179,38 @@ class Service extends Model
     }
 
     /**
+     * Scope a query to subscription services only.
+     */
+    public function scopeSubscriptionOnly($query)
+    {
+        return $query->where('is_subscription', true);
+    }
+
+    /**
+     * Scope a query to one-time services only.
+     */
+    public function scopeOneTimeOnly($query)
+    {
+        return $query->where('is_subscription', false);
+    }
+
+    /**
+     * Scope services with active subscriptions.
+     */
+    public function scopeWithActiveSubscriptions($query)
+    {
+        return $query->whereHas('activeSubscriptions');
+    }
+
+    /**
+     * Scope services with expiring subscriptions.
+     */
+    public function scopeWithExpiringSubscriptions($query)
+    {
+        return $query->whereHas('expiringSubscriptions');
+    }
+
+    /**
      * Get the public URL for this service.
      */
     public function getUrlAttribute(): string
@@ -204,10 +259,169 @@ class Service extends Model
     }
 
     /**
+     * Get the subscriptions for this service.
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * Get active subscriptions for this service.
+     */
+    public function activeSubscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class)
+            ->where('status', 'active')
+            ->where('expires_at', '>', now());
+    }
+
+    /**
+     * Get expiring subscriptions (within reminder window).
+     */
+    public function expiringSubscriptions(): HasMany
+    {
+        $reminderDays = $this->getMaxReminderDays();
+        
+        return $this->hasMany(Subscription::class)
+            ->where('status', 'active')
+            ->whereBetween('expires_at', [now(), now()->addDays($reminderDays)]);
+    }
+
+    /**
+     * Get subscription expiration reminders for this service.
+     */
+    public function expirationReminders(): HasMany
+    {
+        return $this->hasMany(ServiceExpirationReminder::class);
+    }
+
+    /**
      * Get the route key name for Laravel.
      */
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * Get default reminder schedule for this service.
+     */
+    public function getDefaultReminderSchedule(): array
+    {
+        return $this->reminder_schedule ?: [
+            'enabled' => true,
+            'intervals' => ['15_days', '10_days', '5_days', '1_day'],
+            'post_expiration' => ['expired'],
+        ];
+    }
+
+    /**
+     * Get maximum reminder days for query optimization.
+     */
+    public function getMaxReminderDays(): int
+    {
+        $schedule = $this->getDefaultReminderSchedule();
+        $maxDays = 0;
+
+        foreach ($schedule['intervals'] ?? [] as $interval) {
+            $days = (int) str_replace('_days', '', $interval);
+            if ($days > $maxDays) {
+                $maxDays = $days;
+            }
+        }
+
+        return $maxDays ?: 15; // Default to 15 days
+    }
+
+    /**
+     * Check if service requires subscription management.
+     */
+    public function requiresSubscriptionManagement(): bool
+    {
+        return $this->is_subscription && $this->subscription_duration_months > 0;
+    }
+
+    /**
+     * Get subscription duration in months.
+     */
+    public function getSubscriptionDurationAttribute(): ?int
+    {
+        return $this->is_subscription ? $this->subscription_duration_months : null;
+    }
+
+    /**
+     * Get minimum billing term in months.
+     */
+    public function getMinimumBillingTermAttribute(): ?int
+    {
+        return $this->is_subscription ? ($this->minimum_billing_term_months ?: 1) : null;
+    }
+
+    /**
+     * Get grace period in days.
+     */
+    public function getGracePeriodAttribute(): int
+    {
+        return $this->is_subscription ? ($this->grace_period_days ?: 0) : 0;
+    }
+
+    /**
+     * Calculate subscription expiration date from start date.
+     */
+    public function calculateExpirationDate(\DateTime $startDate): \DateTime
+    {
+        if (!$this->is_subscription || !$this->subscription_duration_months) {
+            throw new \InvalidArgumentException('Service is not a subscription or duration not set');
+        }
+
+        return (clone $startDate)->add(new \DateInterval("P{$this->subscription_duration_months}M"));
+    }
+
+    /**
+     * Calculate renewal price with discount.
+     */
+    public function getRenewalPrice(): float
+    {
+        $basePrice = (float) $this->price;
+        
+        if ($this->renewal_discount_percentage && $this->renewal_discount_percentage > 0) {
+            $discount = $basePrice * ($this->renewal_discount_percentage / 100);
+            return $basePrice - $discount;
+        }
+
+        return $basePrice;
+    }
+
+    /**
+     * Get cancellation policy text.
+     */
+    public function getCancellationPolicyText(): string
+    {
+        return $this->cancellation_policy ?: 'Standard cancellation policy applies.';
+    }
+
+    /**
+     * Check if early termination fee applies.
+     */
+    public function hasEarlyTerminationFee(): bool
+    {
+        return $this->is_subscription && $this->early_termination_fee > 0;
+    }
+
+    /**
+     * Check if setup fee applies.
+     */
+    public function hasSetupFee(): bool
+    {
+        return $this->setup_fee > 0;
+    }
+
+    /**
+     * Get total initial cost (service price + setup fee).
+     */
+    public function getTotalInitialCost(): float
+    {
+        return (float) $this->price + (float) ($this->setup_fee ?: 0);
     }
 }

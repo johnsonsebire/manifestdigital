@@ -10,9 +10,12 @@ use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\OrderChangeRequestController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ReminderConfigurationController;
 use App\Http\Controllers\Admin\ReportsController;
 use App\Http\Controllers\Admin\ServiceManagementController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\SubscriptionAnalyticsController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\TaxController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +39,54 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
             Route::post('/{order}/complete', 'complete')->name('complete');
             Route::post('/{order}/mark-paid', 'markAsPaid')->name('mark-paid');
             Route::patch('/{order}/status', 'updateStatus')->name('update-status');
+        });
+
+        // Subscription Management
+        Route::controller(SubscriptionController::class)->prefix('subscriptions')->name('subscriptions.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{subscription}', 'show')->name('show');
+            
+            // Renewal management
+            Route::get('/{subscription}/renew', 'renew')->name('renew');
+            Route::post('/{subscription}/renew', 'processRenewal')->name('process-renewal');
+            
+            // Cancellation
+            Route::get('/{subscription}/cancel', 'cancel')->name('cancel');
+            Route::post('/{subscription}/cancel', 'processCancel')->name('process-cancel');
+            
+            // Bulk operations
+            Route::post('/bulk-action', 'bulkAction')->name('bulk-action');
+            
+            // Export
+            Route::get('/export', 'export')->name('export');
+        });
+
+        // Subscription Analytics
+        Route::controller(SubscriptionAnalyticsController::class)->prefix('subscriptions/analytics')->name('subscriptions.analytics.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/export', 'export')->name('export');
+            Route::get('/chart-data', 'chartData')->name('chart-data');
+        });
+
+        // Reminder Configuration
+        Route::controller(ReminderConfigurationController::class)->prefix('reminders')->name('reminders.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            
+            // Bulk configuration
+            Route::get('/bulk', 'bulkConfigure')->name('bulk');
+            Route::post('/bulk', 'storeBulkConfig')->name('bulk.store');
+            
+            // Service-level configuration
+            Route::get('/service/{service}', 'configureService')->name('configure-service');
+            Route::post('/service/{service}', 'storeServiceConfig')->name('store-service');
+            
+            // Customer-specific configuration
+            Route::get('/customer/{service}/{customer}', 'configureCustomer')->name('configure-customer');
+            Route::post('/customer/{service}/{customer}', 'storeCustomerConfig')->name('store-customer');
+            
+            // Toggle and delete
+            Route::post('/{reminder}/toggle', 'toggle')->name('toggle');
+            Route::delete('/{reminder}', 'destroy')->name('destroy');
         });
 
         // Project Management
@@ -160,5 +211,8 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
             Route::get('/invoice-payment-received', 'invoicePaymentReceived')->name('invoice-payment-received');
             Route::get('/project-created', 'projectCreated')->name('project-created');
             Route::get('/new-project-message', 'newProjectMessage')->name('new-project-message');
+            Route::get('/subscription-expiring', 'subscriptionExpiring')->name('subscription-expiring');
+            Route::post('/reminder', 'previewReminder')->name('reminder');
+            Route::post('/send-test', 'sendTestReminder')->name('send-test');
         });
     });
