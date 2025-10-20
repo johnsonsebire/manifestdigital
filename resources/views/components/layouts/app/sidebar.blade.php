@@ -62,6 +62,9 @@
                     <flux:navlist.item icon="banknotes" :href="route('admin.currencies.index')" :current="request()->routeIs('admin.currencies.*')" wire:navigate>
                         {{ __('Currencies') }}
                     </flux:navlist.item>
+                    <flux:navlist.item icon="globe-alt" :href="route('admin.regional-pricing.index')" :current="request()->routeIs('admin.regional-pricing.*')" wire:navigate>
+                        {{ __('Regional Pricing') }}
+                    </flux:navlist.item>
                     <flux:navlist.item icon="receipt-percent" :href="route('admin.taxes.index')" :current="request()->routeIs('admin.taxes.*')" wire:navigate>
                         {{ __('Taxes') }}
                     </flux:navlist.item>

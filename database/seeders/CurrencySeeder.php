@@ -34,7 +34,27 @@ class CurrencySeeder extends Seeder
                 'code' => 'GHS',
                 'name' => 'Ghana Cedi',
                 'symbol' => 'GH₵',
-                'exchange_rate_to_usd' => 0.074, // 1 GHS = 0.074 USD
+                'exchange_rate_to_usd' => 0.092, // 1 GHS = 0.092 USD (1 USD ≈ 10.9 GHS)
+                'is_base_currency' => false,
+                'is_active' => true,
+                'decimal_places' => 2,
+                'format' => '{symbol}{amount}',
+            ],
+            [
+                'code' => 'EUR',
+                'name' => 'Euro',
+                'symbol' => '€',
+                'exchange_rate_to_usd' => 1.08, // 1 EUR = 1.08 USD (approximate rate)
+                'is_base_currency' => false,
+                'is_active' => true,
+                'decimal_places' => 2,
+                'format' => '{symbol}{amount}',
+            ],
+            [
+                'code' => 'GBP',
+                'name' => 'British Pound Sterling',
+                'symbol' => '£',
+                'exchange_rate_to_usd' => 1.26, // 1 GBP = 1.26 USD (approximate rate)
                 'is_base_currency' => false,
                 'is_active' => true,
                 'decimal_places' => 2,
@@ -49,6 +69,6 @@ class CurrencySeeder extends Seeder
             );
         }
         
-        $this->command->info('Currency data seeded successfully with USD and GHS configurations.');
+        $this->command->info('Currency data seeded successfully with USD, GHS, EUR, and GBP configurations.');
     }
 }

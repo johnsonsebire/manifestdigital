@@ -225,7 +225,7 @@ class CurrencyService
         // For USD base conversions, use currency model rates
         if ($fromCurrency === 'USD') {
             $currency = Currency::where('code', $toCurrency)->first();
-            return $currency?->exchange_rate_to_usd ?? 1.0;
+            return $currency ? (1 / $currency->exchange_rate_to_usd) : 1.0;
         }
         
         if ($toCurrency === 'USD') {

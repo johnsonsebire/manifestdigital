@@ -101,6 +101,24 @@ Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
         Route::resource('currencies', CurrencyController::class);
         Route::post('currencies/update-rates', [CurrencyController::class, 'updateRates'])->name('currencies.update-rates');
 
+        // Regional Pricing Management
+        Route::controller(\App\Http\Controllers\Admin\RegionalPricingController::class)->prefix('regional-pricing')->name('regional-pricing.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{regionalPricing}', 'show')->name('show');
+            Route::get('/{regionalPricing}/edit', 'edit')->name('edit');
+            Route::put('/{regionalPricing}', 'update')->name('update');
+            Route::delete('/{regionalPricing}', 'destroy')->name('destroy');
+            
+            // Bulk operations
+            Route::post('/bulk-create', 'bulkCreate')->name('bulk-create');
+            Route::post('/sync-currency', 'syncCurrency')->name('sync-currency');
+            
+            // AJAX endpoints
+            Route::get('/pricing-suggestions', 'getPricingSuggestions')->name('pricing-suggestions');
+        });
+
         // Tax Management - Regional routes must come before resource routes
         Route::get('taxes/regional', [TaxController::class, 'regionalIndex'])->name('taxes.regional');
         Route::post('taxes/regional', [TaxController::class, 'storeRegional'])->name('taxes.regional.store');
