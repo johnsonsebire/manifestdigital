@@ -127,6 +127,8 @@
                 } catch (error) {
                     console.error('💥 Error loading projects:', error);
                     console.error('Error details:', error.message);
+                    // Stop infinite scroll on repeated errors
+                    this.hasMore = false;
                 } finally {
                     this.loading = false;
                     console.log('🔄 Loading state reset');

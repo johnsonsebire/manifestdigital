@@ -8,14 +8,15 @@
 /vendor
 # Laravel Environment files (root level only)
 /.env
-/.env.*
 /.env.backup
-/.env.production
-/.env.production-corrected
+/.env.production*
 /.env.local
-/.env.development
+/.env.development  
 /.env.testing
 /.env.staging
+# Specific environment files we've created
+/.env-production
+/.env-production-corrected
 .phpactor.json
 .phpunit.result.cache
 Homestead.json

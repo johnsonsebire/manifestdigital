@@ -16,9 +16,13 @@ class ProjectsController extends Controller
             // Check if file exists
             if (!file_exists($jsonPath)) {
                 return response()->json([
-                    'error' => 'Projects data file not found',
-                    'path' => $jsonPath
-                ], 404);
+                    'error' => 'Projects data not initialized',
+                    'message' => 'Please run: php artisan projects:initialize',
+                    'projects' => [],
+                    'hasMore' => false,
+                    'total' => 0,
+                    'currentPage' => 1
+                ], 200); // Return 200 instead of 404 to prevent frontend errors
             }
             
             // Read and decode JSON
