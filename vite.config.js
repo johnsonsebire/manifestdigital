@@ -46,7 +46,14 @@ export default defineConfig({
     server: {
         cors: true
     },
-
+    // Add Node.js compatibility fixes
+    define: {
+        global: 'globalThis',
+    },
+    // Polyfills for Node.js compatibility
+    optimizeDeps: {
+        include: ['crypto']
+    },
     resolve: {
         alias: {
             '@': '/resources',
@@ -55,5 +62,14 @@ export default defineConfig({
             '@css': '/resources/css'
         }
     },
-    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg']
+    assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
+    // Build configuration for production
+    build: {
+        target: 'es2015',
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+    }
 });

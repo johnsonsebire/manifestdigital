@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProjectsController;
 use App\Http\Controllers\Api\CurrencyController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\PricingController;
 
 /*
@@ -33,4 +34,20 @@ Route::prefix('currency')->name('currency.')->group(function () {
     Route::get('/service/{service}/price', [CurrencyController::class, 'servicePrice']);
     Route::post('/convert', [CurrencyController::class, 'convert']);
     Route::get('/{currency}/rates', [CurrencyController::class, 'exchangeRates']);
+});
+
+// V1 API Routes
+Route::prefix('v1')->name('api.v1.')->middleware(['auth:sanctum', 'throttle:60,1'])->group(function () {
+    
+    // Subscription Management API
+    Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
+        Route::get('/', [SubscriptionController::class, 'index'])->name('index');
+        Route::post('/', [SubscriptionController::class, 'store'])->name('store');
+        Route::get('/stats', [SubscriptionController::class, 'stats'])->name('stats');
+        Route::get('/{uuid}', [SubscriptionController::class, 'show'])->name('show');
+        Route::match(['put', 'patch'], '/{uuid}', [SubscriptionController::class, 'update'])->name('update');
+        Route::delete('/{uuid}', [SubscriptionController::class, 'destroy'])->name('destroy');
+        Route::post('/{uuid}/renew', [SubscriptionController::class, 'renew'])->name('renew');
+    });
+    
 });
