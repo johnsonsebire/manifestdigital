@@ -12,28 +12,67 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('service_expiration_reminders', function (Blueprint $table) {
-            $table->foreignId('service_id')->constrained()->onDelete('cascade');
-            $table->foreignId('customer_id')->nullable()->constrained('users')->onDelete('cascade');
+            // Check if columns exist before adding them
+            if (!Schema::hasColumn('service_expiration_reminders', 'service_id')) {
+                $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            }
+            
+            if (!Schema::hasColumn('service_expiration_reminders', 'customer_id')) {
+                $table->foreignId('customer_id')->nullable()->constrained('users')->onDelete('cascade');
+            }
             
             // Reminder configuration
-            $table->json('reminder_days_before')->default('[15, 10, 5, 0]'); // Days before expiration
-            $table->string('email_template')->nullable(); // Custom template override
-            $table->boolean('is_active')->default(true);
+            if (!Schema::hasColumn('service_expiration_reminders', 'reminder_days_before')) {
+                $table->json('reminder_days_before')->default('[15, 10, 5, 0]'); // Days before expiration
+            }
+            
+            if (!Schema::hasColumn('service_expiration_reminders', 'email_template')) {
+                $table->string('email_template')->nullable(); // Custom template override
+            }
+            
+            if (!Schema::hasColumn('service_expiration_reminders', 'is_active')) {
+                $table->boolean('is_active')->default(true);
+            }
             
             // Custom schedule support
-            $table->json('custom_schedule')->nullable(); // For complex reminder schedules
-            $table->text('custom_message')->nullable(); // Custom reminder message
+            if (!Schema::hasColumn('service_expiration_reminders', 'custom_schedule')) {
+                $table->json('custom_schedule')->nullable(); // For complex reminder schedules
+            }
+            
+            if (!Schema::hasColumn('service_expiration_reminders', 'custom_message')) {
+                $table->text('custom_message')->nullable(); // Custom reminder message
+            }
             
             // Metadata for additional configuration
-            $table->json('metadata')->nullable();
-            
-            // Indexes for performance
-            $table->index(['service_id', 'is_active']);
-            $table->index(['customer_id', 'is_active']);
-            
-            // Unique constraint: one reminder config per service per customer
-            $table->unique(['service_id', 'customer_id']);
+            if (!Schema::hasColumn('service_expiration_reminders', 'metadata')) {
+                $table->json('metadata')->nullable();
+            }
         });
+        
+        // Add indexes and constraints separately after ensuring columns exist
+        try {
+            Schema::table('service_expiration_reminders', function (Blueprint $table) {
+                $table->index(['service_id', 'is_active']);
+            });
+        } catch (\Exception $e) {
+            // Index already exists, skip
+        }
+        
+        try {
+            Schema::table('service_expiration_reminders', function (Blueprint $table) {
+                $table->index(['customer_id', 'is_active']);
+            });
+        } catch (\Exception $e) {
+            // Index already exists, skip
+        }
+        
+        try {
+            Schema::table('service_expiration_reminders', function (Blueprint $table) {
+                $table->unique(['service_id', 'customer_id']);
+            });
+        } catch (\Exception $e) {
+            // Unique constraint already exists, skip
+        }
     }
 
     /**
