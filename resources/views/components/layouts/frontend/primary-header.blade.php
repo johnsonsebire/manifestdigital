@@ -27,7 +27,7 @@
             @else
                 <a href="{{ route('login') }}" class="login">Login</a>
             @endauth
-            <a href="{{ url('requsest-quote') }}" class="btn-primary">Get a Quote</a>
+            <a href="{{ route('request-quote') }}" class="btn-primary">Get a Quote</a>
         </div>
         
         <!-- Mobile menu toggle -->
