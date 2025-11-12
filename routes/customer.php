@@ -8,8 +8,8 @@ use App\Http\Controllers\Customer\SubscriptionController;
 use App\Http\Controllers\SubscriptionRenewalController;
 use Illuminate\Support\Facades\Route;
 
-// Customer routes - protected by auth and verified
-Route::middleware(['web', 'auth', 'verified'])
+// Customer routes - protected by auth
+Route::middleware(['web', 'auth'])
     ->prefix('my')
     ->name('customer.')
     ->group(function () {
@@ -49,7 +49,7 @@ Route::middleware(['web', 'auth', 'verified'])
     });
 
 // Subscription Renewal routes - separate from customer prefix for cleaner URLs
-Route::middleware(['web', 'auth', 'verified'])
+Route::middleware(['web', 'auth'])
     ->name('renewal.')
     ->group(function () {
         Route::controller(SubscriptionRenewalController::class)->group(function () {

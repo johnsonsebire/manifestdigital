@@ -18,7 +18,7 @@ Route::middleware(['web'])->group(function () {
 });
 
 // Admin form management routes
-Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['web', 'auth', 'can:access-admin-panel'])->prefix('admin')->name('admin.')->group(function () {
     // Form management
     Route::resource('forms', FormController::class);
     Route::post('forms/{id}/fields', [FormController::class, 'addField'])->name('forms.fields.store');

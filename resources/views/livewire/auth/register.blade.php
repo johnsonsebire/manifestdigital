@@ -4,8 +4,11 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
@@ -20,6 +23,8 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     public function register(): void
     {
+        $this->ensureIsNotRateLimited();
+
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
@@ -32,9 +37,36 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         Auth::login($user);
 
+        RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
         $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+    }
+
+    /**
+     * Ensure the registration request is not rate limited.
+     */
+    protected function ensureIsNotRateLimited(): void
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
+            return;
+        }
+
+        $seconds = RateLimiter::availableIn($this->throttleKey());
+
+        throw ValidationException::withMessages([
+            'email' => __('Too many registration attempts. Please try again in :seconds seconds.', [
+                'seconds' => $seconds,
+            ]),
+        ]);
+    }
+
+    /**
+     * Get the registration rate limiting throttle key.
+     */
+    protected function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->email).'|register|'.request()->ip());
     }
 }; ?>
 
@@ -45,6 +77,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     <x-auth-session-status class="text-center" :status="session('status')" />
 
     <form method="POST" wire:submit="register" class="flex flex-col gap-6">
+        @csrf
         <!-- Name -->
         <flux:input
             wire:model="name"

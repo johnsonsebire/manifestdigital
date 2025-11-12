@@ -21,7 +21,7 @@ use App\Http\Controllers\Admin\TaxController;
 use Illuminate\Support\Facades\Route;
 
 // Admin routes - protected by auth and admin access
-Route::middleware(['web', 'auth', 'verified', 'can:access-admin-panel'])
+Route::middleware(['web', 'auth', 'can:access-admin-panel'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
