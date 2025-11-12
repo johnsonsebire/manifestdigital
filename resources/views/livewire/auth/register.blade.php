@@ -4,6 +4,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
@@ -23,24 +24,90 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     public function register(): void
     {
-        $this->ensureIsNotRateLimited();
+        try {
+            Log::info('REGISTER_ATTEMPT_START', [
+                'name' => $this->name,
+                'email' => $this->email,
+                'session_id' => session()->getId(),
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'csrf_token' => csrf_token(),
+            ]);
 
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+            Log::info('REGISTER_RATE_LIMIT_CHECK');
+            $this->ensureIsNotRateLimited();
+            Log::info('REGISTER_RATE_LIMIT_PASSED');
 
-        $validated['password'] = Hash::make($validated['password']);
+            Log::info('REGISTER_VALIDATION_START');
+            $validated = $this->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+            ]);
+            Log::info('REGISTER_VALIDATION_SUCCESS');
 
-        event(new Registered(($user = User::create($validated))));
+            Log::info('REGISTER_PASSWORD_HASH_START');
+            $validated['password'] = Hash::make($validated['password']);
+            Log::info('REGISTER_PASSWORD_HASH_SUCCESS');
 
-        Auth::login($user);
+            Log::info('REGISTER_USER_CREATE_START');
+            $user = User::create($validated);
+            Log::info('REGISTER_USER_CREATE_SUCCESS', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+            ]);
 
-        RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
+            Log::info('REGISTER_EVENT_FIRE_START');
+            event(new Registered($user));
+            Log::info('REGISTER_EVENT_FIRE_SUCCESS');
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+            Log::info('REGISTER_AUTH_LOGIN_START', ['user_id' => $user->id]);
+            Auth::login($user);
+            Log::info('REGISTER_AUTH_LOGIN_SUCCESS', [
+                'authenticated_user_id' => Auth::id(),
+                'auth_check' => Auth::check(),
+            ]);
+
+            RateLimiter::clear($this->throttleKey());
+            
+            Log::info('REGISTER_SESSION_REGENERATE_START');
+            Session::regenerate();
+            Log::info('REGISTER_SESSION_REGENERATE_SUCCESS', [
+                'new_session_id' => session()->getId(),
+            ]);
+
+            Log::info('REGISTER_REDIRECT_START', [
+                'dashboard_route' => route('dashboard', absolute: false),
+            ]);
+
+            $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
+            
+            Log::info('REGISTER_COMPLETE_SUCCESS');
+
+        } catch (ValidationException $e) {
+            Log::error('REGISTER_VALIDATION_ERROR', [
+                'name' => $this->name,
+                'email' => $this->email,
+                'errors' => $e->errors(),
+                'message' => $e->getMessage(),
+            ]);
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('REGISTER_UNEXPECTED_ERROR', [
+                'name' => $this->name,
+                'email' => $this->email,
+                'session_id' => session()->getId(),
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+            
+            // Re-throw the exception so user sees an error
+            throw new ValidationException(validator([], []), [
+                'email' => ['An unexpected error occurred during registration. Please try again.']
+            ]);
+        }
     }
 
     /**
@@ -48,11 +115,26 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 3)) {
+        $throttleKey = $this->throttleKey();
+        $attempts = RateLimiter::attempts($throttleKey);
+        
+        Log::info('REGISTER_RATE_LIMIT_CHECK', [
+            'throttle_key' => $throttleKey,
+            'current_attempts' => $attempts,
+            'max_attempts' => 3,
+        ]);
+        
+        if (! RateLimiter::tooManyAttempts($throttleKey, 3)) {
             return;
         }
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        Log::warning('REGISTER_RATE_LIMIT_EXCEEDED', [
+            'throttle_key' => $throttleKey,
+            'attempts' => $attempts,
+            'email' => $this->email,
+        ]);
+
+        $seconds = RateLimiter::availableIn($throttleKey);
 
         throw ValidationException::withMessages([
             'email' => __('Too many registration attempts. Please try again in :seconds seconds.', [

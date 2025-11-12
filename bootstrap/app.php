@@ -23,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add currency detection middleware to web routes
         $middleware->web(append: [
             \App\Http\Middleware\CurrencyMiddleware::class,
+            \App\Http\Middleware\LogLivewireRequests::class,
         ]);
         
         // Exclude payment webhook routes from CSRF verification

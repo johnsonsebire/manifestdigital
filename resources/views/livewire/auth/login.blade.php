@@ -3,6 +3,7 @@
 use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
@@ -27,29 +28,88 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     public function login(): void
     {
-        $this->validate();
-
-        $this->ensureIsNotRateLimited();
-
-        $user = $this->validateCredentials();
-
-        if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
-            Session::put([
-                'login.id' => $user->getKey(),
-                'login.remember' => $this->remember,
+        try {
+            Log::info('LOGIN_ATTEMPT_START', [
+                'email' => $this->email,
+                'remember' => $this->remember,
+                'session_id' => session()->getId(),
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'csrf_token' => csrf_token(),
             ]);
 
-            $this->redirect(route('two-factor.login'), navigate: true);
+            Log::info('LOGIN_VALIDATION_START');
+            $this->validate();
+            Log::info('LOGIN_VALIDATION_SUCCESS');
 
-            return;
+            Log::info('LOGIN_RATE_LIMIT_CHECK');
+            $this->ensureIsNotRateLimited();
+            Log::info('LOGIN_RATE_LIMIT_PASSED');
+
+            Log::info('LOGIN_CREDENTIALS_VALIDATION_START');
+            $user = $this->validateCredentials();
+            Log::info('LOGIN_CREDENTIALS_VALIDATION_SUCCESS', [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+            ]);
+
+            if (Features::canManageTwoFactorAuthentication() && $user->hasEnabledTwoFactorAuthentication()) {
+                Log::info('LOGIN_2FA_REDIRECT', ['user_id' => $user->id]);
+                
+                Session::put([
+                    'login.id' => $user->getKey(),
+                    'login.remember' => $this->remember,
+                ]);
+
+                $this->redirect(route('two-factor.login'), navigate: true);
+                return;
+            }
+
+            Log::info('LOGIN_AUTH_LOGIN_START', ['user_id' => $user->id]);
+            Auth::login($user, $this->remember);
+            Log::info('LOGIN_AUTH_LOGIN_SUCCESS', [
+                'authenticated_user_id' => Auth::id(),
+                'auth_check' => Auth::check(),
+            ]);
+
+            RateLimiter::clear($this->throttleKey());
+            
+            Log::info('LOGIN_SESSION_REGENERATE_START');
+            Session::regenerate();
+            Log::info('LOGIN_SESSION_REGENERATE_SUCCESS', [
+                'new_session_id' => session()->getId(),
+            ]);
+
+            Log::info('LOGIN_REDIRECT_START', [
+                'dashboard_route' => route('dashboard', absolute: false),
+            ]);
+            
+            $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
+            
+            Log::info('LOGIN_COMPLETE_SUCCESS');
+
+        } catch (ValidationException $e) {
+            Log::error('LOGIN_VALIDATION_ERROR', [
+                'email' => $this->email,
+                'errors' => $e->errors(),
+                'message' => $e->getMessage(),
+            ]);
+            throw $e;
+        } catch (\Exception $e) {
+            Log::error('LOGIN_UNEXPECTED_ERROR', [
+                'email' => $this->email,
+                'session_id' => session()->getId(),
+                'error_message' => $e->getMessage(),
+                'error_file' => $e->getFile(),
+                'error_line' => $e->getLine(),
+                'stack_trace' => $e->getTraceAsString(),
+            ]);
+            
+            // Re-throw the exception so user sees an error
+            throw new ValidationException(validator([], []), [
+                'email' => ['An unexpected error occurred during login. Please try again.']
+            ]);
         }
-
-        Auth::login($user, $this->remember);
-
-        RateLimiter::clear($this->throttleKey());
-        Session::regenerate();
-
-        $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 
     /**
@@ -57,16 +117,42 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function validateCredentials(): User
     {
+        Log::info('CREDENTIALS_LOOKUP_START', ['email' => $this->email]);
+        
         $user = Auth::getProvider()->retrieveByCredentials(['email' => $this->email, 'password' => $this->password]);
-
-        if (! $user || ! Auth::getProvider()->validateCredentials($user, ['password' => $this->password])) {
+        
+        if (! $user) {
+            Log::warning('CREDENTIALS_USER_NOT_FOUND', ['email' => $this->email]);
             RateLimiter::hit($this->throttleKey());
-
+            
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
         }
-
+        
+        Log::info('CREDENTIALS_USER_FOUND', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'email_verified_at' => $user->email_verified_at,
+        ]);
+        
+        Log::info('CREDENTIALS_PASSWORD_CHECK_START');
+        $passwordValid = Auth::getProvider()->validateCredentials($user, ['password' => $this->password]);
+        
+        if (! $passwordValid) {
+            Log::warning('CREDENTIALS_PASSWORD_INVALID', [
+                'user_id' => $user->id,
+                'email' => $this->email,
+            ]);
+            RateLimiter::hit($this->throttleKey());
+            
+            throw ValidationException::withMessages([
+                'email' => __('auth.failed'),
+            ]);
+        }
+        
+        Log::info('CREDENTIALS_PASSWORD_VALID', ['user_id' => $user->id]);
+        
         return $user;
     }
 
@@ -75,13 +161,28 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        $throttleKey = $this->throttleKey();
+        $attempts = RateLimiter::attempts($throttleKey);
+        
+        Log::info('RATE_LIMIT_CHECK', [
+            'throttle_key' => $throttleKey,
+            'current_attempts' => $attempts,
+            'max_attempts' => 5,
+        ]);
+        
+        if (! RateLimiter::tooManyAttempts($throttleKey, 5)) {
             return;
         }
 
+        Log::warning('RATE_LIMIT_EXCEEDED', [
+            'throttle_key' => $throttleKey,
+            'attempts' => $attempts,
+            'email' => $this->email,
+        ]);
+
         event(new Lockout(request()));
 
-        $seconds = RateLimiter::availableIn($this->throttleKey());
+        $seconds = RateLimiter::availableIn($throttleKey);
 
         throw ValidationException::withMessages([
             'email' => __('auth.throttle', [
