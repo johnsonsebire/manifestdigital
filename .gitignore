@@ -6,9 +6,16 @@
 /storage/*.key
 /storage/pail
 /vendor
-.env
-.env.backup
-.env.production
+# Laravel Environment files (root level only)
+/.env
+/.env.*
+/.env.backup
+/.env.production
+/.env.production-corrected
+/.env.local
+/.env.development
+/.env.testing
+/.env.staging
 .phpactor.json
 .phpunit.result.cache
 Homestead.json

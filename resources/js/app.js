@@ -1,5 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Entry point for our application JavaScript
+    
+    // ========================
+    // CSRF Token Management
+    // ========================
+    function refreshCSRFToken() {
+        const token = document.querySelector('meta[name="csrf-token"]');
+        if (token) {
+            // Update axios defaults if axios is available
+            if (window.axios) {
+                window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+            }
+            
+            // Update any forms with hidden CSRF inputs
+            document.querySelectorAll('input[name="_token"]').forEach(input => {
+                input.value = token.content;
+            });
+        }
+    }
+
+    // Refresh CSRF token on page load
+    refreshCSRFToken();
+
+    // Handle Livewire CSRF token refresh
+    if (window.Livewire) {
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('morph.updated', () => {
+                refreshCSRFToken();
+            });
+        });
+    }
+    
     // ========================
     // Reading Tracker
     // ========================
