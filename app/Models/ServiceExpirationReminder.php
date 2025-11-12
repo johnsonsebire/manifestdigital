@@ -39,6 +39,16 @@ class ServiceExpirationReminder extends Model
     ];
 
     /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'reminder_days_before' => '[15, 10, 5, 0]',
+        'is_active' => true,
+    ];
+
+    /**
      * Get the service this reminder belongs to.
      */
     public function service(): BelongsTo

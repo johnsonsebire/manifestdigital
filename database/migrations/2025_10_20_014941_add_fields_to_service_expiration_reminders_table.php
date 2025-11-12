@@ -23,7 +23,7 @@ return new class extends Migration
             
             // Reminder configuration
             if (!Schema::hasColumn('service_expiration_reminders', 'reminder_days_before')) {
-                $table->json('reminder_days_before')->default('[15, 10, 5, 0]'); // Days before expiration
+                $table->json('reminder_days_before')->nullable(); // Days before expiration
             }
             
             if (!Schema::hasColumn('service_expiration_reminders', 'email_template')) {
