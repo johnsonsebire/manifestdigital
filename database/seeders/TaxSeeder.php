@@ -78,7 +78,7 @@ class TaxSeeder extends Seeder
                 'rate_override' => null, // Use default VAT rate
                 'is_inclusive' => null, // Use default setting
                 'priority' => 1,
-                'is_active' => true,
+                'is_applicable' => true,
             ]);
 
             RegionalTax::create([
@@ -88,7 +88,7 @@ class TaxSeeder extends Seeder
                 'rate_override' => null, // Use default NHIL rate
                 'is_inclusive' => null, // Use default setting
                 'priority' => 2,
-                'is_active' => true,
+                'is_applicable' => true,
             ]);
 
             RegionalTax::create([
@@ -98,7 +98,7 @@ class TaxSeeder extends Seeder
                 'rate_override' => null, // Use default COVID levy rate
                 'is_inclusive' => null, // Use default setting
                 'priority' => 3,
-                'is_active' => true,
+                'is_applicable' => true,
             ]);
         }
 
@@ -111,7 +111,7 @@ class TaxSeeder extends Seeder
                 'rate_override' => 0.00, // Ensure 0% tax
                 'is_inclusive' => false,
                 'priority' => 1,
-                'is_active' => true,
+                'is_applicable' => true,
             ]);
         }
 

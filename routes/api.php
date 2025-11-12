@@ -24,6 +24,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/projects', [App\Http\Controllers\Api\ProjectsController::class, 'index']);
 
+// Debug route to test projects API
+Route::get('/projects/debug', function() {
+    $jsonPath = storage_path('app/projects-data.json');
+    return response()->json([
+        'file_exists' => file_exists($jsonPath),
+        'file_readable' => is_readable($jsonPath),
+        'file_size' => file_exists($jsonPath) ? filesize($jsonPath) : null,
+        'path' => $jsonPath,
+        'sample_content' => file_exists($jsonPath) ? substr(file_get_contents($jsonPath), 0, 200) . '...' : null
+    ]);
+});
+
 // Pricing API routes
 Route::get('/pricing', [PricingController::class, 'getPricingData']);
 
